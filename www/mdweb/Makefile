@@ -8,8 +8,9 @@ WWW=		https://github.com/marklapointe/freebsdguy
 
 LICENSE=	MIT
 
-BUILD_DEPENDS=	node-npm>=24:www/npm
-RUN_DEPENDS=	node>=24:www/node
+BUILD_DEPENDS=	npm:www/npm-node24\
+		node:www/node24
+RUN_DEPENDS=	node:www/node24
 
 USE_GITHUB=	release
 GH_ACCOUNT=	marklapointe
