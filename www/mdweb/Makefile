@@ -4,17 +4,17 @@ CATEGORIES=	www
 
 MAINTAINER=	mark@cloudbsd.org
 COMMENT=	MarkDownWeb (MDWeb) dynamic blogging platform
-WWW=		https://github.com/marklapointe/mdweb
+WWW=		https://github.com/marklapointe/freebsdguy
 
 LICENSE=	MIT
 
 BUILD_DEPENDS=	npm>=0:www/npm
 RUN_DEPENDS=	node>=18:www/node
 
-USE_GITHUB=	yes
+USE_GITHUB=	release
 GH_ACCOUNT=	marklapointe
-GH_PROJECT=	mdweb
-GH_TAGNAME=	v${DISTVERSION}
+GH_PROJECT=	freebsdguy
+GH_TAGNAME=	${DISTVERSION}
 
 USES=		nodejs:run
 
