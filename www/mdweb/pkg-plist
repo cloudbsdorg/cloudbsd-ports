@@ -1,0 +1,10 @@
+@comment This is the package list for MDWeb
+share/man/man1/mdweb.1.gz
+%%WWWDIR%%/README.md
+%%WWWDIR%%/package.json
+%%WWWDIR%%/package-lock.json
+%%ETCDIR%%/mdweb.rc
+@dir %%WWWDIR%%/server
+@dir %%WWWDIR%%/dist
+@dir %%ETCDIR%%
+@dir (read-only)

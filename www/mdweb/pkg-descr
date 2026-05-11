@@ -1,0 +1,6 @@
+MDWeb is a dynamic blogging platform built with React, Vite, Tailwind CSS,
+and Node.js. It features dynamic Markdown-based posts with frontmatter
+metadata, configurable site name and themes, RBAC authentication with
+Admin and Contributor roles, an Admin dashboard for user and content
+management, full Markdown rendering with image support, and a responsive
+design that works on mobile and desktop.
