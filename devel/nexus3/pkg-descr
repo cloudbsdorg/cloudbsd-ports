@@ -1,0 +1,12 @@
+Sonatype Nexus Repository Manager 3 is a professional-grade
+artifact repository manager that supports multiple formats including
+Maven, npm, Docker, NuGet, PyPI, Helm, and more.
+
+Features:
+- Host internal repositories
+- Proxy remote repositories
+- Repository groups
+- Fine-grained security model
+- LDAP integration
+- Full-text search
+- REST API

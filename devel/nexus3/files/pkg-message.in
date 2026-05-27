@@ -1,0 +1,42 @@
+[
+{ type: install
+  message: <<EOM
+Nexus Repository Manager %%VERSION%% has been successfully installed!
+
+To enable Nexus on boot, add the following to /etc/rc.conf[.local]:
+
+  %%NEXUS_RC%%_enable="YES"
+
+IMPORTANT: Nexus runs by default as user %%USER%%!
+
+Start/Stop Nexus:
+  service %%NEXUS_RC%% start
+  service %%NEXUS_RC%% stop
+  service %%NEXUS_RC%% status
+
+Default URL: http://localhost:8081/
+
+Locations:
+  Binary:    %%HOME%%/bin/nexus
+  Config:    %%HOME%%/etc
+  Data:      %%WORKDIR%%
+  Logs:      %%LOGDIR%%
+  PID:       %%HOME%%/nexus.pid
+
+The rc script will automatically restart Nexus if it crashes (daemon -r).
+
+Initial password is stored in: %%WORKDIR%%/admin.password
+EOM
+},
+{ type: upgrade
+  message: <<EOM
+After upgrading, restart Nexus:
+  service %%NEXUS_RC%% restart
+EOM
+},
+{ type: remove
+  message: <<EOM
+Consider deleting %%WORKDIR%%, %%LOGDIR%%, and %%RUNDIR%% manually!
+EOM
+}
+]

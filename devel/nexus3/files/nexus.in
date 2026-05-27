@@ -1,0 +1,81 @@
+#!/bin/sh
+
+# PROVIDE: %%NEXUS_RC%%
+# REQUIRE: LOGIN FILESYSTEMS NETWORKING
+# KEYWORD: shutdown
+#
+# Add the following line to /etc/rc.conf[.local] to enable Nexus:
+#
+#  %%NEXUS_RC%%_enable="YES"
+
+. /etc/rc.subr
+
+name=%%NEXUS_RC%%
+desc="%%DESC%%"
+rcvar=%%NEXUS_RC%%_enable
+
+load_rc_config ${name}
+
+%%NEXUS_RC%%_enable="${%%NEXUS_RC%%_enable:-"NO"}"
+%%NEXUS_RC%%_user=%%USER%%
+%%NEXUS_RC%%_group=%%GROUP%%
+
+nexus_home="%%HOME%%"
+nexus_bin="${nexus_home}/bin/nexus"
+pidfile="${nexus_home}/nexus.pid"
+logfile="%%LOGDIR%%/nexus.log"
+
+command="/usr/sbin/daemon"
+command_args="-r -p ${pidfile} -o ${logfile} -u ${nexus_user} ${nexus_bin} run"
+
+start_cmd=nexus_start
+stop_cmd=nexus_stop
+status_cmd=nexus_status
+
+nexus_start() {
+    check_process
+    if [ "$?" -eq 1 ]; then
+        echo "Starting ${name}."
+        export INSTALL4J_JAVA_HOME=%%JAVA_HOME%%
+        export JAVA_HOME=%%JAVA_HOME%%
+        /usr/sbin/daemon -r -p ${pidfile} -o ${logfile} -u ${nexus_user} ${nexus_bin} run
+    else
+        echo "${name} is already running."
+    fi
+}
+
+nexus_stop() {
+    check_process
+    if [ "$?" -eq 1 ]; then
+        echo "${name} is not running."
+    else
+        echo "Stopping ${name}."
+        /usr/bin/kill $(cat ${pidfile})
+        for i in $(seq 1 30); do
+            if [ ! -f ${pidfile} ] || ! kill -0 $(cat ${pidfile}) 2>/dev/null; then
+                break
+            fi
+            sleep 1
+        done
+    fi
+}
+
+nexus_status() {
+    check_process
+    if [ "$?" -eq 1 ]; then
+        echo "${name} is not running."
+        return 1
+    else
+        echo "${name} is running as pid $(cat ${pidfile})."
+        return 0
+    fi
+}
+
+check_process() {
+    if [ -f ${pidfile} ] && kill -0 $(cat ${pidfile}) 2>/dev/null; then
+        return 0
+    fi
+    return 1
+}
+
+run_rc_command "$1"
