@@ -673,6 +673,7 @@
     SUBDIR += electron39
     SUBDIR += electron40
     SUBDIR += electron41
+    SUBDIR += electron42
     SUBDIR += elf
     SUBDIR += elf-dissector
     SUBDIR += elfcat
@@ -1054,6 +1055,7 @@
     SUBDIR += ignition-msgs
     SUBDIR += ignition-plugin
     SUBDIR += ignition-tools
+    SUBDIR += ignition-utils
     SUBDIR += ikos
     SUBDIR += imake
     SUBDIR += immer
@@ -1207,7 +1209,6 @@
     SUBDIR += kunifiedpush
     SUBDIR += lab
     SUBDIR += lace
-    SUBDIR += lace14
     SUBDIR += lager
     SUBDIR += laminar
     SUBDIR += lasi
@@ -1369,6 +1370,7 @@
     SUBDIR += libkiwix
     SUBDIR += libkiwix13
     SUBDIR += libklel
+    SUBDIR += libks
     SUBDIR += liblangtag
     SUBDIR += liblnk
     SUBDIR += liblockfile
@@ -1687,6 +1689,7 @@
     SUBDIR += maven
     SUBDIR += maven-wrapper
     SUBDIR += maven363
+    SUBDIR += maven38
     SUBDIR += maven39
     SUBDIR += mcpp
     SUBDIR += mdb
@@ -1857,6 +1860,7 @@
     SUBDIR += open-beagle
     SUBDIR += open62541
     SUBDIR += openapi
+    SUBDIR += openapi-generator
     SUBDIR += openapi-tui
     SUBDIR += opencl
     SUBDIR += opencl-clang
@@ -3564,6 +3568,7 @@
     SUBDIR += p5-Sub-Exporter-Lexical
     SUBDIR += p5-Sub-Exporter-Progressive
     SUBDIR += p5-Sub-HandlesVia
+    SUBDIR += p5-Sub-HandlesVia-XS
     SUBDIR += p5-Sub-Identify
     SUBDIR += p5-Sub-Infix
     SUBDIR += p5-Sub-Info
@@ -4341,6 +4346,7 @@
     SUBDIR += picprog
     SUBDIR += pijul
     SUBDIR += pika
+    SUBDIR += pinact
     SUBDIR += pipelight
     SUBDIR += pipestatus
     SUBDIR += pire
@@ -4391,6 +4397,7 @@
     SUBDIR += py-Automat
     SUBDIR += py-BTrees
     SUBDIR += py-Dumper
+    SUBDIR += py-Events
     SUBDIR += py-Faker
     SUBDIR += py-Farama-Notifications
     SUBDIR += py-IBMQuantumExperience
@@ -4672,6 +4679,7 @@
     SUBDIR += py-bump2version
     SUBDIR += py-bytecode
     SUBDIR += py-cabby
+    SUBDIR += py-cachebox
     SUBDIR += py-cached-path
     SUBDIR += py-cached-property
     SUBDIR += py-cachetools
@@ -4839,6 +4847,7 @@
     SUBDIR += py-dal
     SUBDIR += py-darkdetect
     SUBDIR += py-darts.util.lru
+    SUBDIR += py-dasbus
     SUBDIR += py-dask
     SUBDIR += py-dask-awkward
     SUBDIR += py-dask-expr
@@ -4849,8 +4858,8 @@
     SUBDIR += py-datadog
     SUBDIR += py-dataflows-tabulator
     SUBDIR += py-datapackage
-    SUBDIR += py-datashape
     SUBDIR += py-datasette
+    SUBDIR += py-datashape
     SUBDIR += py-datatest
     SUBDIR += py-dateparser
     SUBDIR += py-dateutils
@@ -5004,7 +5013,9 @@
     SUBDIR += py-flatland
     SUBDIR += py-flatten-dict
     SUBDIR += py-flex
+    SUBDIR += py-flexcache
     SUBDIR += py-flexmock
+    SUBDIR += py-flexparser
     SUBDIR += py-flit
     SUBDIR += py-flit-core
     SUBDIR += py-flit-scm
@@ -6520,9 +6531,11 @@
     SUBDIR += qt6-grpc
     SUBDIR += qt6-languageserver
     SUBDIR += qt6-location
+    SUBDIR += qt6-openapi
     SUBDIR += qt6-positioning
     SUBDIR += qt6-remoteobjects
     SUBDIR += qt6-scxml
+    SUBDIR += qt6-tasktree
     SUBDIR += qt6-tools
     SUBDIR += qt6-translations
     SUBDIR += qtcreator
@@ -7533,6 +7546,7 @@
     SUBDIR += rubygem-formatador
     SUBDIR += rubygem-forwardable
     SUBDIR += rubygem-forwardable-extended
+    SUBDIR += rubygem-freezolite
     SUBDIR += rubygem-fugit
     SUBDIR += rubygem-fugit-gitlab
     SUBDIR += rubygem-fuubar
@@ -7655,6 +7669,7 @@
     SUBDIR += rubygem-gyoku
     SUBDIR += rubygem-hamster
     SUBDIR += rubygem-hana
+    SUBDIR += rubygem-hansi
     SUBDIR += rubygem-hashdiff
     SUBDIR += rubygem-hashery
     SUBDIR += rubygem-hashie
@@ -7823,8 +7838,10 @@
     SUBDIR += rubygem-mustache
     SUBDIR += rubygem-mustache-sinatra
     SUBDIR += rubygem-mustermann
+    SUBDIR += rubygem-mustermann-contrib
     SUBDIR += rubygem-mustermann-grape
     SUBDIR += rubygem-mustermann-grape10
+    SUBDIR += rubygem-mustermann3
     SUBDIR += rubygem-mutex_m
     SUBDIR += rubygem-mutter
     SUBDIR += rubygem-nakayoshi_fork
@@ -8116,6 +8133,7 @@
     SUBDIR += rubygem-repl_type_completor
     SUBDIR += rubygem-request_store
     SUBDIR += rubygem-request_store15
+    SUBDIR += rubygem-require-hooks
     SUBDIR += rubygem-require_all
     SUBDIR += rubygem-resque
     SUBDIR += rubygem-resque-scheduler
@@ -8492,6 +8510,7 @@
     SUBDIR += shfmt
     SUBDIR += shiboken2
     SUBDIR += shiboken6
+    SUBDIR += shiboken6-tools
     SUBDIR += shmap
     SUBDIR += shroud
     SUBDIR += shtk

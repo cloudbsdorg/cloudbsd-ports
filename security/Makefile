@@ -64,6 +64,7 @@
     SUBDIR += bsdsfv
     SUBDIR += bsmtrace
     SUBDIR += bsmtrace3
+    SUBDIR += bumblebee
     SUBDIR += bzrtp
     SUBDIR += ca_root_nss
     SUBDIR += caesarcipher
@@ -879,6 +880,7 @@
     SUBDIR += pwdsafety
     SUBDIR += pwman
     SUBDIR += pwned-check
+    SUBDIR += py-PAM
     SUBDIR += py-SecretStorage
     SUBDIR += py-YubiOTP
     SUBDIR += py-acme
@@ -1028,6 +1030,7 @@
     SUBDIR += py-pnu-vuxml
     SUBDIR += py-policyuniverse
     SUBDIR += py-potr
+    SUBDIR += py-privleap
     SUBDIR += py-pwntools
     SUBDIR += py-pyaes
     SUBDIR += py-pyaff4
@@ -1149,6 +1152,7 @@
     SUBDIR += rubygem-android_key_attestation
     SUBDIR += rubygem-attr_encrypted
     SUBDIR += rubygem-attr_encrypted3
+    SUBDIR += rubygem-auth-sanitizer
     SUBDIR += rubygem-bcrypt
     SUBDIR += rubygem-bcrypt-ruby
     SUBDIR += rubygem-bcrypt_pbkdf

@@ -257,6 +257,7 @@
     SUBDIR += grafanactl
     SUBDIR += grails
     SUBDIR += gregarius
+    SUBDIR += grist-core
     SUBDIR += groupoffice
     SUBDIR += grr
     SUBDIR += gstreamer1-plugins-neon
@@ -302,6 +303,7 @@
     SUBDIR += ikiwiki
     SUBDIR += ilias
     SUBDIR += imaginary
+    SUBDIR += iocaine
     SUBDIR += iridium
     SUBDIR += janus
     SUBDIR += jericho-html
@@ -339,6 +341,7 @@
     SUBDIR += libhsts
     SUBDIR += libhubbub
     SUBDIR += libjwt
+    SUBDIR += libjwt3
     SUBDIR += libmicrohttpd
     SUBDIR += libnghttp2
     SUBDIR += libnghttp3
@@ -373,6 +376,7 @@
     SUBDIR += lua-resty-lrucache
     SUBDIR += lua-resty-session
     SUBDIR += lua-resty-session3
+    SUBDIR += lua-stream-nginx-module
     SUBDIR += luakit
     SUBDIR += luakit-devel
     SUBDIR += lubelogger
@@ -507,6 +511,7 @@
     SUBDIR += nginx-devel
     SUBDIR += nginx-full
     SUBDIR += nginx-lite
+    SUBDIR += nginx-module-lua
     SUBDIR += nginx-naxsi
     SUBDIR += nginx-prometheus-exporter
     SUBDIR += nginx-ultimate-bad-bot-blocker
@@ -1549,6 +1554,13 @@
     SUBDIR += py-dash-bootstrap-components
     SUBDIR += py-ddgs
     SUBDIR += py-dj-database-url
+    SUBDIR += py-dj42-django-picklefield
+    SUBDIR += py-dj42-django-ranged-response
+    SUBDIR += py-dj42-django-simple-captcha
+    SUBDIR += py-dj42-django-webpack-loader
+    SUBDIR += py-dj42-django_statici18n
+    SUBDIR += py-dj42-djangorestframework
+    SUBDIR += py-dj42-djangosaml2
     SUBDIR += py-dj52-channels
     SUBDIR += py-dj52-channels-redis
     SUBDIR += py-dj52-django-allauth
@@ -1931,7 +1943,6 @@
     SUBDIR += py-requests
     SUBDIR += py-requests-aws4auth
     SUBDIR += py-requests-cache
-    SUBDIR += py-requests-cache93
     SUBDIR += py-requests-file
     SUBDIR += py-requests-futures
     SUBDIR += py-requests-gssapi
@@ -2144,7 +2155,6 @@
     SUBDIR += rubygem-d3_rails
     SUBDIR += rubygem-davclient
     SUBDIR += rubygem-deckar01-task_list
-    SUBDIR += rubygem-deckar01-task_list-gitlab
     SUBDIR += rubygem-domainatrix
     SUBDIR += rubygem-dropzonejs-rails
     SUBDIR += rubygem-em-http-request
@@ -2378,6 +2388,7 @@
     SUBDIR += rubygem-rack-protection2
     SUBDIR += rubygem-rack-protection3
     SUBDIR += rubygem-rack-proxy
+    SUBDIR += rubygem-rack-proxy-gitlab
     SUBDIR += rubygem-rack-session
     SUBDIR += rubygem-rack-session-gitlab
     SUBDIR += rubygem-rack-session10

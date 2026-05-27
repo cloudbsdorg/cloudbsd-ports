@@ -1,8 +1,11 @@
 PORTNAME=	octave
 PORTVERSION=	${OCTAVE_VERSION}
-PORTREVISION=	4
+PORTREVISION=	6
 CATEGORIES=	math java
 MASTER_SITES=	GNU
+
+PATCH_SITES=	https://github.com/gnu-octave/octave/commit/
+PATCHFILES=	e21b1898cb6507dff38679c25b4db7fde44de883.patch:-p1
 
 MAINTAINER=	stephen@FreeBSD.org
 COMMENT=	High-level interactive language for numerical computations
@@ -39,7 +42,6 @@ LIB_DEPENDS=	libamd.so:math/suitesparse-amd \
 		libGraphicsMagick.so:graphics/GraphicsMagick \
 		libhdf5.so:science/hdf5 \
 		libklu.so:math/suitesparse-klu \
-		libOSMesa.so:graphics/libosmesa \
 		libpcre.so:devel/pcre \
 		libportaudio.so:audio/portaudio \
 		libqhull_r.so:math/qhull \
@@ -82,8 +84,7 @@ CONFIGURE_ARGS=	--disable-jit \
 		--enable-shared \
 		--host=${GNU_HOST} \
 		--with-blas="-L${LOCALBASE}/lib ${BLASLIB}" \
-		--with-lapack="${LAPACKLIB}" \
-		--with-osmesa
+		--with-lapack="${LAPACKLIB}"
 
 INFO=		octave liboctave
 
