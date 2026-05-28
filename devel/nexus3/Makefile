@@ -23,7 +23,7 @@ NO_ARCH=	yes
 NO_BUILD=	yes
 NO_TEST=	yes
 
-USE_RC_SUBR=	nexus
+USE_RC_SUBR=	nexus3
 
 NEXUS_USER=	nexus
 NEXUS_GROUP=	nexus
