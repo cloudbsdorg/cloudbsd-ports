@@ -27,6 +27,8 @@ USE_RC_SUBR=	nexus
 
 NEXUS_USER=	nexus
 NEXUS_GROUP=	nexus
+GROUPS=		${NEXUS_GROUP}
+USERS=		${NEXUS_USER}
 
 NEXUS_HOME=	${PREFIX}/nexus3
 NEXUS_RUNDIR=	/var/run
@@ -70,5 +72,8 @@ do-install:
 	@${TOUCH} ${STAGEDIR}${NEXUS_WORKDIR}/clean_cache
 	@${TOUCH} ${STAGEDIR}${NEXUS_WORKDIR}/log/.placeholder
 	@${TOUCH} ${STAGEDIR}${NEXUS_WORKDIR}/tmp/.placeholder
+	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${NEXUS_HOME}
+	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${NEXUS_WORKDIR}
+	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${PREFIX}/sonatype-work
 
 .include <bsd.port.mk>
