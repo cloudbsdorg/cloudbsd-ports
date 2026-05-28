@@ -36,7 +36,7 @@ NEXUS_WORKDIR=	/var/sonatype-work/${PORTNAME}
 
 JAVA_HOME=	${LOCALBASE}/openjdk17
 
-WRKSRC=		${WRKDIR}/nexus-3.77.2-02-unix
+WRKSRC=		${WRKDIR}/nexus-3.77.2-02
 
 SUB_FILES=	pkg-message
 SUB_LIST=	NEXUS_RC=${PORTNAME} \
