@@ -550,7 +550,13 @@
 %%HOME%%/system/settings.xml
 %%HOME%%/system/uk/org/lidalia/sysout-over-slf4j/1.0.2/sysout-over-slf4j-1.0.2.jar
 %%HOME%%/system/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar
+@group %%GROUP%%
+@user %%USER%%:%%GROUP%%
 @dir %%LOGDIR%%
+@owner %%USER%% %%HOME%%
+@owner %%USER%% %%WORKDIR%%/log/.placeholder
+@owner %%USER%% %%WORKDIR%%/tmp/.placeholder
+@owner %%USER%% %%WORKDIR%%/clean_cache
 %%WORKDIR%%/clean_cache
 %%WORKDIR%%/log/.placeholder
 %%WORKDIR%%/tmp/.placeholder
