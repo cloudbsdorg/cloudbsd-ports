@@ -3,9 +3,9 @@
   message: <<EOM
 Nexus Repository Manager %%VERSION%% has been successfully installed!
 
-To enable Nexus on boot, add the following to /etc/rc.conf[.local]:
+To enable Nexus on boot execute:
 
-  %%NEXUS_RC%%_enable="YES"
+  service %%NEXUS_RC%% enable
 
 IMPORTANT: Nexus runs by default as user %%USER%%!
 
