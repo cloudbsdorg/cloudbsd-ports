@@ -550,6 +550,7 @@
 %%HOME%%/system/settings.xml
 %%HOME%%/system/uk/org/lidalia/sysout-over-slf4j/1.0.2/sysout-over-slf4j-1.0.2.jar
 %%HOME%%/system/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar
-sonatype-work/nexus3/clean_cache
-sonatype-work/nexus3/log/.placeholder
-sonatype-work/nexus3/tmp/.placeholder
+@dir %%LOGDIR%%
+%%WORKDIR%%/clean_cache
+%%WORKDIR%%/log/.placeholder
+%%WORKDIR%%/tmp/.placeholder

@@ -22,23 +22,40 @@ load_rc_config ${name}
 
 nexus_home="%%HOME%%"
 nexus_bin="${nexus_home}/bin/nexus"
-pidfile="${nexus_home}/nexus.pid"
+nexus_workdir="/var/sonatype-work/nexus3"
+pidfile="%%RUNDIR%%/nexus3.pid"
 logfile="%%LOGDIR%%/nexus.log"
 
+# Ensure required directories and symlinks exist
+setup_nexus_dirs() {
+    # Create symlink for sonatype-work if not exists
+    if [ ! -e /usr/local/sonatype-work ] && [ ! -L /usr/local/sonatype-work ]; then
+        ln -sf /var/sonatype-work /usr/local/sonatype-work
+    fi
+    # Create work directories if not exist
+    mkdir -p ${nexus_workdir}/log ${nexus_workdir}/tmp
+    # Ensure nexus binary is executable
+    chmod +x ${nexus_bin} 2>/dev/null
+    # Set ownership on data directories
+    chown -R %%USER%%:%%GROUP%% /var/sonatype-work/nexus3 2>/dev/null
+    chown -R %%USER%%:%%GROUP%% /usr/local/sonatype-work 2>/dev/null
+}
+
 command="/usr/sbin/daemon"
-command_args="-r -p ${pidfile} -o ${logfile} -u ${nexus_user} ${nexus_bin} run"
+command_args="-r -p ${pidfile} -o ${logfile} -u %%USER%% ${nexus_bin} run"
 
 start_cmd=nexus_start
 stop_cmd=nexus_stop
 status_cmd=nexus_status
 
 nexus_start() {
+    setup_nexus_dirs
     check_process
     if [ "$?" -eq 1 ]; then
         echo "Starting ${name}."
         export INSTALL4J_JAVA_HOME=%%JAVA_HOME%%
         export JAVA_HOME=%%JAVA_HOME%%
-        /usr/sbin/daemon -r -p ${pidfile} -o ${logfile} -u ${nexus_user} ${nexus_bin} run
+        /usr/sbin/daemon -r -p ${pidfile} -o ${logfile} -u %%USER%% ${nexus_bin} run
     else
         echo "${name} is already running."
     fi
@@ -50,7 +67,7 @@ nexus_stop() {
         echo "${name} is not running."
     else
         echo "Stopping ${name}."
-        /usr/bin/kill $(cat ${pidfile})
+        kill $(cat ${pidfile})
         for i in $(seq 1 30); do
             if [ ! -f ${pidfile} ] || ! kill -0 $(cat ${pidfile}) 2>/dev/null; then
                 break

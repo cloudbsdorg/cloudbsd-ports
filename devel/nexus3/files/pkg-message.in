@@ -21,7 +21,7 @@ Locations:
   Config:    %%HOME%%/etc
   Data:      %%WORKDIR%%
   Logs:      %%LOGDIR%%
-  PID:       %%HOME%%/nexus.pid
+  PID:       %%RUNDIR%%/nexus3.pid
 
 The rc script will automatically restart Nexus if it crashes (daemon -r).
 

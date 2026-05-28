@@ -10,7 +10,7 @@ COMMENT=	Sonatype Nexus Repository Manager 3
 WWW=		https://www.sonatype.com/products/repository-oss
 
 LICENSE=	EPL
-LICENSE_FILE=	${WRKSRC}/LICENSE.txt
+LICENSE_FILE=	${WRKSRC}/OSS-LICENSE.txt
 
 RUN_DEPENDS=	${LOCALBASE}/openjdk17/bin/java:java/openjdk17
 BUILD_DEPENDS=	${LOCALBASE}/openjdk17/bin/java:java/openjdk17
@@ -31,7 +31,7 @@ USERS=		${NEXUS_USER}
 GROUPS=		${NEXUS_GROUP}
 
 NEXUS_HOME=	${PREFIX}/nexus3
-NEXUS_RUNDIR=	/var/run/${PORTNAME}
+NEXUS_RUNDIR=	/var/run
 NEXUS_LOGDIR=	/var/log/${PORTNAME}
 NEXUS_WORKDIR=	/var/sonatype-work/${PORTNAME}
 
@@ -62,10 +62,18 @@ PLIST_SUB=	USER=${NEXUS_USER} \
 do-install:
 	@${MKDIR} ${STAGEDIR}${NEXUS_HOME}
 	@(cd ${WRKSRC} && ${COPYTREE_SHARE} . ${STAGEDIR}${NEXUS_HOME})
+	@${CHMOD} +x ${STAGEDIR}${NEXUS_HOME}/bin/nexus
 	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}
+	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}/log
+	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}/tmp
 	@${MKDIR} ${STAGEDIR}${NEXUS_RUNDIR}
 	@${MKDIR} ${STAGEDIR}${NEXUS_LOGDIR}
+	@${MKDIR} ${STAGEDIR}${PREFIX}/sonatype-work
+	@${TOUCH} ${STAGEDIR}${NEXUS_WORKDIR}/clean_cache
+	@${TOUCH} ${STAGEDIR}${NEXUS_WORKDIR}/log/.placeholder
+	@${TOUCH} ${STAGEDIR}${NEXUS_WORKDIR}/tmp/.placeholder
 	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${NEXUS_HOME}
 	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${NEXUS_WORKDIR}
+	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${PREFIX}/sonatype-work
 
 .include <bsd.port.mk>
