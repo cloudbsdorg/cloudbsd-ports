@@ -1,6 +1,6 @@
-PORTNAME=	antigravity-cli
-DISTVERSION=	1.0.7
-CATEGORIES=	misc # machine-learning
+PORTNAME=	agy
+DISTVERSION=	1.0.8
+CATEGORIES=	devel
 MASTER_SITES=	${AGY_URL_BASE}linux-x64/:amd64 \
 		${AGY_URL_BASE}linux-arm/:aarch64
 DISTFILES=	cli_linux_x64.tar.gz:amd64 \
@@ -12,12 +12,12 @@ COMMENT=	CLI for Google Antigravity AI platform
 WWW=		https://antigravity.google/
 
 ONLY_FOR_ARCHS=		aarch64 amd64
-ONLY_FOR_ARCHS_REASON=	is a Linux binary with a limited platform support
+ONLY_FOR_ARCHS_REASON=	is a Linux binary with limited platform support
 
 USES=		linux:rl9
 USE_LINUX=	base
 
-AGY_URL_BASE=	https://storage.googleapis.com/antigravity-public/antigravity-cli/1.0.7-5436940900761600/
+AGY_URL_BASE=	https://storage.googleapis.com/antigravity-public/antigravity-cli/1.0.8-5963827121094656/
 
 NO_BUILD=	yes
 NO_WRKSUBDIR=	yes
@@ -34,6 +34,7 @@ find-new-version:
 	if [ "$$new_ver" != "$$current_ver" ]; then \
 		new_url=$$(echo "$$manifest" | jq -r '.url'); \
 		new_url_base=$$(echo "$$new_url" | ${SED} -E 's|/[^/]+/[^/]+$$||'); \
+		new_hash=$$(echo "$$manifest" | jq -r '.sha512'); \
 		${SED} -i '' "s/^DISTVERSION=.*/DISTVERSION=$${TAB}$$new_ver/" ${.CURDIR}/Makefile; \
 		${SED} -i '' "s|^AGY_URL_BASE=.*|AGY_URL_BASE=$${TAB}$$new_url_base/|" ${.CURDIR}/Makefile; \
 		echo "=> New version available: $$current_ver -> $$new_ver"; \

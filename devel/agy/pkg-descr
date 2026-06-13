@@ -1,0 +1,6 @@
+agy is the command-line interface for Google's Antigravity AI platform.
+
+It is a closed-source Linux Go binary that runs through the FreeBSD
+Linuxulator. agy provides access to Google's Gemini models via a
+feature-rich interactive CLI with plugin support, multi-model selection,
+and sandboxed execution modes.

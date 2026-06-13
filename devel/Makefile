@@ -8815,6 +8815,7 @@
     SUBDIR += xxgdb
     SUBDIR += xxhash
     SUBDIR += xxl
+    SUBDIR += agy
     SUBDIR += yaegi
     SUBDIR += yaggo
     SUBDIR += yajl

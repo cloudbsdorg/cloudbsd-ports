@@ -1,7 +1,7 @@
 [
 { type: install
   message: <<EOM
-You installed Antigraviry CLI: Google's Antigravity CLI.
+You installed Antigravity CLI: Google's Antigravity CLI.
 
 The binary agy requires a working FreeDesktop Secret Service.
 
