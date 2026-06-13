@@ -246,6 +246,7 @@
     SUBDIR += klettres
     SUBDIR += koboldcpp
     SUBDIR += kookbook
+    SUBDIR += ktea
     SUBDIR += ktouch
     SUBDIR += kwordquiz
     SUBDIR += lastools
@@ -487,6 +488,7 @@
     SUBDIR += py-fal-client
     SUBDIR += py-fast-histogram
     SUBDIR += py-fastmcp
+    SUBDIR += py-fastmcp-slim
     SUBDIR += py-fastscapelib
     SUBDIR += py-files-to-prompt
     SUBDIR += py-fleep
@@ -516,6 +518,7 @@
     SUBDIR += py-langchain-core
     SUBDIR += py-langchain-google-genai
     SUBDIR += py-langchain-openai
+    SUBDIR += py-langchain-protocol
     SUBDIR += py-langchain-tests
     SUBDIR += py-langchain-text-splitters
     SUBDIR += py-langgraph
@@ -784,6 +787,7 @@
     SUBDIR += vote
     SUBDIR += vxl
     SUBDIR += wacli
+    SUBDIR += warp
     SUBDIR += wavedrom
     SUBDIR += wego
     SUBDIR += whichman
@@ -812,6 +816,7 @@
     SUBDIR += xtail
     SUBDIR += xtar
     SUBDIR += ytree
+    SUBDIR += zeroclaw
     SUBDIR += zine
     SUBDIR += zoneinfo
 

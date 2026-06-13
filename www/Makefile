@@ -90,6 +90,7 @@
     SUBDIR += browsh
     SUBDIR += bugzilla2atom
     SUBDIR += buku
+    SUBDIR += bunkerweb
     SUBDIR += butterfly
     SUBDIR += c-icap
     SUBDIR += c-icap-modules
@@ -504,6 +505,7 @@
     SUBDIR += nextcloud-groupfolders
     SUBDIR += nextcloud-news
     SUBDIR += nextcloud-notes
+    SUBDIR += nextcloud-memories
     SUBDIR += nextcloud-tasks
     SUBDIR += nghttp2
     SUBDIR += nginx
@@ -1512,7 +1514,6 @@
     SUBDIR += py-asgiref
     SUBDIR += py-autobahn
     SUBDIR += py-azure-common
-    SUBDIR += py-azure-storage
     SUBDIR += py-baize
     SUBDIR += py-beaker
     SUBDIR += py-beautifulsoup
@@ -1594,7 +1595,6 @@
     SUBDIR += py-dj52-django-tasks
     SUBDIR += py-dj52-django-timezone-field
     SUBDIR += py-dj52-django-treebeard
-    SUBDIR += py-dj52-django-treenode
     SUBDIR += py-dj52-django-unfold
     SUBDIR += py-dj52-djangorestframework
     SUBDIR += py-dj52-djangorestframework-guardian
@@ -1709,6 +1709,7 @@
     SUBDIR += py-django-tinymce
     SUBDIR += py-django-tree-queries
     SUBDIR += py-django-treebeard
+    SUBDIR += py-django-treenode
     SUBDIR += py-django-unfold
     SUBDIR += py-django-voting
     SUBDIR += py-django-webpack-loader
@@ -1841,6 +1842,7 @@
     SUBDIR += py-html5lib-modern
     SUBDIR += py-html5rdf
     SUBDIR += py-htmldate
+    SUBDIR += py-htmltools
     SUBDIR += py-httmock
     SUBDIR += py-http-parser
     SUBDIR += py-http-sf
@@ -1916,7 +1918,6 @@
     SUBDIR += py-py-restclient
     SUBDIR += py-pygsheets
     SUBDIR += py-pyjwt
-    SUBDIR += py-pyjwt1
     SUBDIR += py-pylsqpack
     SUBDIR += py-pyocclient
     SUBDIR += py-pyramid
@@ -2038,6 +2039,8 @@
     SUBDIR += py-youtube-transcript-api
     SUBDIR += py-yt-dlp
     SUBDIR += py-yt-dlp-ejs
+    SUBDIR += py-yubal
+    SUBDIR += py-yubal-api
     SUBDIR += pydio-cells
     SUBDIR += qdecoder
     SUBDIR += qhttpengine
@@ -2058,7 +2061,6 @@
     SUBDIR += rdrview
     SUBDIR += rearx
     SUBDIR += reddsaver
-    SUBDIR += redmine51
     SUBDIR += redmine60
     SUBDIR += redmine61
     SUBDIR += rejik
@@ -2597,7 +2599,6 @@
     SUBDIR += suitecrm
     SUBDIR += suphp
     SUBDIR += surf
-    SUBDIR += surge
     SUBDIR += swiggle
     SUBDIR += sws
     SUBDIR += tailwindcss3

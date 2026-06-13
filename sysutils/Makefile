@@ -153,6 +153,7 @@
     SUBDIR += bstack
     SUBDIR += btop
     SUBDIR += btsixad
+    SUBDIR += bttf
     SUBDIR += budgie-control-center
     SUBDIR += buildah
     SUBDIR += bulk_extractor
@@ -680,6 +681,7 @@
     SUBDIR += logtool
     SUBDIR += logwatch
     SUBDIR += loki
+    SUBDIR += loki3
     SUBDIR += lookat
     SUBDIR += lr
     SUBDIR += lsblk
@@ -1169,6 +1171,7 @@
     SUBDIR += reoback
     SUBDIR += reproduce
     SUBDIR += reptyr
+    SUBDIR += reqlog
     SUBDIR += respond
     SUBDIR += rest-server
     SUBDIR += restic
@@ -1185,6 +1188,7 @@
     SUBDIR += root-tail
     SUBDIR += rovclock
     SUBDIR += rpi-firmware
+    SUBDIR += rpi-usbboot
     SUBDIR += rset
     SUBDIR += rshim-user-space
     SUBDIR += rsnapshot

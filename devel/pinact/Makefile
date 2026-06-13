@@ -1,6 +1,6 @@
 PORTNAME=	pinact
 DISTVERSIONPREFIX=	v
-DISTVERSION=	3.10.1
+DISTVERSION=	4.1.0
 CATEGORIES=	devel
 
 MAINTAINER=	tagattie@FreeBSD.org
@@ -12,7 +12,7 @@ LICENSE_FILE=	${WRKSRC}/LICENSE
 
 USES=		go:1.26+,modules
 
-GO_MODULE=	github.com/suzuki-shunsuke/${PORTNAME}/v3
+GO_MODULE=	github.com/suzuki-shunsuke/${PORTNAME}/v4
 GO_TARGET=	./cmd/pinact
 GO_LDFLAGS=	-w -X main.version=${DISTVERSION}
 
@@ -28,9 +28,9 @@ COMPLETIONS_PLIST_FILES=etc/bash_completion.d/${PORTNAME} \
 			share/fish/completions/${PORTNAME}.fish \
 			share/zsh/site-functions/_${PORTNAME}
 
-pre-build:
-	@${CP} ${GO_WRKSRC}/vendor/github.com/suzuki-shunsuke/ghtkn-go-sdk/ghtkn/internal/browser/browser_linux.go \
-		${GO_WRKSRC}/vendor/github.com/suzuki-shunsuke/ghtkn-go-sdk/ghtkn/internal/browser/browser_freebsd.go
+post-configure:
+	@${CP} ${GO_WRKSRC}/vendor/github.com/suzuki-shunsuke/ghtkn-go-sdk/ghtkn/browser/browser_linux.go \
+		${GO_WRKSRC}/vendor/github.com/suzuki-shunsuke/ghtkn-go-sdk/ghtkn/browser/browser_freebsd.go
 
 post-build-COMPLETIONS-on:
 .for shell in bash fish zsh

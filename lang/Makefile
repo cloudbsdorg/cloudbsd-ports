@@ -102,7 +102,6 @@
     SUBDIR += gcc6-aux
     SUBDIR += gforth
     SUBDIR += ghc
-    SUBDIR += ghc94
     SUBDIR += ghc96
     SUBDIR += ghc98
     SUBDIR += gir-to-d
@@ -181,6 +180,7 @@
     SUBDIR += lua52
     SUBDIR += lua53
     SUBDIR += lua54
+    SUBDIR += lua55
     SUBDIR += luajit
     SUBDIR += luajit-openresty
     SUBDIR += malbolge
@@ -307,6 +307,7 @@
     SUBDIR += python313
     SUBDIR += python313t
     SUBDIR += python314
+    SUBDIR += python314t
     SUBDIR += python315
     SUBDIR += qmasm
     SUBDIR += quickjs
