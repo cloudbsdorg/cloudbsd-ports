@@ -24,10 +24,8 @@ USES=		compiler:c++17-lang gl gnome meson pkgconfig
 USE_GL=		glesv2
 USE_GNOME=	cairo glibmm gtkmm30
 
-USE_GITHUB=	nodefault
+USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
-GH_TAGNAME=	v${DISTVERSION}
-MASTER_SITES=	https://github.com/revytechinc/wayfire-plugins-extra/archive/refs/tags/v${DISTVERSION}.tar.gz
 DISTFILES=	wayfire-plugins-extra-${DISTVERSION}.tar.gz
 
 post-patch:

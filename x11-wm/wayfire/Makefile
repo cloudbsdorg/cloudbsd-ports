@@ -29,11 +29,9 @@ TEST_DEPENDS=	doctest>0:devel/doctest
 
 USES=		cmake:indirect compiler:c++17-lang gl gnome jpeg meson \
 		pkgconfig xorg
-USE_GITHUB=	nodefault
+USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
-GH_TAGNAME=	v${DISTVERSION}
 DISTFILES=	wayfire-${DISTVERSION}.tar.gz
-MASTER_SITES=	https://github.com/revytechinc/wayfire/archive/refs/tags/v${DISTVERSION}.tar.gz
 
 USE_GL=		egl glesv2
 USE_GNOME=	cairo pango

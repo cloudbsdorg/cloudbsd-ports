@@ -19,10 +19,8 @@ RUN_DEPENDS=	glm>0:math/glm
 TEST_DEPENDS=	doctest>0:devel/doctest
 
 USES=		cmake:indirect compiler:c++17-lang gnome meson pkgconfig
-USE_GITHUB=	nodefault
+USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
-GH_TAGNAME=	v${DISTVERSION}
-MASTER_SITES=	https://github.com/revytechinc/wf-config/archive/refs/tags/v${DISTVERSION}.tar.gz
 DISTFILES=	wf-config-${DISTVERSION}.tar.gz
 USE_GNOME=	libxml2
 USE_LDCONFIG=	yes

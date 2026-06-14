@@ -30,10 +30,8 @@ nopulse_PKGNAMESUFFIX=		-nopulse
 
 USES=		compiler:c++17-lang gnome meson pkgconfig
 CXXFLAGS+=	-I${LOCALBASE}/include/libdrm
-USE_GITHUB=	nodefault
+USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
-GH_TAGNAME=	v${DISTVERSION}
-MASTER_SITES=	https://github.com/revytechinc/wf-shell/archive/refs/tags/v${DISTVERSION}.tar.gz
 DISTFILES=	wf-shell-${DISTVERSION}.tar.gz
 GH_TUPLE=	GNOME:libgnome-volume-control:468022b:gvc/subprojects/gvc
 USE_GNOME=	gtkmm40
