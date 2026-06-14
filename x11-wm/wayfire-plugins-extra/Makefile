@@ -26,7 +26,7 @@ USE_GNOME=	cairo glibmm gtkmm30
 
 USE_GITHUB=	nodefault
 GH_ACCOUNT=	revytechinc
-GH_TAGNAME=	refs/tags/v${DISTVERSION}
+GH_TAGNAME=	v${DISTVERSION}
 MASTER_SITES=	${MASTER_SITE_GITHUB}
 DISTFILES=	wayfire-plugins-extra-${DISTVERSION}.tar.gz
 
