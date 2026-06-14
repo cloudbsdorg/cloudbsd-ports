@@ -66,7 +66,7 @@ post-patch:
 	${REINPLACE_CMD} "s/dependency('gbm', required: get_option('live-previews-dmabuf'))/dependency('gbm', required: false)/" ${WRKSRC}/meson.build
 	${REINPLACE_CMD} "s/dependency('libdrm', required: get_option('live-previews-dmabuf'))/dependency('libdrm', required: false)/" ${WRKSRC}/meson.build
 # Fix PAM and xdg install to use PREFIX/etc instead of hardcoded /etc/ paths
-	/usr/bin/python3 ${FILESDIR}/patch-data-meson-build.py ${WRKSRC}/data/meson.build
+	/usr/bin/python3 ${FILESDIR}/fix-pam-xdg-paths.py ${WRKSRC}/data/meson.build
 
 post-extract:
 # Install wf-json meson wrap to fetch the submodule from upstream
