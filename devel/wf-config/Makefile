@@ -1,7 +1,7 @@
 PORTNAME=	wf-config
 DISTVERSIONPREFIX=	v
 DISTVERSION=0.11.0
-WRKSRC=		${WRKDIR}/wf-config
+WRKSRC=		${WRKDIR}/wf-config-0.11.0
 CATEGORIES=	devel
 
 MAINTAINER=	mark@revytechinc.com
@@ -26,11 +26,6 @@ USE_LDCONFIG=	yes
 
 MESON_ARGS=	-Dtests=disabled
 PLIST_SUB=	VERSION=${DISTVERSION}
-
-post-patch:
-# FreeBSD ports requires project() to be first in meson.build.
-# Move the git remote setup (lines 1-4) to after the project() call.
-	/bin/sh ${FILESDIR}/move-git-remote.sh ${WRKSRC}/meson.build
 
 pre-test:
 	@if [ ! -e ${WRKDIR}/.meson_build_tests ]; then \

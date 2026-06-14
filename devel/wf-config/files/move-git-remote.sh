@@ -15,14 +15,21 @@ prefix = lines[:${PREFIX_LINES}]
 # Rest = lines 6 onwards (original lines after the blank line 5)
 rest = lines[5:]
 
-# Find the closing ')' of the project() call.
-# It's the first line in rest that ends with ')' and whose previous line is indented (part of project)
+# Find the closing ')' of the project() call using paren balancing.
+# rest[1] is 'project(' so depth starts at 1.
 proj_close = -1
+depth = 0
 for i, line in enumerate(rest):
-    stripped = line.rstrip()
-    # project() closes on a line with just ')' at the start of a line
-    if stripped == ')':
-        proj_close = i
+    stripped = line.lstrip()
+    for ch in stripped:
+        if ch == '(':
+            depth += 1
+        elif ch == ')':
+            depth -= 1
+            if depth == 0:
+                proj_close = i
+                break
+    if proj_close >= 0:
         break
 
 if proj_close < 0:
