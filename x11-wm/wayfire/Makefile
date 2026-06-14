@@ -32,8 +32,8 @@ USES=		cmake:indirect compiler:c++17-lang gl gnome jpeg meson \
 USE_GITHUB=	nodefault
 GH_ACCOUNT=	revytechinc
 GH_TAGNAME=	v${DISTVERSION}
-MASTER_SITES=	${MASTER_SITE_GITHUB}
 DISTFILES=	wayfire-${DISTVERSION}.tar.gz
+MASTER_SITES=	https://github.com/revytechinc/wayfire/archive/refs/tags/v${DISTVERSION}.tar.gz
 
 USE_GL=		egl glesv2
 USE_GNOME=	cairo pango
