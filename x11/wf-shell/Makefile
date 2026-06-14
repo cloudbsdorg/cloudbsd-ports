@@ -66,8 +66,8 @@ post-patch:
 	${REINPLACE_CMD} "s/dependency('gbm', required: get_option('live-previews-dmabuf'))/dependency('gbm', required: false)/" ${WRKSRC}/meson.build
 	${REINPLACE_CMD} "s/dependency('libdrm', required: get_option('live-previews-dmabuf'))/dependency('libdrm', required: false)/" ${WRKSRC}/meson.build
 # Fix PAM and xdg install to use PREFIX/etc instead of hardcoded /etc/ paths
-	${REINPLACE_CMD} "s|pam\.d')|pam.d'))|" ${WRKSRC}/data/meson.build
-	${REINPLACE_CMD} "s|xdg-desktop-portal-wlr')|xdg-desktop-portal-wlr'))|" ${WRKSRC}/data/meson.build
+	${REINPLACE_CMD} "s|sysconf_dir + '/pam\.d/'|get_option('prefix') + '/etc/pam.d/'|" ${WRKSRC}/data/meson.build
+	${REINPLACE_CMD} "s|join_paths(sysconf_dir, 'xdg', 'xdg-desktop-portal-wlr')|join_paths(get_option('prefix'), 'etc', 'xdg', 'xdg-desktop-portal-wlr')|" ${WRKSRC}/data/meson.build
 
 post-extract:
 # Install wf-json meson wrap to fetch the submodule from upstream
