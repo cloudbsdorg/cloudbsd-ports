@@ -72,17 +72,24 @@ nexus_stop() {
     else
         echo "Stopping ${name}."
         pid=$(cat ${pidfile} 2>/dev/null)
+        # Kill the daemon process
         if [ -n "${pid}" ] && [ "${pid}" -gt 0 ] 2>/dev/null; then
             kill ${pid} 2>/dev/null
         fi
-        rm -f ${pidfile}
+        # Also kill any child Java processes
+        pkill -f "${nexus_bin}" 2>/dev/null
         for i in $(seq 1 30); do
-            pid=$(cat ${pidfile} 2>/dev/null)
-            if [ ! -f ${pidfile} ] || ! kill -0 ${pid} 2>/dev/null; then
+            if ! pgrep -f "${nexus_bin}" > /dev/null 2>&1; then
+                rm -f ${pidfile}
                 break
             fi
             sleep 1
         done
+        # Force kill if still running
+        if pgrep -f "${nexus_bin}" > /dev/null 2>&1; then
+            pkill -9 -f "${nexus_bin}" 2>/dev/null
+            rm -f ${pidfile}
+        fi
     fi
 }
 
