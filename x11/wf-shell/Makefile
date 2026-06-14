@@ -32,7 +32,6 @@ USES=		compiler:c++17-lang gnome meson pkgconfig
 CXXFLAGS+=	-I${LOCALBASE}/include/libdrm
 USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
-DISTFILES=	wf-shell-${DISTVERSION}.tar.gz
 GH_TUPLE=	GNOME:libgnome-volume-control:468022b:gvc/subprojects/gvc
 USE_GNOME=	gtkmm40
 MESON_ARGS=	-Dgvc:alsa=false -Dwayland-logout=false
