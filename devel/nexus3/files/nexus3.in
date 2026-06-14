@@ -22,23 +22,23 @@ load_rc_config ${name}
 
 nexus_home="%%HOME%%"
 nexus_bin="${nexus_home}/bin/nexus"
-nexus_workdir="/var/sonatype-work/nexus3"
+nexus_workdir="%%WORKDIR%%"
 pidfile="%%RUNDIR%%/nexus3.pid"
 logfile="%%LOGDIR%%/nexus.log"
 
 # Ensure required directories and symlinks exist
 setup_nexus_dirs() {
     # Create symlink for sonatype-work if not exists
-    if [ ! -e /usr/local/sonatype-work ] && [ ! -L /usr/local/sonatype-work ]; then
-        ln -sf /var/sonatype-work /usr/local/sonatype-work
+    if [ ! -e %%PREFIX%%/sonatype-work ] && [ ! -L %%PREFIX%%/sonatype-work ]; then
+        ln -sf %%WORKDIR%% %%PREFIX%%/sonatype-work
     fi
     # Create work directories if not exist
     mkdir -p ${nexus_workdir}/log ${nexus_workdir}/tmp
     # Ensure nexus binary is executable
     chmod +x ${nexus_bin} 2>/dev/null
     # Set ownership on data directories
-    chown -R %%USER%%:%%GROUP%% /var/sonatype-work/nexus3 2>/dev/null
-    chown -R %%USER%%:%%GROUP%% /usr/local/sonatype-work 2>/dev/null
+    chown -R %%USER%%:%%GROUP%% %%WORKDIR%% 2>/dev/null
+    chown -R %%USER%%:%%GROUP%% %%PREFIX%%/sonatype-work 2>/dev/null
 }
 
 command="/usr/sbin/daemon"
