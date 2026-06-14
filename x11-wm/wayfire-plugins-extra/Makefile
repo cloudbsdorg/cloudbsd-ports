@@ -24,11 +24,17 @@ USES=		compiler:c++17-lang gl gnome meson pkgconfig
 USE_GL=		glesv2
 USE_GNOME=	cairo glibmm gtkmm30
 
-DISTFILES=	wayfire-plugins-extra.tar.gz
+USE_GITHUB=	nodefault
+GH_ACCOUNT=	revytechinc
+GH_TAGNAME=	refs/tags/v${DISTVERSION}
+MASTER_SITES=	${MASTER_SITE_GITHUB}
+DISTFILES=	wayfire-plugins-extra-${DISTVERSION}.tar.gz
 
 post-patch:
 # Fetch git submodules not included in the GitHub tarball.
 	/bin/sh ${FILESDIR}/fetch-submodules.sh ${WRKSRC}
+# Insert FreeBSD compat shim for linux/input-event-codes.h
+	/bin/sh ${FILESDIR}/insert-compat.sh ${WRKSRC}/meson.build
 
 MESON_ARGS=	-Denable_focus_request=true \
 		-Denable_pixdecor=false \

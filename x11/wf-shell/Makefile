@@ -31,10 +31,12 @@ nopulse_PKGNAMESUFFIX=		-nopulse
 USES=		compiler:c++17-lang gnome meson pkgconfig
 CXXFLAGS+=	-I${LOCALBASE}/include/libdrm
 USE_GITHUB=	nodefault
-USE_GNOME=	gtkmm40
-
-DISTFILES=	wf-shell.tar.gz
+GH_ACCOUNT=	revytechinc
+GH_TAGNAME=	v${DISTVERSION}
+MASTER_SITES=	${MASTER_SITE_GITHUB}
+DISTFILES=	wf-shell-${DISTVERSION}.tar.gz
 GH_TUPLE=	GNOME:libgnome-volume-control:468022b:gvc/subprojects/gvc
+USE_GNOME=	gtkmm40
 MESON_ARGS=	-Dgvc:alsa=false -Dwayland-logout=false
 DATADIR=	${PREFIX}/share/wayfire
 METADATADIR=	${DATADIR}/wf-shell
