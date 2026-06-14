@@ -24,7 +24,7 @@ CONFLICTS_INSTALL=	wcmcommander # bin/wcm
 USES=		compiler:c++17-lang gnome meson pkgconfig
 USE_GITHUB=	yes
 USE_GNOME=	gdkpixbuf gtk30 libxml2
-GH_ACCOUNT=	WayfireWM
+GH_ACCOUNT=	revytechinc
 
 OPTIONS_DEFINE=	WDISPLAYS WFSHELL
 OPTIONS_DEFAULT=WDISPLAYS WFSHELL

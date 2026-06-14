@@ -1,11 +1,12 @@
 PORTNAME=	wf-config
 DISTVERSIONPREFIX=	v
-DISTVERSION=	0.10.0
+DISTVERSION=0.11.0
+WRKSRC=		${WRKDIR}/wf-config
 CATEGORIES=	devel
 
-MAINTAINER=	ports@FreeBSD.org
+MAINTAINER=	mark@revytechinc.com
 COMMENT=	Library for managing configuration files, written for wayfire
-WWW=		https://wayfire.org/
+WWW=		https://github.com/revytechinc/wf-config
 
 LICENSE=	MIT
 LICENSE_FILE=	${WRKSRC}/LICENSE
@@ -18,12 +19,16 @@ RUN_DEPENDS=	glm>0:math/glm
 TEST_DEPENDS=	doctest>0:devel/doctest
 
 USES=		cmake:indirect compiler:c++17-lang gnome meson pkgconfig
-USE_GITHUB=	yes
 USE_GNOME=	libxml2
 USE_LDCONFIG=	yes
-GH_ACCOUNT=	WayfireWM
+
 MESON_ARGS=	-Dtests=disabled
-PLIST_SUB=	VERSION=${PORTVERSION}
+PLIST_SUB=	VERSION=${DISTVERSION}
+
+post-patch:
+# FreeBSD ports requires project() to be first in meson.build.
+# Move the git remote setup (lines 1-4) to after the project() call.
+	/bin/sh ${FILESDIR}/move-git-remote.sh ${WRKSRC}/meson.build
 
 pre-test:
 	@if [ ! -e ${WRKDIR}/.meson_build_tests ]; then \

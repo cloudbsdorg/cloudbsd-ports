@@ -1,7 +1,7 @@
 #!/bin/sh
 # Fetch git submodules missing from the GitHub tarball.
 # GitHub tarballs don't include submodule contents (mode 160000).
-# Submodule commit references at wayfire commit 886735908d7d6fcd8d58ed2885964f7abf534ef2
+# Submodule commit references at wayfire commit v0.11.0-revytech.1 (d55960deb39ed3ee3115a3b0a86079e1cdb4ff2b)
 WRKSRC="$1"
 
 fetch_submodule() {
@@ -24,7 +24,7 @@ fetch_submodule() {
     fi
 }
 
-fetch_submodule "wf-json"   "https://github.com/WayfireWM/wf-json"   "70039e13cdeaebd8ec498ed30bf5ab91c2e313ec"
-fetch_submodule "wf-config" "https://github.com/WayfireWM/wf-config" "a2051f5d131a23acdcd96bfeb509d01cf57139ec"
-fetch_submodule "wf-utils"  "https://github.com/WayfireWM/wf-utils"  "329c3ff01724d82947f61c45332f75d3534e8454"
-fetch_submodule "wf-touch"  "https://github.com/WayfireWM/wf-touch"  "093d8943df03cc8a2667990a065513c1bf2b57e0"
+fetch_submodule "wf-json"   "https://github.com/revytechinc/wf-json.git"   "70039e13cdeaebd8ec498ed30bf5ab91c2e313ec"
+fetch_submodule "wf-config" "https://github.com/revytechinc/wf-config.git" "ccfe77ce6386eab76465be5d4cb5fcfd962faca2"
+fetch_submodule "wf-utils"  "https://github.com/revytechinc/wf-utils.git"  "329c3ff01724d82947f61c45332f75d3534e8454"
+fetch_submodule "wf-touch"  "https://github.com/revytechinc/wf-touch.git"  "093d8943df03cc8a2667990a065513c1bf2b57e0"

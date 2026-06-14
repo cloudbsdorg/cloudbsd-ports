@@ -3,12 +3,13 @@ DISTVERSIONPREFIX=	v
 DISTVERSION=	0.11.0
 CATEGORIES=	x11-wm wayland
 
-MAINTAINER=	nxjoseph@FreeBSD.org
+MAINTAINER=	mark@revytechinc.com
 COMMENT=	3D Wayland compositor
-WWW=		https://wayfire.org/
+WWW=		https://github.com/revytechinc/wayfire
 
 LICENSE=	MIT
 LICENSE_FILE=	${WRKSRC}/LICENSE
+WRKSRC=		${WRKDIR}/wayfire-0.11.0
 
 BUILD_DEPENDS=	${LOCALBASE}/include/xf86drmMode.h:graphics/libdrm \
 		evdev-proto>0:devel/evdev-proto \
@@ -20,6 +21,7 @@ LIB_DEPENDS=	libevdev.so:devel/libevdev \
 		libpng.so:graphics/png \
 		libudev.so:devel/libudev-devd \
 		libwayland-server.so:graphics/wayland \
+		libwf-config.so:devel/wf-config \
 		libwlroots-0.20.so:x11-toolkits/wlroots020 \
 		libxkbcommon.so:x11/libxkbcommon \
 		libyyjson.so:devel/yyjson
@@ -27,9 +29,8 @@ TEST_DEPENDS=	doctest>0:devel/doctest
 
 USES=		cmake:indirect compiler:c++17-lang gl gnome jpeg meson \
 		pkgconfig xorg
-USE_GITHUB=	yes
-GH_ACCOUNT=	WayfireWM
-GH_TAGNAME=	886735908d7d6fcd8d58ed2885964f7abf534ef2
+DISTFILES=	wayfire.tar.gz
+
 USE_GL=		egl glesv2
 USE_GNOME=	cairo pango
 USE_XORG=	pixman
@@ -50,6 +51,8 @@ X11_USE=		XORG=xcb
 X11_MESON_ENABLED=	xwayland
 
 post-patch:
+# Fix missing include in option-wrapper.hpp (uses section_t but doesn't include section.hpp)
+	/bin/sh ${FILESDIR}/fix-include.sh ${WRKSRC}/src/api/wayfire/option-wrapper.hpp
 # Fetch git submodules not included in the GitHub tarball
 	/bin/sh ${FILESDIR}/fetch-submodules.sh ${WRKSRC}
 # Extract (snapshot) version from the port instead of meson.build
