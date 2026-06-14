@@ -9,7 +9,7 @@ WWW=		https://github.com/revytechinc/wayfire-plugins-extra
 
 LICENSE=	MIT
 LICENSE_FILE=	${WRKSRC}/LICENSE
-WRKSRC=		${WRKDIR}/wayfire-plugins-extra
+WRKSRC=		${WRKDIR}/wayfire-plugins-extra-0.11.0
 
 BUILD_DEPENDS=	boost-libs>0:devel/boost-libs \
 		evdev-proto>0:devel/evdev-proto \
