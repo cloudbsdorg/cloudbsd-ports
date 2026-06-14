@@ -21,7 +21,6 @@ TEST_DEPENDS=	doctest>0:devel/doctest
 USES=		cmake:indirect compiler:c++17-lang gnome meson pkgconfig
 USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
-DISTFILES=	wf-config-${DISTVERSION}.tar.gz
 USE_GNOME=	libxml2
 USE_LDCONFIG=	yes
 

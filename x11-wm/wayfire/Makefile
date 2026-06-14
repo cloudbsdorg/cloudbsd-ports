@@ -31,7 +31,6 @@ USES=		cmake:indirect compiler:c++17-lang gl gnome jpeg meson \
 		pkgconfig xorg
 USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
-DISTFILES=	wayfire-${DISTVERSION}.tar.gz
 
 USE_GL=		egl glesv2
 USE_GNOME=	cairo pango

@@ -26,7 +26,6 @@ USE_GNOME=	cairo glibmm gtkmm30
 
 USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
-DISTFILES=	wayfire-plugins-extra-${DISTVERSION}.tar.gz
 
 post-patch:
 # Fetch git submodules not included in the GitHub tarball.
