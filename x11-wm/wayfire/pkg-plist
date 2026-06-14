@@ -10,15 +10,6 @@ include/wayfire/condition/logic_condition.hpp
 include/wayfire/condition/test_condition.hpp
 include/wayfire/config-backend.hpp
 include/wayfire/config.h
-include/wayfire/config/compound-option.hpp
-include/wayfire/config/config-manager.hpp
-include/wayfire/config/file.hpp
-include/wayfire/config/option-types.hpp
-include/wayfire/config/option-wrapper.hpp
-include/wayfire/config/option.hpp
-include/wayfire/config/section.hpp
-include/wayfire/config/types.hpp
-include/wayfire/config/xml.hpp
 include/wayfire/core.hpp
 include/wayfire/dassert.hpp
 include/wayfire/debug.hpp
@@ -33,7 +24,6 @@ include/wayfire/matcher.hpp
 include/wayfire/nonstd/json.hpp
 include/wayfire/nonstd/observer_ptr.h
 include/wayfire/nonstd/reverse.hpp
-include/wayfire/nonstd/safe-list.hpp
 include/wayfire/nonstd/tracking-allocator.hpp
 include/wayfire/nonstd/wlroots-full.hpp
 include/wayfire/nonstd/wlroots.hpp
@@ -99,9 +89,6 @@ include/wayfire/unstable/wlr-view-keyboard-interaction.hpp
 include/wayfire/unstable/xdg-toplevel-base.hpp
 include/wayfire/unstable/xwl-toplevel-base.hpp
 include/wayfire/util.hpp
-include/wayfire/util/duration.hpp
-include/wayfire/util/log.hpp
-include/wayfire/util/stringify.hpp
 include/wayfire/utils.hpp
 include/wayfire/variant.hpp
 include/wayfire/view-access-interface.hpp
@@ -116,9 +103,6 @@ include/wayfire/workspace-stream.hpp
 lib/libwayfire-blur-base.so
 lib/libwayfire-move-drag-interface.a
 lib/libwayfire-workspace-wall.a
-lib/libwf-config.so
-lib/libwf-config.so.0.11.0
-lib/libwf-config.so.1
 lib/libwf-utils.so
 lib/libwf-utils.so.0
 lib/libwf-utils.so.0.4.0
@@ -170,7 +154,6 @@ lib/wayfire/libxdg-activation.so
 lib/wayfire/libxkb-bindings.so
 lib/wayfire/libzoom.so
 libdata/pkgconfig/wayfire.pc
-libdata/pkgconfig/wf-config.pc
 libdata/pkgconfig/wf-utils.pc
 %%EXAMPLESDIR%%/wayfire.ini
 share/locale/ro/LC_MESSAGES/wf-plugin-alpha.mo

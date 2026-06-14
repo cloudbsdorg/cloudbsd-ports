@@ -3,12 +3,13 @@ DISTVERSIONPREFIX=	v
 DISTVERSION=	0.11.0
 CATEGORIES=	x11-wm wayland
 
-MAINTAINER=	ports@FreeBSD.org
+MAINTAINER=	mark@revytechinc.com
 COMMENT=	Additional plugins for Wayfire
-WWW=		https://wayfire.org/
+WWW=		https://github.com/revytechinc/wayfire-plugins-extra
 
 LICENSE=	MIT
 LICENSE_FILE=	${WRKSRC}/LICENSE
+WRKSRC=		${WRKDIR}/wayfire-plugins-extra
 
 BUILD_DEPENDS=	boost-libs>0:devel/boost-libs \
 		evdev-proto>0:devel/evdev-proto \
@@ -20,17 +21,17 @@ LIB_DEPENDS=	libevdev.so:devel/libevdev \
 		libwayland-server.so:graphics/wayland
 
 USES=		compiler:c++17-lang gl gnome meson pkgconfig
-USE_GITHUB=	yes
-USE_GITLAB=	nodefault
 USE_GL=		glesv2
 USE_GNOME=	cairo glibmm gtkmm30
-GH_ACCOUNT=	revYTEchInc
-GH_PROJECT=	wayfire-plugins-extra
-GH_TAGNAME=	a65af2577986fbbdf8100048ad9943aff8ab27ff
+
+DISTFILES=	wayfire-plugins-extra.tar.gz
+
+post-patch:
+# Fetch git submodules not included in the GitHub tarball.
+	/bin/sh ${FILESDIR}/fetch-submodules.sh ${WRKSRC}
 
 MESON_ARGS=	-Denable_focus_request=true \
-		-Denable_wayfire_shadows=true \
-		-Denable_pixdecor=true \
+		-Denable_pixdecor=false \
 		-Denable_filters=true
 
 OPTIONS_DEFINE=	PANGO
