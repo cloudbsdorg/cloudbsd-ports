@@ -40,7 +40,7 @@ JAVA_HOME=	${LOCALBASE}/openjdk17
 
 WRKSRC=		${WRKDIR}/nexus-3.77.2-02
 
-SUB_FILES=	pkg-message
+SUB_FILES=	pkg-message pkg-deinstall pkg-install
 SUB_LIST=	NEXUS_RC=${PORTNAME} \
 		DESC="${COMMENT}" \
 		VERSION=${PORTVERSION} \
@@ -81,5 +81,13 @@ do-install:
 	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${NEXUS_HOME}
 	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${NEXUS_WORKDIR}
 	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${PREFIX}/sonatype-work
+	# Install pkg deinstall and install scripts
+	@${MKDIR} ${STAGEDIR}${PREFIX}/pkgdb
+	@${SED} -e 's|%%HOME%%|${NEXUS_HOME}|g' \
+		${FILESDIR}/pkg-deinstall.in > ${STAGEDIR}${PREFIX}/pkgdb/+DEINSTALL
+	@${CHMOD} 755 ${STAGEDIR}${PREFIX}/pkgdb/+DEINSTALL
+	@${SED} -e 's|%%HOME%%|${NEXUS_HOME}|g' \
+		${FILESDIR}/pkg-install.in > ${STAGEDIR}${PREFIX}/pkgdb/+INSTALL
+	@${CHMOD} 755 ${STAGEDIR}${PREFIX}/pkgdb/+INSTALL
 
 .include <bsd.port.mk>

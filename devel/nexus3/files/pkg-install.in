@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Start nexus3 service after package installation/upgrade
+if [ "$2" = "POST-INSTALL" ]; then
+    # Check if service was enabled before deinstall
+    if [ -f /var/db/nexus3.was_enabled ]; then
+        rm -f /var/db/nexus3.was_enabled
+        echo "Restarting nexus3 service after upgrade..."
+        service nexus3 start 2>/dev/null
+    fi
+fi

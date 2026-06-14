@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# Stop nexus3 service during package removal/upgrade
+if [ "$2" = "DEINSTALL" ] || [ "$2" = "POST-DEINSTALL" ]; then
+    # Check if service is enabled or running
+    if service nexus3 status >/dev/null 2>&1; then
+        # Check if enabled in rc.conf
+        if grep -q "^nexus3_enable=.*YES" /etc/rc.conf 2>/dev/null; then
+            mkdir -p /var/db
+            touch /var/db/nexus3.was_enabled
+        fi
+        echo "Stopping nexus3 service..."
+        service nexus3 stop 2>/dev/null
+        # Wait for processes to terminate
+        for i in $(seq 1 30); do
+            if ! pgrep -f "%%HOME%%/bin/nexus" > /dev/null 2>&1; then
+                break
+            fi
+            sleep 1
+        done
+        # Force kill if still running
+        if pgrep -f "%%HOME%%/bin/nexus" > /dev/null 2>&1; then
+            pkill -9 -f "%%HOME%%/bin/nexus" 2>/dev/null
+        fi
+    fi
+fi

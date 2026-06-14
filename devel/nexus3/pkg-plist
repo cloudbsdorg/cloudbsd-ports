@@ -556,3 +556,5 @@
 %%WORKDIR%%/clean_cache
 %%WORKDIR%%/log/.placeholder
 %%WORKDIR%%/tmp/.placeholder
+pkgdb/+DEINSTALL
+pkgdb/+INSTALL

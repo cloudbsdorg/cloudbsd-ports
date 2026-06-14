@@ -3,13 +3,12 @@
   message: <<EOM
 Nexus Repository Manager %%VERSION%% has been successfully installed!
 
-To enable Nexus on boot execute:
-
-  service %%NEXUS_RC%% enable
-
 IMPORTANT: Nexus runs by default as user %%USER%%!
 
-Start/Stop Nexus:
+To enable Nexus on boot:
+  service %%NEXUS_RC%% enable
+
+To start/stop Nexus:
   service %%NEXUS_RC%% start
   service %%NEXUS_RC%% stop
   service %%NEXUS_RC%% status
@@ -30,8 +29,11 @@ EOM
 },
 { type: upgrade
   message: <<EOM
-After upgrading, restart Nexus:
-  service %%NEXUS_RC%% restart
+Nexus Repository Manager %%VERSION%% has been upgraded!
+
+If Nexus was running during the upgrade, it has been automatically restarted.
+Otherwise, start it manually:
+  service %%NEXUS_RC%% start
 EOM
 },
 { type: remove
