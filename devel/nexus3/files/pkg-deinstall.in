@@ -4,8 +4,8 @@
 if [ "$2" = "DEINSTALL" ] || [ "$2" = "POST-DEINSTALL" ]; then
     # Check if service is enabled or running
     if service nexus3 status >/dev/null 2>&1; then
-        # Check if enabled in rc.conf
-        if grep -q "^nexus3_enable=.*YES" /etc/rc.conf 2>/dev/null; then
+        # Check if enabled in rc.conf using sysrc
+        if sysrc nexus3_enable 2>/dev/null | grep -q "= YES"; then
             mkdir -p /var/db
             touch /var/db/nexus3.was_enabled
         fi
