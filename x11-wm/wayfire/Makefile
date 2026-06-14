@@ -31,7 +31,7 @@ USES=		cmake:indirect compiler:c++17-lang gl gnome jpeg meson \
 		pkgconfig xorg
 USE_GITHUB=	nodefault
 GH_ACCOUNT=	revytechinc
-GH_TAGNAME=	refs/tags/v${DISTVERSION}
+GH_TAGNAME=	v${DISTVERSION}
 MASTER_SITES=	${MASTER_SITE_GITHUB}
 DISTFILES=	wayfire-${DISTVERSION}.tar.gz
 
