@@ -27,7 +27,7 @@ NO_MANCOMPRESS=	yes
 # Options Framework
 # =============================================================================
 # JVM heap size (mutually exclusive)
-OPTIONS_DEFINE=		SMALL MEDIUM LARGE DESKTOP METRICS BACKUP
+OPTIONS_DEFINE=		SMALL MEDIUM LARGE DESKTOP METRICS BACKUP HEALTH
 OPTIONS_DEFAULT=		SMALL
 
 SMALL_DESC=		Small JVM heap (2703m, baseline - minimum safe)
@@ -36,6 +36,7 @@ LARGE_DESC=		Large JVM heap (8G, 50+ users)
 DESKTOP_DESC=		Desktop integration (launcher + browser)
 METRICS_DESC=		Enable Prometheus metrics endpoint
 BACKUP_DESC=		Automated backup scripts
+HEALTH_DESC=		Health check CLI tool
 
 # Version for download filenames (PORTVERSION with last . replaced by -)
 NX_VER=		${PORTVERSION:C/^(.+)\.(.+)$/\1-\2/}
@@ -137,16 +138,16 @@ do-install:
 
 	# Install backup script example
 	@${MKDIR} ${STAGEDIR}${PREFIX}/share/examples/nexus
-	@${CP} ${FILESDIR}/backup.sh ${STAGEDIR}${PREFIX}/share/examples/nexus/
-	@${CHMOD} 755 ${STAGEDIR}${PREFIX}/share/examples/nexus/backup.sh
+	@${CP} ${FILESDIR}/nexus-backup ${STAGEDIR}${PREFIX}/share/examples/nexus/
+	@${CHMOD} 755 ${STAGEDIR}${PREFIX}/share/examples/nexus/nexus-backup
 
-	# Install desktop launcher and desktop file
-	@${CP} ${FILESDIR}/nexus-desktop-launcher.sh ${STAGEDIR}${NEXUS_HOME}/bin/
-	@${CHMOD} 755 ${STAGEDIR}${NEXUS_HOME}/bin/nexus-desktop-launcher.sh
+	# Desktop integration (DESKTOP option)
+	@${CP} ${FILESDIR}/nexus-desktop-launcher ${STAGEDIR}${NEXUS_HOME}/bin/
+	@${CHMOD} 755 ${STAGEDIR}${NEXUS_HOME}/bin/nexus-desktop-launcher
 	@${MKDIR} ${STAGEDIR}${PREFIX}/share/applications
 	@${SED} -e 's|${PREFIX}|${PREFIX}|g' ${FILESDIR}/nexus3.desktop > ${STAGEDIR}${PREFIX}/share/applications/nexus3.desktop
 
-	# Install desktop icons (hicolor icon set)
+	# Desktop icons (hicolor icon set)
 	@${MKDIR} ${STAGEDIR}${PREFIX}/share/icons/hicolor/48x48/apps
 	@${MKDIR} ${STAGEDIR}${PREFIX}/share/icons/hicolor/64x64/apps
 	@${MKDIR} ${STAGEDIR}${PREFIX}/share/icons/hicolor/128x128/apps
@@ -155,10 +156,23 @@ do-install:
 	@${CP} ${FILESDIR}/icons/hicolor/64x64/apps/nexus3.png ${STAGEDIR}${PREFIX}/share/icons/hicolor/64x64/apps/
 	@${CP} ${FILESDIR}/icons/hicolor/128x128/apps/nexus3.png ${STAGEDIR}${PREFIX}/share/icons/hicolor/128x128/apps/
 	@${CP} ${FILESDIR}/icons/hicolor/256x256/apps/nexus3.png ${STAGEDIR}${PREFIX}/share/icons/hicolor/256x256/apps/
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/icons/hicolor/scalable/apps
+	@${CP} ${FILESDIR}/icons/hicolor/256x256/apps/nexus3.png ${STAGEDIR}${PREFIX}/share/icons/hicolor/scalable/apps/nexus3.png
 
-	# Install Prometheus metrics configuration (METRICS option)
-	@${MKDIR} ${STAGEDIR}${PREFIX}/share/examples/nexus
+	# Prometheus metrics example config (METRICS option)
 	@${CP} ${FILESDIR}/metrics.properties ${STAGEDIR}${PREFIX}/share/examples/nexus/metrics.properties.sample
+
+	# Health check CLI tool (HEALTH option)
+	@${CP} ${FILESDIR}/nexus-healthcheck ${STAGEDIR}${NEXUS_HOME}/bin/
+	@${CHMOD} 755 ${STAGEDIR}${NEXUS_HOME}/bin/nexus-healthcheck
+
+# Update desktop icon cache after installation
+post-install:
+	@${CAT} ${STAGEDIR}${PREFIX}/share/icons/hicolor/index.theme 2>/dev/null >/dev/null || \
+		echo '[Icon Theme]' > ${STAGEDIR}${PREFIX}/share/icons/hicolor/index.theme; \
+		echo 'Name=hicolor' >> ${STAGEDIR}${PREFIX}/share/icons/hicolor/index.theme; \
+		echo 'Comment=Default icon theme' >> ${STAGEDIR}${PREFIX}/share/icons/hicolor/index.theme; \
+		echo 'Inherits=Adwaita' >> ${STAGEDIR}${PREFIX}/share/icons/hicolor/index.theme
 
 # =============================================================================
 # Integration Tests (commented out by default - enable with: make test)
@@ -278,8 +292,26 @@ integration-test:
 		failures=$$((failures+1)); \
 	fi; \
 	service nexus3 stop; \
-	echo ""; \
-	echo "=== Tests Complete ==="; \
+		echo "";
+		echo "--- Test 12: Health Check CLI (HEALTH option) ---";
+		if [ -f /usr/local/nexus3/bin/nexus-healthcheck ]; then \
+			/usr/local/nexus3/bin/nexus-healthcheck -v 2>&1 || { echo "WARNING: Health check reported issues"; }; \
+		else \
+			echo "Health check script not installed (HEALTH option)"; \
+		fi; \
+		echo "";
+		echo "--- Test 13: Metrics Endpoint (METRICS option) ---";
+		echo "Note: Enable via Nexus UI -> Administration -> Capabilities -> Metrics Collector"; \
+		METRICS_CODE=$$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/service/metrics 2>/dev/null); \
+		if [ "$$METRICS_CODE" = "200" ]; then \
+			echo "Metrics endpoint: OK"; \
+		else \
+			echo "Metrics endpoint: Not available (code: $$METRICS_CODE)"; \
+			echo "  Enable via Nexus web UI if needed"; \
+		fi; \
+		service nexus3 stop; \
+		echo "";
+		echo "=== Tests Complete ===";
 	if [ $$failures -eq 0 ]; then \
 		echo "RESULT: ALL TESTS PASSED"; \
 		exit 0; \

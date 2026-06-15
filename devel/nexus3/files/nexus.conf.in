@@ -15,12 +15,20 @@
 # NEXUS_JAVA_OPTS="-XX:+UseG1GC -XX:+UseStringDeduplication"
 
 # =============================================================================
+# Automated Backup Configuration (BACKUP option)
+# =============================================================================
+# Enable automated backups (default: NO)
+# nexus_backup_enable=NO
+
+# Backup directory (default: /var/backups/nexus3)
+# nexus_backup_dir=/var/backups/nexus3
+
+# Backup retention in days (default: 7)
+# nexus_backup_retention=7
+
+# =============================================================================
 # Prometheus Metrics Configuration (METRICS option)
 # =============================================================================
-# To enable Prometheus metrics endpoint, add this to /usr/local/nexus3/etc/nexus.properties:
-#   nexus.metrics.enabled=true
-#
-# Metrics will be available at: http://localhost:8081/service/metrics
-#
-# NOTE: This setting can also be configured via Nexus web UI at:
-#   Administration -> System -> Capabilities -> Metrics Collector
+# Metrics are available at: http://localhost:8081/service/metrics
+# Enable via Nexus web UI: Administration -> System -> Capabilities -> Metrics Collector
+# Or add to /usr/local/nexus3/etc/nexus.properties: nexus.metrics.enabled=true

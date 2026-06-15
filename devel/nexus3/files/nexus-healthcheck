@@ -1,0 +1,98 @@
+#!/usr/bin/env sh
+#
+# nexus3 health check
+# Usage: nexus-healthcheck [-v]
+# Exit codes: 0 = healthy, 1 = unhealthy, 2 = unknown/error
+#
+
+VERBOSE=0
+if [ "$1" = "-v" ]; then
+    VERBOSE=1
+fi
+
+NEXUS_CONF="${NEXUS_CONF:-/usr/local/etc/nexus/nexus.conf}"
+NEXUS_URL="${NEXUS_URL:-http://localhost:8081}"
+TIMEOUT=5
+
+# Source nexus configuration if it exists
+if [ -f "$NEXUS_CONF" ]; then
+    . "$NEXUS_CONF"
+fi
+
+log() {
+    if [ "$VERBOSE" = "1" ]; then
+        echo "$1"
+    fi
+}
+
+check_service() {
+    if ! service nexus3 status >/dev/null 2>&1; then
+        echo "UNHEALTHY: Nexus service not running"
+        exit 1
+    fi
+    log "Service: OK"
+}
+
+check_http() {
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout "$TIMEOUT" "$NEXUS_URL/" 2>/dev/null)
+    if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ] || [ "$HTTP_CODE" = "301" ]; then
+        log "HTTP: OK (code: $HTTP_CODE)"
+    else
+        echo "UNHEALTHY: HTTP endpoint returned $HTTP_CODE"
+        exit 1
+    fi
+}
+
+check_process() {
+    if ! pgrep -f "/usr/local/nexus3/bin/nexus" >/dev/null 2>&1; then
+        echo "UNHEALTHY: No nexus process found"
+        exit 1
+    fi
+    PID=$(pgrep -f "/usr/local/nexus3/bin/nexus" | head -1)
+    log "Process: OK (PID: $PID)"
+}
+
+check_heap() {
+    if [ -f /usr/local/etc/nexus/nexus.conf ]; then
+        XMX=$(grep "^NEXUS_XMX=" /usr/local/etc/nexus/nexus.conf 2>/dev/null | cut -d= -f2)
+        if [ -n "$XMX" ]; then
+            log "Heap config: $XMX"
+            # Convert to MB for comparison
+            XMX_MB=$(echo "$XMX" | sed 's/[gG]/*1024/; s/[mM]//' | bc 2>/dev/null)
+            if [ "$XMX_MB" -lt 2703 ]; then
+                echo "WARNING: Heap ($XMX) below recommended minimum (2703m)"
+            fi
+        fi
+    fi
+}
+
+check_disk() {
+    WORKDIR="/var/sonatype-work/nexus3"
+    if [ -d "$WORKDIR" ]; then
+        FREE=$(df -m "$WORKDIR" | tail -1 | awk '{print $4}')
+        if [ "$FREE" -lt 1024 ]; then
+            echo "WARNING: Low disk space in work directory ($FREE MB free)"
+        fi
+        log "Disk space: ${FREE}MB free"
+    fi
+}
+
+check_metrics() {
+    METRICS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout "$TIMEOUT" "$NEXUS_URL/service/metrics" 2>/dev/null)
+    if [ "$METRICS_CODE" = "200" ]; then
+        log "Metrics: OK"
+    else
+        log "Metrics: Not available (code: $METRICS_CODE)"
+    fi
+}
+
+# Run checks
+check_service
+check_process
+check_http
+check_heap
+check_disk
+check_metrics
+
+echo "HEALTHY: All checks passed"
+exit 0
