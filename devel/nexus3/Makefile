@@ -219,10 +219,15 @@ integration-test:
 #
 # Architecture-aware: uses current host arch for jail names.
 #
+# Ports tree options (set with MULTI_RELEASE_TEST):
+#   POUDRIERE_PORTS=local      - Use /usr/ports if it exists
+#   POUDRIERE_PORTS=cloudbsd   - Use https://github.com/cloudbsdorg/freebsd-ports.git (default)
+#   POUDRIERE_PORTS=freebsd    - Use https://github.com/freebsd/freebsd-ports.git
+#   POUDRIERE_PORTS=<url>      - Use custom git URL
+#
 # Prerequisites:
 #   1. Install poudriere: pkg install poudriere
 #   2. Configure poudriere: Edit /usr/local/etc/poudriere.conf
-#   3. Create ports tree: sudo poudriere ports -c -p default
 #
 # Run with: sudo make MULTI_RELEASE_TEST=1 do-test
 #
@@ -246,8 +251,57 @@ do-test:
 	}; \
 	echo "poudriere available"; \
 	echo ""; \
-	echo "Checking ports tree..."; \
-	sudo poudriere ports -l 2>/dev/null | grep -q default || sudo poudriere ports -c -p default 2>/dev/null; \
+	\
+	# Determine ports tree \
+	PORTS_TREE=default; \
+	PORTS_URL="https://github.com/cloudbsdorg/freebsd-ports.git"; \
+	if [ -n "$${POUDRIERE_PORTS:-}" ]; then \
+		case "$$POUDRIERE_PORTS" in \
+			local) \
+				if [ -d /usr/ports ]; then \
+					echo "Using local /usr/ports (bind mount)"; \
+					PORTS_METHOD="nullfs"; \
+					PORTS_PATH="/usr/ports"; \
+				else \
+					echo "WARNING: /usr/ports not found, using cloudbsd repo"; \
+					PORTS_URL="https://github.com/cloudbsdorg/freebsd-ports.git"; \
+					PORTS_METHOD="git"; \
+				fi ;; \
+			freebsd) PORTS_URL="https://github.com/freebsd/freebsd-ports.git" ;; \
+			https://*|git://*) PORTS_URL="$$POUDRIERE_PORTS" ;; \
+			*) echo "Unknown POUDRIERE_PORTS: $$POUDRIERE_PORTS, using default"; ;; \
+		esac; \
+	else \
+		echo "Using default ports tree: $$PORTS_URL"; \
+	fi; \
+	PORTS_METHOD=$${PORTS_METHOD:-git}; \
+	echo ""; \
+	echo "Checking ports tree '$$PORTS_TREE'..."; \
+	if sudo poudriere ports -l 2>/dev/null | grep -q "$$PORTS_TREE"; then \
+		echo "Ports tree exists"; \
+		if [ "$$PORTS_METHOD" = "nullfs" ]; then \
+			echo "Local ports - no update needed"; \
+		else \
+			echo "Updating ports tree..."; \
+			sudo poudriere ports -u -p $$PORTS_TREE 2>/dev/null || echo "Update skipped"; \
+		fi; \
+	else \
+		if [ "$$PORTS_METHOD" = "nullfs" ]; then \
+			echo "Creating nullfs ports tree linked to /usr/ports..."; \
+			sudo poudriere ports -c -p $$PORTS_TREE -m nullfs -f /usr/ports 2>/dev/null || { \
+				echo "Could not create nullfs ports tree"; \
+				echo "RESULT: SKIPPED"; \
+				exit 0; \
+			}; \
+		else \
+			echo "Creating ports tree from: $$PORTS_URL"; \
+			sudo poudriere ports -c -p $$PORTS_TREE -m git -U "$$PORTS_URL" 2>/dev/null || { \
+				echo "Could not create ports tree from $$PORTS_URL"; \
+				echo "RESULT: SKIPPED"; \
+				exit 0; \
+			}; \
+		fi; \
+	fi; \
 	echo ""; \
 	echo "Available jails:"; \
 	sudo poudriere jail -l 2>/dev/null || true; \
@@ -260,9 +314,9 @@ do-test:
 		echo "--- Testing $$JAIL ---"; \
 		if sudo poudriere jail -l 2>/dev/null | grep -q "$$JAIL"; then \
 			echo "Using jail..."; \
-			sudo poudriere testport -j $$JAIL -p default -o devel/nexus3 2>&1 | tee /tmp/poudriere.$$JAIL.log; \
+			sudo poudriere testport -j $$JAIL -p $$PORTS_TREE -o devel/nexus3 2>&1 | tee /tmp/poudriere.$$JAIL.log; \
 			if grep -q "Nonexistent origin" /tmp/poudriere.$$JAIL.log; then \
-				echo "NOTE: Port not in poudriere ports tree - this is expected for local ports"; \
+				echo "NOTE: Port not in ports tree - this is expected for local-only ports"; \
 				echo "$$JAIL: SKIP (port not in tree)"; \
 				skipped=$$((skipped+1)); \
 			elif grep -q "BUILD SUCCESSFUL" /tmp/poudriere.$$JAIL.log; then \
@@ -274,9 +328,9 @@ do-test:
 		else \
 			echo "Creating jail..."; \
 			sudo poudriere jail -c -j $$JAIL -v $$V-RELEASE -a $$JAIL_ARCH 2>/dev/null && { \
-				sudo poudriere testport -j $$JAIL -p default -o devel/nexus3 2>&1 | tee /tmp/poudriere.$$JAIL.log; \
+				sudo poudriere testport -j $$JAIL -p $$PORTS_TREE -o devel/nexus3 2>&1 | tee /tmp/poudriere.$$JAIL.log; \
 				if grep -q "Nonexistent origin" /tmp/poudriere.$$JAIL.log; then \
-					echo "NOTE: Port not in poudriere ports tree"; \
+					echo "NOTE: Port not in ports tree"; \
 					echo "$$JAIL: SKIP (port not in tree)"; \
 					skipped=$$((skipped+1)); \
 				elif grep -q "BUILD SUCCESSFUL" /tmp/poudriere.$$JAIL.log; then \
