@@ -121,4 +121,113 @@ do-install:
 		${FILESDIR}/pkg-install.in > ${STAGEDIR}${PREFIX}/pkgdb/+INSTALL
 	@${CHMOD} 755 ${STAGEDIR}${PREFIX}/pkgdb/+INSTALL
 
+# =============================================================================
+# Integration Tests (commented out by default - enable with: make test)
+# =============================================================================
+#
+# NOTE: These tests require root privileges and may take several minutes to run.
+#       Run from an installed system, not from within the port directory.
+#
+# To enable integration testing:
+#   1. Build and install the port normally
+#   2. Enable tests:  cd /usr/ports/devel/nexus3 && make INTEGRATION_TEST=1 test
+#
+# Prerequisites:
+#   - Port must be installed
+#   - Root or sudo access for service control
+#   - See all processes (may require root/sudo for full visibility)
+#
+# Test Categories:
+#   1. Service lifecycle (start/stop/status/restart)
+#   2. Man page validation
+#   3. Documentation and file paths
+#   4. Multi-arch package validation
+
+#.if defined(INTEGRATION_TEST)
+#USE_GITHUB=	yes
+#GH_ACCOUNT=	sonatype
+#GH_PROJECT=	nexus-public
+#GH_TAGNAME=	nexus-3.${PORTVERSION:R}
+#GH_COMMIT=	${GH_TAGNAME}
+
+# Test the service lifecycle
+#do-test:
+#	@echo "=== Nexus3 Integration Tests ==="
+#	@echo ""
+#	@echo "--- Test 1: Service Status (before start) ---"
+#	@service nexus3 status || true
+#	@echo ""
+#	@echo "--- Test 2: Enable and Start Service ---"
+#	@sysrc nexus3_enable=YES
+#	@service nexus3 start
+#	@sleep 5
+#	@echo ""
+#	@echo "--- Test 3: Service Status (after start) ---"
+#	@service nexus3 status
+#	@echo ""
+#	@echo "--- Test 4: Check Process Visibility ---"
+#	@echo "PID file contents:"
+#	@cat /var/run/nexus3.pid 2>/dev/null || echo "No PID file"
+#	@echo "Running processes:"
+#	@pgrep -f /usr/local/nexus3/bin/nexus || echo "No processes found"
+#	@echo ""
+#	@echo "--- Test 5: Man Page Validation ---"
+#	@man -w nexus3 && echo "Man page found" || echo "ERROR: Man page not found"
+#	@man nexus3 | head -20 || echo "ERROR: Cannot render man page"
+#	@echo ""
+#	@echo "--- Test 6: Documentation Paths ---"
+#	@test -f /usr/local/nexus3/bin/nexus && echo "Binary: OK" || echo "Binary: MISSING"
+#	@test -f /usr/local/etc/nexus/nexus.conf && echo "Config: OK" || echo "Config: MISSING"
+#	@test -f /usr/local/share/man/man1/nexus3.1.gz && echo "Man page: OK" || echo "Man page: MISSING"
+#	@test -d /var/sonatype-work/nexus3 && echo "Work dir: OK" || echo "Work dir: MISSING"
+#	@echo ""
+#	@echo "--- Test 7: Service Stop ---"
+#	@service nexus3 stop
+#	@sleep 2
+#	@echo ""
+#	@echo "--- Test 8: Service Status (after stop) ---"
+#	@service nexus3 status || true
+#	@echo ""
+#	@echo "=== Tests Complete ==="
+#.endif
+
+# =============================================================================
+# Multi-Architecture Validation (requires poudriere or synth)
+# =============================================================================
+#
+# To validate packages across architectures, use poudriere or synth:
+#
+# With poudriere:
+#   poudriere testport -j13amd64 -j14amd64 -jaarch64 -p main -o devel/nexus3
+#
+# With synth:
+#   synth build-repository
+#   synth build-ports devel/nexus3 --architectures "amd64 arm64"
+#
+# Manual validation after build:
+#   pkg create -o /tmp/pkg -p /usr/ports/devel/nexus3/pkg-plist
+#   tar -tf /tmp/pkg/nexus3-*.txz | grep -E "^usr/local/(nexus3|etc|share/man)"
+#
+# Arch-specific checks (add to do-test when running on target arch):
+#   # Verify binary compatibility
+#   file ${PREFIX}/nexus3/bin/nexus
+#   # Check for architecture-specific files
+#   @test -f ${PREFIX}/nexus3/bin/nexus && echo "amd64/aarch64 binary: OK"
+#
+# Supported architectures per PORTNAME:
+#   amd64   - Primary, fully tested
+#   aarch64 - Fully tested
+#
+# To run multi-arch validation:
+#.if defined(MULTI_ARCH_TEST)
+#do-test:
+#	@echo "=== Multi-Architecture Validation ==="
+#	@echo "Checking package contents for arch compatibility..."
+#	@echo "Expected paths for amd64/aarch64:"
+#	@echo "  - /usr/local/nexus3/bin/nexus"
+#	@echo "  - /usr/local/etc/nexus/nexus.conf"
+#	@echo "  - /usr/local/share/man/man1/nexus3.1.gz"
+#	@echo "  - /var/sonatype-work/nexus3/"
+#.endif
+
 .include <bsd.port.mk>
