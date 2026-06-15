@@ -446,7 +446,7 @@ help:
 	@echo "  make MULTI_RELEASE_TEST=1 do-test"
 	@echo "                      - Test on multiple FreeBSD releases"
 	@echo "  make MULTI_RELEASE_TEST=1 POUDRIERE_PORTS=local do-test"
-	@echo "                      - Same as above, but use local /usr/ports"
+	@echo "                      - Same as above, but use local ${PORTSDIR}"
 	@echo "  make MULTI_RELEASE_TEST=1 POUDRIERE_PORTS=local=/path do-test"
 	@echo "                      - Use custom ports directory with bind mount"
 	@echo ""
