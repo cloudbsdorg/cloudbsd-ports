@@ -146,56 +146,67 @@ do-install:
 
 .if defined(INTEGRATION_TEST)
 # Test the service lifecycle
+# Returns: 0 on success, non-zero on failure
 integration-test:
-	@echo "=== Nexus3 Integration Tests ==="
-	@echo ""
-	@echo "--- Test 1: Service Status (before start) ---"
-	@service nexus3 status || true
-	@echo ""
-	@echo "--- Test 2: Enable and Start Service ---"
-	@sysrc nexus3_enable=YES
-	@service nexus3 start
-	@sleep 5
-	@echo ""
-	@echo "--- Test 3: Service Status (after start) ---"
-	@service nexus3 status
-	@echo ""
-	@echo "--- Test 4: Check Process Visibility ---"
-	@echo "PID file contents:"
-	@cat /var/run/nexus3.pid 2>/dev/null || echo "No PID file"
-	@echo "Running processes:"
-	@pgrep -f /usr/local/nexus3/bin/nexus || echo "No processes found"
-	@echo ""
-	@echo "--- Test 5: Man Page Validation ---"
-	@man -w nexus3 && echo "Man page found" || echo "ERROR: Man page not found"
-	@man nexus3 | head -20 || echo "ERROR: Cannot render man page"
-	@echo ""
-	@echo "--- Test 6: Documentation Paths ---"
-	@test -f /usr/local/nexus3/bin/nexus && echo "Binary: OK" || echo "Binary: MISSING"
-	@test -f /usr/local/etc/nexus/nexus.conf && echo "Config: OK" || echo "Config: MISSING"
-	@test -f /usr/local/share/man/man1/nexus3.1.gz && echo "Man page: OK" || echo "Man page: MISSING"
-	@test -d /var/sonatype-work/nexus3 && echo "Work dir: OK" || echo "Work dir: MISSING"
-	@echo ""
-	@echo "--- Test 7: Service Stop ---"
-	@service nexus3 stop
-	@sleep 2
-	@echo ""
-	@echo "--- Test 8: Service Status (after stop) ---"
-	@service nexus3 status || true
-	@echo ""
-	@echo "--- Test 9: Data Preservation Check ---"
-	@echo "Creating test data marker in work directory..."
-	@mkdir -p /var/sonatype-work/nexus3
-	@echo "NEXUS3_UPGRADE_TEST" > /var/sonatype-work/nexus3/.upgrade_test_marker
-	@chown -R nexus:nexus /var/sonatype-work/nexus3
-	@echo "Test marker created. Simulating upgrade..."
-	@echo "Checking work directory ownership..."
-	@ls -ld /var/sonatype-work/nexus3
-	@test -d /var/sonatype-work/nexus3 && echo "Work dir exists: OK" || echo "Work dir MISSING: FAIL"
-	@test -f /var/sonatype-work/nexus3/.upgrade_test_marker && echo "Data preserved: OK" || echo "Data MISSING: FAIL"
-	@cat /var/sonatype-work/nexus3/.upgrade_test_marker
-	@echo ""
-	@echo "=== Tests Complete ==="
+	@set -e; \
+	failures=0; \
+	echo "=== Nexus3 Integration Tests ==="; \
+	echo ""; \
+	echo "--- Test 1: Service Status (before start) ---"; \
+	service nexus3 status || true; \
+	echo ""; \
+	echo "--- Test 2: Enable and Start Service ---"; \
+	sysrc nexus3_enable=YES; \
+	service nexus3 start || { echo "FAIL: Service start failed"; failures=$$((failures+1)); }; \
+	sleep 5; \
+	echo ""; \
+	echo "--- Test 3: Service Status (after start) ---"; \
+	service nexus3 status || { echo "FAIL: Service not running"; failures=$$((failures+1)); }; \
+	echo ""; \
+	echo "--- Test 4: Check Process Visibility ---"; \
+	echo "PID file contents:"; \
+	cat /var/run/nexus3.pid 2>/dev/null || { echo "No PID file"; failures=$$((failures+1)); }; \
+	echo "Running processes:"; \
+	pgrep -f /usr/local/nexus3/bin/nexus || { echo "No processes found"; failures=$$((failures+1)); }; \
+	echo ""; \
+	echo "--- Test 5: Man Page Validation ---"; \
+	man -w nexus3 > /dev/null 2>&1 || { echo "FAIL: Man page not found"; failures=$$((failures+1)); }; \
+	man nexus3 > /dev/null 2>&1 || { echo "FAIL: Cannot render man page"; failures=$$((failures+1)); }; \
+	echo "Man page: OK"; \
+	echo ""; \
+	echo "--- Test 6: Documentation Paths ---"; \
+	test -f /usr/local/nexus3/bin/nexus && echo "Binary: OK" || { echo "Binary: MISSING"; failures=$$((failures+1)); }; \
+	test -f /usr/local/etc/nexus/nexus.conf && echo "Config: OK" || { echo "Config: MISSING"; failures=$$((failures+1)); }; \
+	test -f /usr/local/share/man/man1/nexus3.1.gz && echo "Man page: OK" || { echo "Man page: MISSING"; failures=$$((failures+1)); }; \
+	test -d /var/sonatype-work/nexus3 && echo "Work dir: OK" || { echo "Work dir: MISSING"; failures=$$((failures+1)); }; \
+	echo ""; \
+	echo "--- Test 7: Service Stop ---"; \
+	service nexus3 stop; \
+	sleep 2; \
+	echo ""; \
+	echo "--- Test 8: Service Status (after stop) ---"; \
+	service nexus3 status || true; \
+	echo ""; \
+	echo "--- Test 9: Data Preservation Check ---"; \
+	echo "Creating test data marker in work directory..."; \
+	mkdir -p /var/sonatype-work/nexus3; \
+	echo "NEXUS3_UPGRADE_TEST" > /var/sonatype-work/nexus3/.upgrade_test_marker; \
+	chown -R nexus:nexus /var/sonatype-work/nexus3; \
+	echo "Test marker created. Simulating upgrade..."; \
+	echo "Checking work directory ownership..."; \
+	ls -ld /var/sonatype-work/nexus3; \
+	test -d /var/sonatype-work/nexus3 && echo "Work dir exists: OK" || { echo "Work dir MISSING: FAIL"; failures=$$((failures+1)); }; \
+	test -f /var/sonatype-work/nexus3/.upgrade_test_marker && echo "Data preserved: OK" || { echo "Data MISSING: FAIL"; failures=$$((failures+1)); }; \
+	cat /var/sonatype-work/nexus3/.upgrade_test_marker; \
+	echo ""; \
+	echo "=== Tests Complete ==="; \
+	if [ $$failures -eq 0 ]; then \
+		echo "RESULT: ALL TESTS PASSED"; \
+		exit 0; \
+	else \
+		echo "RESULT: $$failures TEST(S) FAILED"; \
+		exit 1; \
+	fi
 .endif
 
 # =============================================================================
@@ -241,20 +252,55 @@ integration-test:
 #   poudriere jail -c -j 15amd64 -v 15-RELEASE -a amd64
 .if defined(MULTI_RELEASE_TEST)
 do-test:
-	@echo "=== Multi-Release Validation ==="
-	@echo "Testing port across FreeBSD releases..."
-	@echo ""
-	@echo "Listing available poudriere jails..."
-	@poudriere jail -l
-	@echo ""
-	@echo "Running poudriere testport on 14amd64..."
-	@poudriere testport -j 14amd64 -p main -o devel/nexus3 || echo "14amd64 test failed or jail not available"
-	@echo ""
-	@echo "Running poudriere testport on 15amd64..."
-	@poudriere testport -j 15amd64 -p main -o devel/nexus3 || echo "15amd64 test failed or jail not available"
-	@echo ""
-	@echo "Verifying installed binary..."
-	@file ${PREFIX}/nexus3/bin/nexus
+	@set -e; \
+	failures=0; \
+	echo "=== Multi-Release Validation ==="; \
+	echo "Testing port across FreeBSD releases..."; \
+	echo ""; \
+	echo "--- Checking poudriere availability ---"; \
+	if ! command -v poudriere > /dev/null 2>&1; then \
+		echo "ERROR: poudriere is not installed"; \
+		echo "Install with: pkg install poudriere"; \
+		echo "RESULT: SKIPPED - poudriere not available"; \
+		exit 0; \
+	fi; \
+	echo "poudriere found: $$(which poudriere)"; \
+	echo ""; \
+	echo "Listing available poudriere jails..."; \
+	poudriere jail -l || true; \
+	echo ""; \
+	echo "--- Testing on 14amd64 ---"; \
+	if poudriere jail -l | grep -q "14amd64"; then \
+		poudriere testport -j 14amd64 -p main -o devel/nexus3 || { \
+			echo "14amd64 test FAILED"; \
+			failures=$$((failures+1)); \
+		}; \
+	else \
+		echo "SKIP: 14amd64 jail not available"; \
+		echo "Create with: poudriere jail -c -j 14amd64 -v 14-RELEASE -a amd64"; \
+	fi; \
+	echo ""; \
+	echo "--- Testing on 15amd64 ---"; \
+	if poudriere jail -l | grep -q "15amd64"; then \
+		poudriere testport -j 15amd64 -p main -o devel/nexus3 || { \
+			echo "15amd64 test FAILED"; \
+			failures=$$((failures+1)); \
+		}; \
+	else \
+		echo "SKIP: 15amd64 jail not available"; \
+		echo "Create with: poudriere jail -c -j 15amd64 -v 15-RELEASE -a amd64"; \
+	fi; \
+	echo ""; \
+	echo "--- Verifying installed binary ---"; \
+	file ${PREFIX}/nexus3/bin/nexus || true; \
+	echo ""; \
+	if [ $$failures -eq 0 ]; then \
+		echo "RESULT: ALL RELEASE TESTS PASSED"; \
+		exit 0; \
+	else \
+		echo "RESULT: $$failures RELEASE TEST(S) FAILED"; \
+		exit 1; \
+	fi
 .endif
 
 .include <bsd.port.mk>
