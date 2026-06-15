@@ -144,10 +144,10 @@ do-install:
 		chmod 755 ${STAGEDIR}${PREFIX}/share/examples/nexus/backup.sh; \
 		fi
 	# Desktop launcher
-	@if [ -f "${FILESDIR}/nexus-launcher.sh" ]; then \
+	@if [ -f "${FILESDIR}/nexus-desktop-launcher.sh" ]; then \
 		${MKDIR} ${STAGEDIR}${NEXUS_HOME}/bin; \
-		${CP} ${FILESDIR}/nexus-launcher.sh ${STAGEDIR}${NEXUS_HOME}/bin/; \
-		chmod 755 ${STAGEDIR}${NEXUS_HOME}/bin/nexus-launcher.sh; \
+		${CP} ${FILESDIR}/nexus-desktop-launcher.sh ${STAGEDIR}${NEXUS_HOME}/bin/; \
+		chmod 755 ${STAGEDIR}${NEXUS_HOME}/bin/nexus-desktop-launcher.sh; \
 		fi
 
 # =============================================================================
