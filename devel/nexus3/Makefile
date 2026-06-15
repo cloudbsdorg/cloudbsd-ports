@@ -144,45 +144,45 @@ do-install:
 #   4. Multi-arch package validation
 
 #.if defined(INTEGRATION_TEST)
-## Test the service lifecycle
+# Test the service lifecycle
 #integration-test:
-	@echo "=== Nexus3 Integration Tests ==="
-	@echo ""
-	@echo "--- Test 1: Service Status (before start) ---"
-	@service nexus3 status || true
-	@echo ""
-	@echo "--- Test 2: Enable and Start Service ---"
-	@sysrc nexus3_enable=YES
-	@service nexus3 start
-	@sleep 5
-	@echo ""
-	@echo "--- Test 3: Service Status (after start) ---"
-	@service nexus3 status
-	@echo ""
-	@echo "--- Test 4: Check Process Visibility ---"
-	@echo "PID file contents:"
-	@cat /var/run/nexus3.pid 2>/dev/null || echo "No PID file"
-	@echo "Running processes:"
-	@pgrep -f /usr/local/nexus3/bin/nexus || echo "No processes found"
-	@echo ""
-	@echo "--- Test 5: Man Page Validation ---"
-	@man -w nexus3 && echo "Man page found" || echo "ERROR: Man page not found"
-	@man nexus3 | head -20 || echo "ERROR: Cannot render man page"
-	@echo ""
-	@echo "--- Test 6: Documentation Paths ---"
-	@test -f /usr/local/nexus3/bin/nexus && echo "Binary: OK" || echo "Binary: MISSING"
-	@test -f /usr/local/etc/nexus/nexus.conf && echo "Config: OK" || echo "Config: MISSING"
-	@test -f /usr/local/share/man/man1/nexus3.1.gz && echo "Man page: OK" || echo "Man page: MISSING"
-	@test -d /var/sonatype-work/nexus3 && echo "Work dir: OK" || echo "Work dir: MISSING"
-	@echo ""
-	@echo "--- Test 7: Service Stop ---"
-	@service nexus3 stop
-	@sleep 2
-	@echo ""
-	@echo "--- Test 8: Service Status (after stop) ---"
-	@service nexus3 status || true
-	@echo ""
-	@echo "=== Tests Complete ==="
+#	@echo "=== Nexus3 Integration Tests ==="
+#	@echo ""
+#	@echo "--- Test 1: Service Status (before start) ---"
+#	@service nexus3 status || true
+#	@echo ""
+#	@echo "--- Test 2: Enable and Start Service ---"
+#	@sysrc nexus3_enable=YES
+#	@service nexus3 start
+#	@sleep 5
+#	@echo ""
+#	@echo "--- Test 3: Service Status (after start) ---"
+#	@service nexus3 status
+#	@echo ""
+#	@echo "--- Test 4: Check Process Visibility ---"
+#	@echo "PID file contents:"
+#	@cat /var/run/nexus3.pid 2>/dev/null || echo "No PID file"
+#	@echo "Running processes:"
+#	@pgrep -f /usr/local/nexus3/bin/nexus || echo "No processes found"
+#	@echo ""
+#	@echo "--- Test 5: Man Page Validation ---"
+#	@man -w nexus3 && echo "Man page found" || echo "ERROR: Man page not found"
+#	@man nexus3 | head -20 || echo "ERROR: Cannot render man page"
+#	@echo ""
+#	@echo "--- Test 6: Documentation Paths ---"
+#	@test -f /usr/local/nexus3/bin/nexus && echo "Binary: OK" || echo "Binary: MISSING"
+#	@test -f /usr/local/etc/nexus/nexus.conf && echo "Config: OK" || echo "Config: MISSING"
+#	@test -f /usr/local/share/man/man1/nexus3.1.gz && echo "Man page: OK" || echo "Man page: MISSING"
+#	@test -d /var/sonatype-work/nexus3 && echo "Work dir: OK" || echo "Work dir: MISSING"
+#	@echo ""
+#	@echo "--- Test 7: Service Stop ---"
+#	@service nexus3 stop
+#	@sleep 2
+#	@echo ""
+#	@echo "--- Test 8: Service Status (after stop) ---"
+#	@service nexus3 status || true
+#	@echo ""
+#	@echo "=== Tests Complete ==="
 #.endif
 
 # =============================================================================
