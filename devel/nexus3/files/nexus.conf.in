@@ -13,3 +13,14 @@
 
 # Additional Java options (uncomment and customize as needed)
 # NEXUS_JAVA_OPTS="-XX:+UseG1GC -XX:+UseStringDeduplication"
+
+# =============================================================================
+# Prometheus Metrics Configuration (METRICS option)
+# =============================================================================
+# To enable Prometheus metrics endpoint, add this to /usr/local/nexus3/etc/nexus.properties:
+#   nexus.metrics.enabled=true
+#
+# Metrics will be available at: http://localhost:8081/service/metrics
+#
+# NOTE: This setting can also be configured via Nexus web UI at:
+#   Administration -> System -> Capabilities -> Metrics Collector

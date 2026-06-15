@@ -135,20 +135,20 @@ do-install:
 		${FILESDIR}/pkg-install.in > ${STAGEDIR}${PREFIX}/pkgdb/+INSTALL
 	@${CHMOD} 755 ${STAGEDIR}${PREFIX}/pkgdb/+INSTALL
 
-# Install optional components
-.post-install:
-	# Backup script
-	@if [ -f "${FILESDIR}/backup.sh" ]; then \
-		${MKDIR} ${STAGEDIR}${PREFIX}/share/examples/nexus; \
-		${CP} ${FILESDIR}/backup.sh ${STAGEDIR}${PREFIX}/share/examples/nexus/; \
-		chmod 755 ${STAGEDIR}${PREFIX}/share/examples/nexus/backup.sh; \
-		fi
-	# Desktop launcher
-	@if [ -f "${FILESDIR}/nexus-desktop-launcher.sh" ]; then \
-		${MKDIR} ${STAGEDIR}${NEXUS_HOME}/bin; \
-		${CP} ${FILESDIR}/nexus-desktop-launcher.sh ${STAGEDIR}${NEXUS_HOME}/bin/; \
-		chmod 755 ${STAGEDIR}${NEXUS_HOME}/bin/nexus-desktop-launcher.sh; \
-		fi
+	# Install backup script example
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/examples/nexus
+	@${CP} ${FILESDIR}/backup.sh ${STAGEDIR}${PREFIX}/share/examples/nexus/
+	@${CHMOD} 755 ${STAGEDIR}${PREFIX}/share/examples/nexus/backup.sh
+
+	# Install desktop launcher and desktop file
+	@${CP} ${FILESDIR}/nexus-desktop-launcher.sh ${STAGEDIR}${NEXUS_HOME}/bin/
+	@${CHMOD} 755 ${STAGEDIR}${NEXUS_HOME}/bin/nexus-desktop-launcher.sh
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/applications
+	@${SED} -e 's|${PREFIX}|${PREFIX}|g' ${FILESDIR}/nexus3.desktop > ${STAGEDIR}${PREFIX}/share/applications/nexus3.desktop
+
+	# Install Prometheus metrics configuration (METRICS option)
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/examples/nexus
+	@${CP} ${FILESDIR}/metrics.properties ${STAGEDIR}${PREFIX}/share/examples/nexus/metrics.properties.sample
 
 # =============================================================================
 # Integration Tests (commented out by default - enable with: make test)
