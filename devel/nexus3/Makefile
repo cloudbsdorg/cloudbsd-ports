@@ -75,6 +75,8 @@ do-install:
 	@# Remove bundled JDK - use system JDK instead
 	@${RM} -rf ${STAGEDIR}${NEXUS_HOME}/jdk
 	@${CHMOD} +x ${STAGEDIR}${NEXUS_HOME}/bin/nexus
+	@# Create nexus.rc to configure external JDK
+	@printf 'app_java_home=%s\n' '${JAVA_HOME}' > ${STAGEDIR}${NEXUS_HOME}/bin/nexus.rc
 	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}
 	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}/log
 	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}/tmp

@@ -1,0 +1,39 @@
+@dir nexus3/bin
+@dir nexus3/deploy
+@dir nexus3/etc
+@dir nexus3/etc/fabric
+@dir nexus3/etc/jetty
+@dir nexus3/etc/logback
+@dir nexus3/etc/spring
+@dir nexus3/etc/ssl
+nexus3/NOTICE.txt
+nexus3/OSS-LICENSE.txt
+nexus3/bin/nexus
+nexus3/bin/nexus.rc
+nexus3/bin/nexus.vmoptions
+nexus3/bin/sonatype-nexus-repository-3.93.0-06.jar
+nexus3/deploy/.placeholder
+nexus3/etc/default-application.properties
+nexus3/etc/fabric/ehcache.xml
+nexus3/etc/fabric/mybatis.xml
+nexus3/etc/jetty/jetty-http.xml
+nexus3/etc/jetty/jetty-https-fips.xml
+nexus3/etc/jetty/jetty-https.xml
+nexus3/etc/jetty/jetty-requestlog.xml
+nexus3/etc/jetty/jetty.xml
+nexus3/etc/jetty/nexus-web.xml
+nexus3/etc/jetty/override-default-web.xml
+nexus3/etc/logback/logback.xml
+nexus3/etc/nexus-default.properties
+nexus3/etc/spring/java.util.logging.properties
+nexus3/etc/ssl/.placeholder
+@owner nexus
+@group nexus
+@dir %%VARDIR%%/sonatype-work/nexus3
+@dir %%VARDIR%%/sonatype-work/nexus3/log
+@dir %%VARDIR%%/sonatype-work/nexus3/tmp
+%%VARDIR%%/sonatype-work/nexus3/clean_cache
+%%VARDIR%%/sonatype-work/nexus3/log/.placeholder
+%%VARDIR%%/sonatype-work/nexus3/tmp/.placeholder
+pkgdb/+DEINSTALL
+pkgdb/+INSTALL
