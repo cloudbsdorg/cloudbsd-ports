@@ -35,6 +35,7 @@ nexus3/etc/ssl/.placeholder
 %%VARDIR%%/sonatype-work/nexus3/clean_cache
 %%VARDIR%%/sonatype-work/nexus3/log/.placeholder
 %%VARDIR%%/sonatype-work/nexus3/tmp/.placeholder
+share/man/man1/nexus3.1.gz
 pkgdb/+DEINSTALL
 pkgdb/+INSTALL
 share/examples/nexus/nexus.conf.sample

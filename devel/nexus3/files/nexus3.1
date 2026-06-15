@@ -1,0 +1,46 @@
+.\" Man page for nexus3
+.\"
+.Dd %%VERSION%%
+.Os FreeBSD
+.Dt NEXUS3 1
+.Sh NAME
+.Nm nexus3
+.Nd Sonatype Nexus Repository Manager 3
+.Sh SYNOPSIS
+.Nm
+.Ar command
+.Sh DESCRIPTION
+.Nm
+is the control script for the Sonatype Nexus Repository Manager 3.
+.Sh COMMANDS
+.Bl -tag -width "run-redirect"
+.It Cm start
+Start the Nexus server in the background.
+.It Cm stop
+Stop the Nexus server gracefully.
+.It Cm run
+Start the Nexus server in the foreground.
+.It Cm run-redirect
+Start the Nexus server in the foreground with output redirected to a log file.
+.It Cm status
+Print the current running status of the Nexus server.
+.It Cm restart
+Stop and then start the Nexus server.
+.It Cm force-reload
+Send the stop signal to the running Nexus server and restart it.
+.El
+.Sh FILES
+.Bl -tag -width "%%HOME%%" -compact
+.It Pa %%HOME%%
+Default installation directory
+.It Pa %%VARDIR%%/sonatype-work/nexus3
+Nexus work directory
+.It Pa %%LOGDIR%%
+Nexus log directory
+.It Pa %%PREFIX%%/etc/nexus/nexus.conf
+Java configuration file
+.El
+.Sh SEE ALSO
+.Xr rc.subr 8
+.Sh AUTHORS
+This manual page was created for the FreeBSD ports collection.

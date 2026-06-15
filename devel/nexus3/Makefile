@@ -21,6 +21,7 @@ CPE_PRODUCT=	nexus_repository
 NO_ARCH=	yes
 NO_BUILD=	yes
 NO_TEST=	yes
+NO_MANCOMPRESS=	yes
 
 # Version for download filenames (PORTVERSION with last . replaced by -)
 NX_VER=		${PORTVERSION:C/^(.+)\.(.+)$/\1-\2/}
@@ -102,6 +103,11 @@ do-install:
 	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${NEXUS_HOME}
 	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${NEXUS_WORKDIR}
 	@${CHOWN} -R ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${PREFIX}/sonatype-work
+	# Install man page
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/man/man1
+	@${SED} -e 's|%%VERSION%%|${PORTVERSION}|g' \
+		${FILESDIR}/nexus3.1 > ${STAGEDIR}${PREFIX}/share/man/man1/nexus3.1
+
 	# Install pkg deinstall and install scripts
 	@${MKDIR} ${STAGEDIR}${PREFIX}/pkgdb
 	@${SED} -e 's|%%HOME%%|${NEXUS_HOME}|g' \
