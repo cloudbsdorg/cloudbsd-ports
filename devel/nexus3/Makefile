@@ -279,6 +279,22 @@ integration-test:
 	fi; \
 	service nexus3 stop; \
 	echo ""; \
+	echo "--- Test 12: Health Check CLI (HEALTH option) ---"; \
+	if [ -f /usr/local/nexus3/bin/nexus-healthcheck ]; then \
+		/usr/local/nexus3/bin/nexus-healthcheck -v 2>&1 || { echo "WARNING: Health check reported issues"; }; \
+	else \
+		echo "Health check script not installed (enable HEALTH option)"; \
+	fi; \
+	echo ""; \
+	echo "--- Test 13: Metrics Endpoint (METRICS option) ---"; \
+	echo "Note: Enable via Nexus UI -> Capabilities -> Metrics Collector"; \
+	METRICS_CODE=$$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/service/metrics 2>/dev/null); \
+	if [ "$$METRICS_CODE" = "200" ]; then \
+		echo "Metrics endpoint: OK"; \
+	else \
+		echo "Metrics endpoint: Not available (code: $$METRICS_CODE)"; \
+	fi; \
+	echo ""; \
 	echo "=== Tests Complete ==="; \
 	if [ $$failures -eq 0 ]; then \
 		echo "RESULT: ALL TESTS PASSED"; \
