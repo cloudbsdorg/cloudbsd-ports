@@ -37,3 +37,4 @@ nexus3/etc/ssl/.placeholder
 %%VARDIR%%/sonatype-work/nexus3/tmp/.placeholder
 pkgdb/+DEINSTALL
 pkgdb/+INSTALL
+share/examples/nexus/nexus.conf.sample

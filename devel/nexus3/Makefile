@@ -45,7 +45,7 @@ JAVA_HOME=	${LOCALBASE}/openjdk21
 
 WRKSRC=		${WRKDIR}/nexus-${NX_VER}
 
-SUB_FILES=	pkg-message pkg-deinstall pkg-install
+SUB_FILES=	pkg-message pkg-deinstall pkg-install nexus.rc
 SUB_LIST=	NEXUS_RC=${PORTNAME} \
 		DESC="${COMMENT}" \
 		VERSION=${PORTVERSION} \
@@ -75,8 +75,19 @@ do-install:
 	@# Remove bundled JDK - use system JDK instead
 	@${RM} -rf ${STAGEDIR}${NEXUS_HOME}/jdk
 	@${CHMOD} +x ${STAGEDIR}${NEXUS_HOME}/bin/nexus
-	@# Create nexus.rc to configure external JDK
-	@printf 'app_java_home=%s\n' '${JAVA_HOME}' > ${STAGEDIR}${NEXUS_HOME}/bin/nexus.rc
+	@# Install nexus.rc (configured by SUB_FILES)
+	@${CP} ${WRKDIR}/nexus.rc ${STAGEDIR}${NEXUS_HOME}/bin/nexus.rc
+	@# Install default Java configuration (preserve existing)
+	@${MKDIR} ${STAGEDIR}${PREFIX}/etc/nexus
+	@if [ ! -f ${STAGEDIR}${PREFIX}/etc/nexus/nexus.conf ]; then \
+		${SED} -e 's|%%JAVA_HOME%%|${JAVA_HOME}|g' \
+		${FILESDIR}/nexus.conf.in > ${STAGEDIR}${PREFIX}/etc/nexus/nexus.conf; \
+		${CHOWN} ${NEXUS_USER}:${NEXUS_GROUP} ${STAGEDIR}${PREFIX}/etc/nexus/nexus.conf; \
+		fi
+	@# Install example config
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/examples/nexus
+	@${SED} -e 's|%%JAVA_HOME%%|${JAVA_HOME}|g' \
+		${FILESDIR}/nexus.conf.in > ${STAGEDIR}${PREFIX}/share/examples/nexus/nexus.conf.sample
 	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}
 	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}/log
 	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}/tmp

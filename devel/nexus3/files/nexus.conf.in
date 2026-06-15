@@ -1,0 +1,15 @@
+# Nexus Repository Manager 3 - Java Runtime Configuration
+# This file is sourced by the nexus startup script
+# Values here override the defaults in nexus.vmoptions
+#
+# NOTE: This file is NOT overwritten during upgrades if it exists.
+# To reset to defaults, delete this file.
+
+# Minimum heap size (default: 2703m)
+# NEXUS_XMS=2703m
+
+# Maximum heap size (default: 2703m)
+# NEXUS_XMX=2703m
+
+# Additional Java options (uncomment and customize as needed)
+# NEXUS_JAVA_OPTS="-XX:+UseG1GC -XX:+UseStringDeduplication"

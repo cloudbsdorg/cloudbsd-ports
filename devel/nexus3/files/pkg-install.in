@@ -1,7 +1,31 @@
 #!/bin/sh
 
-# Start nexus3 service after package installation/upgrade
+# Restore default config if it was deleted
 if [ "$2" = "POST-INSTALL" ]; then
+    if [ ! -f %%PREFIX%%/etc/nexus/nexus.conf ]; then
+        echo "Restoring default nexus configuration..."
+        mkdir -p %%PREFIX%%/etc/nexus
+        sed 's|%%JAVA_HOME%%|%%JAVA_HOME%%|g' %%PREFIX%%/%%NEXUS_RC%%/bin/nexus.rc 2>/dev/null | head -1 >/dev/null || true
+        # Copy default config from installed template or create minimal one
+        cat > %%PREFIX%%/etc/nexus/nexus.conf << 'EOFCONF'
+# Nexus Repository Manager 3 - Java Runtime Configuration
+# This file is sourced by the nexus startup script
+# Values here override the defaults in nexus.vmoptions
+#
+# NOTE: This file is NOT overwritten during upgrades if it exists.
+
+# Minimum heap size (default: 2703m)
+# NEXUS_XMS=2703m
+
+# Maximum heap size (default: 2703m)
+# NEXUS_XMX=2703m
+
+# Additional Java options (uncomment and customize as needed)
+# NEXUS_JAVA_OPTS="-XX:+UseG1GC -XX:+UseStringDeduplication"
+EOFCONF
+        chown nexus:nexus %%PREFIX%%/etc/nexus/nexus.conf 2>/dev/null || true
+    fi
+
     # Check if service was enabled before deinstall
     if sysrc nexus3_enable 2>/dev/null | grep -q ": YES"; then
         echo "Restarting nexus3 service after upgrade..."

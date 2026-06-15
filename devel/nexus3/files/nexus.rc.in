@@ -1,0 +1,7 @@
+# Source system configuration
+if [ -f %%PREFIX%%/etc/nexus/nexus.conf ]; then
+    . %%PREFIX%%/etc/nexus/nexus.conf
+fi
+
+# Set Java home
+app_java_home=%%JAVA_HOME%%
