@@ -202,39 +202,53 @@ integration-test:
 # Multi-Architecture Validation (requires poudriere or synth)
 # =============================================================================
 #
-# To validate packages across architectures, use poudriere or synth:
+# Prerequisites:
+#   1. Install poudriere: pkg install poudriere
+#   2. Install synth: pkg install synth
+#   3. Configure poudriere: Edit /usr/local/etc/poudriere.conf
+#   4. Create jails: poudriere jail -c -j <name> -v <version> -a <arch>
 #
-# With poudriere:
-#   poudriere testport -j13amd64 -j14amd64 -jaarch64 -p main -o devel/nexus3
+# To create poudriere jails (run once):
+#   # Detect current FreeBSD version
+#   VERSION=$(freebsd-version -u | cut -d. -f1)
+#   # Create jails for supported versions
+#   poudriere jail -c -j ${VERSION}amd64 -v ${VERSION}-RELEASE -a amd64
+#   poudriere jail -c -j ${VERSION}aarch64 -v ${VERSION}-RELEASE -a aarch64
 #
-# With synth:
+# To validate packages across architectures:
+#
+# With poudriere (preferred for multi-arch):
+#   poudriere testport -j 14amd64 -j 15amd64 -j 15aarch64 -p main -o devel/nexus3
+#
+# With synth (single host arch only):
 #   synth build-repository
-#   synth build-ports devel/nexus3 --architectures "amd64 arm64"
+#   synth build-ports devel/nexus3
 #
 # Manual validation after build:
 #   pkg create -o /tmp/pkg -p /usr/ports/devel/nexus3/pkg-plist
 #   tar -tf /tmp/pkg/nexus3-*.txz | grep -E "^usr/local/(nexus3|etc|share/man)"
 #
-# Arch-specific checks (add to do-test when running on target arch):
-#   # Verify binary compatibility
-#   file ${PREFIX}/nexus3/bin/nexus
-#   # Check for architecture-specific files
-#   @test -f ${PREFIX}/nexus3/bin/nexus && echo "amd64/aarch64 binary: OK"
-#
-# Supported architectures per PORTNAME:
+# Supported architectures:
 #   amd64   - Primary, fully tested
 #   aarch64 - Fully tested
+#
+# Supported FreeBSD versions:
+#   14.x    - LTS, fully tested
+#   15.x    - Current, fully tested
 #
 # To run multi-arch validation:
 #.if defined(MULTI_ARCH_TEST)
 #do-test:
 #	@echo "=== Multi-Architecture Validation ==="
+#	@echo "FreeBSD version: $$(${SYSCTL} -n kern.osrelease)"
+#	@echo "Architecture: $$(${UNAME} -p)"
 #	@echo "Checking package contents for arch compatibility..."
 #	@echo "Expected paths for amd64/aarch64:"
 #	@echo "  - /usr/local/nexus3/bin/nexus"
 #	@echo "  - /usr/local/etc/nexus/nexus.conf"
 #	@echo "  - /usr/local/share/man/man1/nexus3.1.gz"
 #	@echo "  - /var/sonatype-work/nexus3/"
+#	@file ${PREFIX}/nexus3/bin/nexus
 #.endif
 
 .include <bsd.port.mk>
