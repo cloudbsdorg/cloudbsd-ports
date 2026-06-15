@@ -11,6 +11,7 @@ nexus3/OSS-LICENSE.txt
 nexus3/bin/nexus
 nexus3/bin/nexus.rc
 nexus3/bin/nexus.vmoptions
+nexus3/bin/nexus-desktop-launcher.sh
 nexus3/bin/sonatype-nexus-repository-3.93.0-06.jar
 nexus3/deploy/.placeholder
 nexus3/etc/default-application.properties
@@ -39,3 +40,10 @@ share/man/man1/nexus3.1.gz
 pkgdb/+DEINSTALL
 pkgdb/+INSTALL
 share/examples/nexus/nexus.conf.sample
+share/examples/nexus/backup.sh
+share/examples/nexus/metrics.properties.sample
+share/applications/nexus3.desktop
+share/icons/hicolor/48x48/apps/nexus3.png
+share/icons/hicolor/64x64/apps/nexus3.png
+share/icons/hicolor/128x128/apps/nexus3.png
+share/icons/hicolor/256x256/apps/nexus3.png

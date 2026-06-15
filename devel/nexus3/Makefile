@@ -146,6 +146,16 @@ do-install:
 	@${MKDIR} ${STAGEDIR}${PREFIX}/share/applications
 	@${SED} -e 's|${PREFIX}|${PREFIX}|g' ${FILESDIR}/nexus3.desktop > ${STAGEDIR}${PREFIX}/share/applications/nexus3.desktop
 
+	# Install desktop icons (hicolor icon set)
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/icons/hicolor/48x48/apps
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/icons/hicolor/64x64/apps
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/icons/hicolor/128x128/apps
+	@${MKDIR} ${STAGEDIR}${PREFIX}/share/icons/hicolor/256x256/apps
+	@${CP} ${FILESDIR}/icons/hicolor/48x48/apps/nexus3.png ${STAGEDIR}${PREFIX}/share/icons/hicolor/48x48/apps/
+	@${CP} ${FILESDIR}/icons/hicolor/64x64/apps/nexus3.png ${STAGEDIR}${PREFIX}/share/icons/hicolor/64x64/apps/
+	@${CP} ${FILESDIR}/icons/hicolor/128x128/apps/nexus3.png ${STAGEDIR}${PREFIX}/share/icons/hicolor/128x128/apps/
+	@${CP} ${FILESDIR}/icons/hicolor/256x256/apps/nexus3.png ${STAGEDIR}${PREFIX}/share/icons/hicolor/256x256/apps/
+
 	# Install Prometheus metrics configuration (METRICS option)
 	@${MKDIR} ${STAGEDIR}${PREFIX}/share/examples/nexus
 	@${CP} ${FILESDIR}/metrics.properties ${STAGEDIR}${PREFIX}/share/examples/nexus/metrics.properties.sample
