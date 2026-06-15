@@ -67,6 +67,8 @@ post-patch:
 		${WRKSRC}/compat/linux/input-event-codes.h
 # Insert FreeBSD compat code into meson.build after the cpp compiler line
 	/bin/sh ${FILESDIR}/insert-compat.sh ${WRKSRC}/meson.build
+# Disable tests in wf-config subproject (doctest not available on FreeBSD)
+	/bin/sh ${FILESDIR}/disable-wfconfig-tests.sh ${WRKSRC}/meson.build
 
 post-install:
 	${MKDIR} ${STAGEDIR}${EXAMPLESDIR}
