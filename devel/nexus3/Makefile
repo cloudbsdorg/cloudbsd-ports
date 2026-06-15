@@ -220,9 +220,9 @@ integration-test:
 # Architecture-aware: uses current host arch for jail names.
 #
 # Ports tree options (set with MULTI_RELEASE_TEST):
-#   POUDRIERE_PORTS=local      - Use /usr/ports if it exists
-#   POUDRIERE_PORTS=freebsd    - Use https://github.com/freebsd/freebsd-ports.git
-#   POUDRIERE_PORTS=<url>      - Use custom git URL
+#   POUDRIERE_PORTS=local           - Use /usr/ports if it exists
+#   POUDRIERE_PORTS=local=/path     - Use custom directory for bind mount
+#   POUDRIERE_PORTS=<git-url>       - Use custom git URL
 #
 # Prerequisites:
 #   1. Install poudriere: pkg install poudriere
@@ -267,6 +267,16 @@ do-test:
 					echo "WARNING: /usr/ports not found, using FreeBSD ports"; \
 					PORTS_URL="https://github.com/freebsd/freebsd-ports.git"; \
 					PORTS_METHOD="git"; \
+				fi ;; \
+			local=*) \
+				PORTS_PATH="$${POUDRIERE_PORTS#local=}"; \
+				if [ -d "$$PORTS_PATH" ]; then \
+					echo "Using local ports tree: $$PORTS_PATH (bind mount)"; \
+					PORTS_METHOD="nullfs"; \
+				else \
+					echo "ERROR: Ports directory not found: $$PORTS_PATH"; \
+					echo "RESULT: SKIPPED"; \
+					exit 0; \
 				fi ;; \
 			https://*|git://*) PORTS_URL="$$POUDRIERE_PORTS" ;; \
 			*) echo "Unknown POUDRIERE_PORTS: $$POUDRIERE_PORTS, using default"; ;; \
@@ -367,6 +377,8 @@ help:
 	@echo "                      - Test on multiple FreeBSD releases"
 	@echo "  make MULTI_RELEASE_TEST=1 POUDRIERE_PORTS=local do-test"
 	@echo "                      - Same as above, but use local /usr/ports"
+	@echo "  make MULTI_RELEASE_TEST=1 POUDRIERE_PORTS=local=/path do-test"
+	@echo "                      - Use custom ports directory with bind mount"
 	@echo ""
 	@echo "  make help            - Show this help"
 	@echo ""
