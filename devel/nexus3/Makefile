@@ -237,18 +237,18 @@ integration-test:
 #   15.x    - Current, fully tested
 #
 # To run multi-arch validation:
-#.if defined(MULTI_ARCH_TEST)
-#do-test:
-#	@echo "=== Multi-Architecture Validation ==="
-#	@echo "FreeBSD version: $$(${SYSCTL} -n kern.osrelease)"
-#	@echo "Architecture: $$(${UNAME} -p)"
-#	@echo "Checking package contents for arch compatibility..."
-#	@echo "Expected paths for amd64/aarch64:"
-#	@echo "  - /usr/local/nexus3/bin/nexus"
-#	@echo "  - /usr/local/etc/nexus/nexus.conf"
-#	@echo "  - /usr/local/share/man/man1/nexus3.1.gz"
-#	@echo "  - /var/sonatype-work/nexus3/"
-#	@file ${PREFIX}/nexus3/bin/nexus
-#.endif
+.if defined(MULTI_ARCH_TEST)
+do-test:
+	@echo "=== Multi-Architecture Validation ==="
+	@echo "FreeBSD version: $$(${SYSCTL} -n kern.osrelease)"
+	@echo "Architecture: $$(${UNAME} -p)"
+	@echo "Checking package contents for arch compatibility..."
+	@echo "Expected paths for amd64/aarch64:"
+	@echo "  - /usr/local/nexus3/bin/nexus"
+	@echo "  - /usr/local/etc/nexus/nexus.conf"
+	@echo "  - /usr/local/share/man/man1/nexus3.1.gz"
+	@echo "  - /var/sonatype-work/nexus3/"
+	@file ${PREFIX}/nexus3/bin/nexus
+.endif
 
 .include <bsd.port.mk>
