@@ -240,6 +240,8 @@ do-test:
 	if [ "$$JAIL_ARCH" = "arm" ]; then JAIL_ARCH=armv7; fi; \
 	VER1=$$((HOST_VERSION - 1)); \
 	VER2=$$((HOST_VERSION - 2)); \
+	[ $$VER2 -lt 14 ] && VER2=0; \
+	[ $$VER1 -lt 14 ] && VER1=0; \
 	echo "=== Multi-Release Validation ==="; \
 	echo "Host: FreeBSD $$HOST_VERSION on $$HOST_ARCH"; \
 	echo "Testing: $$HOST_VERSION, $$VER1, $$VER2"; \
