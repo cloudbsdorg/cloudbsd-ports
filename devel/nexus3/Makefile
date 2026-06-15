@@ -2,7 +2,7 @@ PORTNAME=	nexus3
 PORTVERSION=	3.93.0.06
 CATEGORIES=	devel www java
 MASTER_SITES=	https://cdn.download.sonatype.com/repository/downloads-prod-group/3/
-DISTNAME=	nexus-${NX_VER}-linux-x86_64
+DISTNAME=	nexus-${NX_VER}-linux-${_NX_ARCH}
 
 MAINTAINER=	mark@cloudbsd.org
 COMMENT=	Sonatype Nexus Repository Manager 3
