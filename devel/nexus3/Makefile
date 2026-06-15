@@ -14,7 +14,7 @@ LICENSE_FILE=	${WRKSRC}/OSS-LICENSE.txt
 RUN_DEPENDS=	${LOCALBASE}/openjdk21/bin/java:java/openjdk21
 BUILD_DEPENDS=	${LOCALBASE}/openjdk21/bin/java:java/openjdk21
 
-USES=		cpe
+USES=		cpe desktop-file-utils
 CPE_VENDOR=	sonatype
 CPE_PRODUCT=	nexus_repository
 
