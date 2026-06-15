@@ -106,6 +106,10 @@ do-install:
 	# Install man page
 	@${MKDIR} ${STAGEDIR}${PREFIX}/share/man/man1
 	@${SED} -e 's|%%VERSION%%|${PORTVERSION}|g' \
+		-e 's|%%HOME%%|${NEXUS_HOME}|g' \
+		-e 's|%%VARDIR%%|${VARDIR}|g' \
+		-e 's|%%LOGDIR%%|${NEXUS_LOGDIR}|g' \
+		-e 's|%%PREFIX%%|${PREFIX}|g' \
 		${FILESDIR}/nexus3.1 > ${STAGEDIR}${PREFIX}/share/man/man1/nexus3.1
 
 	# Install pkg deinstall and install scripts
