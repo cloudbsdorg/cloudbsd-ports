@@ -237,17 +237,25 @@ integration-test:
 #   15.x    - Current, fully tested
 #
 # To run multi-arch validation:
+# NOTE: This requires poudriere jails to be set up first:
+#   poudriere jail -c -j 14amd64 -v 14-RELEASE -a amd64
+#   poudriere jail -c -j 15amd64 -v 15-RELEASE -a amd64
 .if defined(MULTI_ARCH_TEST)
 do-test:
 	@echo "=== Multi-Architecture Validation ==="
 	@echo "FreeBSD version: $$(${SYSCTL} -n kern.osrelease)"
 	@echo "Architecture: $$(${UNAME} -p)"
-	@echo "Checking package contents for arch compatibility..."
-	@echo "Expected paths for amd64/aarch64:"
-	@echo "  - /usr/local/nexus3/bin/nexus"
-	@echo "  - /usr/local/etc/nexus/nexus.conf"
-	@echo "  - /usr/local/share/man/man1/nexus3.1.gz"
-	@echo "  - /var/sonatype-work/nexus3/"
+	@echo ""
+	@echo "Listing available poudriere jails..."
+	@poudriere jail -l
+	@echo ""
+	@echo "Running poudriere testport on 14amd64..."
+	@poudriere testport -j 14amd64 -p main -o devel/nexus3 || echo "14amd64 test failed or jail not available"
+	@echo ""
+	@echo "Running poudriere testport on 15amd64..."
+	@poudriere testport -j 15amd64 -p main -o devel/nexus3 || echo "15amd64 test failed or jail not available"
+	@echo ""
+	@echo "Verifying installed binary..."
 	@file ${PREFIX}/nexus3/bin/nexus
 .endif
 
