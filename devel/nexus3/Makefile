@@ -221,7 +221,6 @@ integration-test:
 #
 # Ports tree options (set with MULTI_RELEASE_TEST):
 #   POUDRIERE_PORTS=local      - Use /usr/ports if it exists
-#   POUDRIERE_PORTS=cloudbsd   - Use https://github.com/cloudbsdorg/freebsd-ports.git (default)
 #   POUDRIERE_PORTS=freebsd    - Use https://github.com/freebsd/freebsd-ports.git
 #   POUDRIERE_PORTS=<url>      - Use custom git URL
 #
@@ -256,7 +255,7 @@ do-test:
 	\
 	# Determine ports tree \
 	PORTS_TREE=default; \
-	PORTS_URL="https://github.com/cloudbsdorg/freebsd-ports.git"; \
+	PORTS_URL="https://github.com/freebsd/freebsd-ports.git"; \
 	if [ -n "$${POUDRIERE_PORTS:-}" ]; then \
 		case "$$POUDRIERE_PORTS" in \
 			local) \
@@ -265,11 +264,10 @@ do-test:
 					PORTS_METHOD="nullfs"; \
 					PORTS_PATH="/usr/ports"; \
 				else \
-					echo "WARNING: /usr/ports not found, using cloudbsd repo"; \
-					PORTS_URL="https://github.com/cloudbsdorg/freebsd-ports.git"; \
+					echo "WARNING: /usr/ports not found, using FreeBSD ports"; \
+					PORTS_URL="https://github.com/freebsd/freebsd-ports.git"; \
 					PORTS_METHOD="git"; \
 				fi ;; \
-			freebsd) PORTS_URL="https://github.com/freebsd/freebsd-ports.git" ;; \
 			https://*|git://*) PORTS_URL="$$POUDRIERE_PORTS" ;; \
 			*) echo "Unknown POUDRIERE_PORTS: $$POUDRIERE_PORTS, using default"; ;; \
 		esac; \
