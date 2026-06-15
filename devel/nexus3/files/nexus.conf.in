@@ -5,10 +5,10 @@
 # NOTE: This file is NOT overwritten during upgrades if it exists.
 # To reset to defaults, delete this file.
 
-# Minimum heap size (default: 2703m)
+# Minimum heap size (default: 2703m - minimum safe for Nexus 3)
 # NEXUS_XMS=2703m
 
-# Maximum heap size (default: 2703m)
+# Maximum heap size (default: 2703m - minimum safe for Nexus 3)
 # NEXUS_XMX=2703m
 
 # Additional Java options (uncomment and customize as needed)

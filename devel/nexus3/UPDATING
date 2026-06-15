@@ -1,0 +1,68 @@
+This file documents the upgrade steps for devel/nexus3 between major
+versions. For minor version upgrades (e.g., 3.93.0.05 to 3.93.0.06),
+the upgrade is typically seamless.
+
+When upgrading to a new major version (e.g., 3.94.0.XX):
+
+20250615:
+	Upgraded from 3.92 to 3.93:
+	- Ensure nexus3 service is stopped before upgrade:
+	  # service nexus3 stop
+	- The data directory at /var/sonatype-work/nexus3 is preserved
+	- JVM heap size defaults changed:
+	  - SMALL: 2703m Xms/Xmx (minimum safe baseline)
+	  - MEDIUM: 2703m Xms, 4g Xmx (10-50 users)
+	  - LARGE: 4g Xms, 8g Xmx (50+ users)
+	- If using custom nexus.conf, verify JAVA_HOME path is correct
+
+20250301:
+	Upgraded from 3.91 to 3.92:
+	- No special migration steps required
+	- Backup recommended before any upgrade
+
+20241201:
+	Upgraded from 3.88 to 3.91:
+	- Data directory structure unchanged
+	- Configuration files in /usr/local/etc/nexus/ preserved
+
+General upgrade procedure:
+
+1. Backup your data:
+   # tar -czf /var/backups/nexus3_pre_upgrade.tar.gz -C /var/sonatype-work nexus3
+
+2. Stop the service:
+   # service nexus3 stop
+
+3. If using periodic backups, disable temporarily:
+   # rm /usr/local/etc/periodic/daily/nexus-backup.sh
+
+4. Upgrade the port:
+   # portupgrade devel/nexus3
+   or
+   # pkg upgrade nexus3
+
+5. Re-enable backups (if applicable):
+   # cp /usr/local/share/examples/nexus/backup.sh /usr/local/etc/periodic/daily/
+
+6. Start the service:
+   # service nexus3 start
+
+7. Verify:
+   # service nexus3 status
+   # curl -s http://localhost:8081/ | head
+
+Rollback procedure:
+
+1. Stop service:
+   # service nexus3 stop
+
+2. Restore data:
+   # rm -rf /var/sonatype-work/nexus3
+   # tar -xzf /var/backups/nexus3_pre_upgrade.tar.gz -C /var/sonatype-work
+
+3. Reinstall old version:
+   # pkg remove nexus3
+   # pkg add nexus3-OLDVERSION.txz
+
+4. Start service:
+   # service nexus3 start

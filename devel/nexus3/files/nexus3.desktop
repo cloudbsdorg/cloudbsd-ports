@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Nexus Repository Manager 3
+Comment=Open Source Artifact Repository Manager
+Icon=${PREFIX}/share/icons/hicolor/48x48/apps/nexus3.png
+Exec=${PREFIX}/nexus3/bin/nexus-launcher.sh
+Terminal=false
+Categories=Development;Java;
+StartupNotify=true
+MimeType=x-scheme-handler/http;x-scheme-handler/https;
+Keywords=nexus;repository;artifact;maven;npm;docker;

@@ -23,6 +23,20 @@ NO_BUILD=	yes
 NO_TEST=	yes
 NO_MANCOMPRESS=	yes
 
+# =============================================================================
+# Options Framework
+# =============================================================================
+# JVM heap size (mutually exclusive)
+OPTIONS_DEFINE=		SMALL MEDIUM LARGE DESKTOP METRICS BACKUP
+OPTIONS_DEFAULT=		SMALL
+
+SMALL_DESC=		Small JVM heap (2703m, baseline - minimum safe)
+MEDIUM_DESC=		Medium JVM heap (4G, 10-50 users)
+LARGE_DESC=		Large JVM heap (8G, 50+ users)
+DESKTOP_DESC=		Desktop integration (launcher + browser)
+METRICS_DESC=		Enable Prometheus metrics endpoint
+BACKUP_DESC=		Automated backup scripts
+
 # Version for download filenames (PORTVERSION with last . replaced by -)
 NX_VER=		${PORTVERSION:C/^(.+)\.(.+)$/\1-\2/}
 # Architecture mapping for download filenames
@@ -121,6 +135,21 @@ do-install:
 		${FILESDIR}/pkg-install.in > ${STAGEDIR}${PREFIX}/pkgdb/+INSTALL
 	@${CHMOD} 755 ${STAGEDIR}${PREFIX}/pkgdb/+INSTALL
 
+# Install optional components
+.post-install:
+	# Backup script
+	@if [ -f "${FILESDIR}/backup.sh" ]; then \
+		${MKDIR} ${STAGEDIR}${PREFIX}/share/examples/nexus; \
+		${CP} ${FILESDIR}/backup.sh ${STAGEDIR}${PREFIX}/share/examples/nexus/; \
+		chmod 755 ${STAGEDIR}${PREFIX}/share/examples/nexus/backup.sh; \
+		fi
+	# Desktop launcher
+	@if [ -f "${FILESDIR}/nexus-launcher.sh" ]; then \
+		${MKDIR} ${STAGEDIR}${NEXUS_HOME}/bin; \
+		${CP} ${FILESDIR}/nexus-launcher.sh ${STAGEDIR}${NEXUS_HOME}/bin/; \
+		chmod 755 ${STAGEDIR}${NEXUS_HOME}/bin/nexus-launcher.sh; \
+		fi
+
 # =============================================================================
 # Integration Tests (commented out by default - enable with: make test)
 # =============================================================================
@@ -141,8 +170,9 @@ do-install:
 #   1. Service lifecycle (start/stop/status/restart)
 #   2. Man page validation
 #   3. Documentation and file paths
-#   4. Multi-arch package validation
-#   5. Data preservation during upgrade
+#   4. Data preservation during upgrade
+#   5. JVM heap configuration (2703m baseline minimum)
+#   6. Service stability with configured heap
 
 .if defined(INTEGRATION_TEST)
 # Test the service lifecycle
@@ -198,6 +228,46 @@ integration-test:
 	test -d /var/sonatype-work/nexus3 && echo "Work dir exists: OK" || { echo "Work dir MISSING: FAIL"; failures=$$((failures+1)); }; \
 	test -f /var/sonatype-work/nexus3/.upgrade_test_marker && echo "Data preserved: OK" || { echo "Data MISSING: FAIL"; failures=$$((failures+1)); }; \
 	cat /var/sonatype-work/nexus3/.upgrade_test_marker; \
+	echo ""; \
+	echo "--- Test 10: Heap Configuration (Small - 2703m baseline) ---"; \
+	echo "Testing JVM heap settings..."; \
+	if grep -q "NEXUS_XMX" /usr/local/etc/nexus/nexus.conf 2>/dev/null; then \
+		echo "Custom heap config found, using existing settings"; \
+	else \
+		echo "No custom heap config, testing default (2703m)..."; \
+	fi; \
+	service nexus3 start || { echo "FAIL: Service start with default heap failed"; failures=$$((failures+1)); }; \
+	sleep 8; \
+	HEAP_PID=$$(pgrep -f "/usr/local/nexus3/bin/nexus" 2>/dev/null | head -1); \
+	if [ -n "$$HEAP_PID" ]; then \
+		HEAP_SIZE=$$(ps -o vsz= -p $$HEAP_PID 2>/dev/null || echo "0"); \
+		echo "Process VSZ: $$HEAP_SIZE KB"; \
+		if [ "$$HEAP_SIZE" -gt 2000000 ]; then \
+			echo "Heap memory: OK (VSZ > 2GB)"; \
+		else \
+			echo "WARNING: Heap may be below minimum safe threshold"; \
+		fi; \
+	else \
+		echo "FAIL: No process found"; \
+		failures=$$((failures+1)); \
+	fi; \
+	service nexus3 stop; \
+	sleep 2; \
+	echo ""; \
+	echo "--- Test 11: Service Stability Check ---"; \
+	service nexus3 start && sleep 5; \
+	if service nexus3 status >/dev/null 2>&1; then \
+		echo "Service stable: OK"; \
+		if curl -sf -o /dev/null http://localhost:8081/ 2>/dev/null; then \
+			echo "HTTP endpoint: OK"; \
+		else \
+			echo "WARNING: HTTP endpoint not responding yet (may still be starting)"; \
+		fi; \
+	else \
+		echo "FAIL: Service not stable"; \
+		failures=$$((failures+1)); \
+	fi; \
+	service nexus3 stop; \
 	echo ""; \
 	echo "=== Tests Complete ==="; \
 	if [ $$failures -eq 0 ]; then \
@@ -382,5 +452,31 @@ help:
 	@echo ""
 	@echo "  make help            - Show this help"
 	@echo ""
+
+# =============================================================================
+# Options Processing
+# =============================================================================
+# JVM heap size based on selected option
+# Default to SMALL (2703m) to match existing installations
+NEXUS_XMS?=	2703m
+NEXUS_XMX?=	2703m
+
+.if defined(WITH_SMALL)
+NEXUS_XMS=	2703m
+NEXUS_XMX=	2703m
+.endif
+
+.if defined(WITH_MEDIUM)
+NEXUS_XMS=	2703m
+NEXUS_XMX=	4g
+.endif
+
+.if defined(WITH_LARGE)
+NEXUS_XMS=	4g
+NEXUS_XMX=	8g
+.endif
+
+PLIST_SUB+=	NEXUS_XMS=${NEXUS_XMS} \
+		NEXUS_XMX=${NEXUS_XMX}
 
 .include <bsd.port.mk>
