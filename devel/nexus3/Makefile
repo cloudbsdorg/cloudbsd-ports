@@ -348,4 +348,27 @@ do-test:
 	[ $$failures -eq 0 ] && echo "RESULT: PASSED" || echo "RESULT: FAILED"
 .endif
 
+# =============================================================================
+# Help
+# =============================================================================
+help:
+	@echo "Nexus3 Port - Available targets:"
+	@echo ""
+	@echo "  make package          - Build binary package"
+	@echo "  make install         - Install from built package"
+	@echo "  make deinstall       - Remove installed package"
+	@echo "  make clean           - Clean build artifacts"
+	@echo "  make reinstall       - Reinstall (deinstall + install)"
+	@echo ""
+	@echo "  make INTEGRATION_TEST=1 integration-test"
+	@echo "                      - Run integration tests (service, man page, data)"
+	@echo ""
+	@echo "  make MULTI_RELEASE_TEST=1 do-test"
+	@echo "                      - Test on multiple FreeBSD releases"
+	@echo "  make MULTI_RELEASE_TEST=1 POUDRIERE_PORTS=local do-test"
+	@echo "                      - Same as above, but use local /usr/ports"
+	@echo ""
+	@echo "  make help            - Show this help"
+	@echo ""
+
 .include <bsd.port.mk>
