@@ -199,30 +199,29 @@ integration-test:
 .endif
 
 # =============================================================================
-# Multi-Architecture Validation (requires poudriere or synth)
+# Multi-Release Validation (requires poudriere)
 # =============================================================================
+#
+# This tests the port on multiple FreeBSD releases (14.x, 15.x) on amd64.
+# True multi-arch testing (amd64/aarch64) requires cross-compilation or
+# separate ARM build hosts.
 #
 # Prerequisites:
 #   1. Install poudriere: pkg install poudriere
-#   2. Install synth: pkg install synth
-#   3. Configure poudriere: Edit /usr/local/etc/poudriere.conf
-#   4. Create jails: poudriere jail -c -j <name> -v <version> -a <arch>
+#   2. Configure poudriere: Edit /usr/local/etc/poudriere.conf
+#   3. Create jails: poudriere jail -c -j <name> -v <version> -a <arch>
 #
 # To create poudriere jails (run once):
-#   # Detect current FreeBSD version
-#   VERSION=$(freebsd-version -u | cut -d. -f1)
-#   # Create jails for supported versions
-#   poudriere jail -c -j ${VERSION}amd64 -v ${VERSION}-RELEASE -a amd64
-#   poudriere jail -c -j ${VERSION}aarch64 -v ${VERSION}-RELEASE -a aarch64
+#   # Detect current FreeBSD major version
+#   VERSION=$$(freebsd-version -u | cut -d. -f1)
+#   # Create jails for supported releases
+#   poudriere jail -c -j $${VERSION}amd64 -v $${VERSION}-RELEASE -a amd64
 #
-# To validate packages across architectures:
+# To validate packages across releases:
 #
-# With poudriere (preferred for multi-arch):
-#   poudriere testport -j 14amd64 -j 15amd64 -j 15aarch64 -p main -o devel/nexus3
-#
-# With synth (single host arch only):
-#   synth build-repository
-#   synth build-ports devel/nexus3
+# With poudriere (multi-release testing):
+#   poudriere testport -j 14amd64 -p main -o devel/nexus3
+#   poudriere testport -j 15amd64 -p main -o devel/nexus3
 #
 # Manual validation after build:
 #   pkg create -o /tmp/pkg -p /usr/ports/devel/nexus3/pkg-plist
@@ -230,21 +229,20 @@ integration-test:
 #
 # Supported architectures:
 #   amd64   - Primary, fully tested
-#   aarch64 - Fully tested
+#   aarch64 - Requires separate ARM build host (cross-compile not supported)
 #
-# Supported FreeBSD versions:
+# Supported FreeBSD releases:
 #   14.x    - LTS, fully tested
 #   15.x    - Current, fully tested
 #
-# To run multi-arch validation:
+# To run multi-release validation:
 # NOTE: This requires poudriere jails to be set up first:
 #   poudriere jail -c -j 14amd64 -v 14-RELEASE -a amd64
 #   poudriere jail -c -j 15amd64 -v 15-RELEASE -a amd64
-.if defined(MULTI_ARCH_TEST)
+.if defined(MULTI_RELEASE_TEST)
 do-test:
-	@echo "=== Multi-Architecture Validation ==="
-	@echo "FreeBSD version: $$(${SYSCTL} -n kern.osrelease)"
-	@echo "Architecture: $$(${UNAME} -p)"
+	@echo "=== Multi-Release Validation ==="
+	@echo "Testing port across FreeBSD releases..."
 	@echo ""
 	@echo "Listing available poudriere jails..."
 	@poudriere jail -l
