@@ -17,7 +17,7 @@ Default URL: http://localhost:8081/
 
 Locations:
   Binary:    %%HOME%%/bin/nexus
-  Config:    %%HOME%%/etc
+  Config:    %%PREFIX%%/etc/nexus
   Data:      %%WORKDIR%%
   Logs:      %%LOGDIR%%
   PID:       %%RUNDIR%%/nexus3.pid
