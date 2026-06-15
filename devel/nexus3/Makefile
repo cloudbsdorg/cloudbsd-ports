@@ -1,8 +1,8 @@
 PORTNAME=	nexus3
-PORTVERSION=	3.77.2.02
+PORTVERSION=	3.93.0.06
 CATEGORIES=	devel www java
-MASTER_SITES=	https://download.sonatype.com/nexus/3/
-DISTNAME=	nexus-3.77.2-02-unix
+MASTER_SITES=	https://cdn.download.sonatype.com/repository/downloads-prod-group/3/
+DISTNAME=	nexus-${NX_VER}-linux-x86_64
 
 MAINTAINER=	mark@cloudbsd.org
 COMMENT=	Sonatype Nexus Repository Manager 3
@@ -11,8 +11,8 @@ WWW=		https://www.sonatype.com/products/repository-oss
 LICENSE=	EPL
 LICENSE_FILE=	${WRKSRC}/OSS-LICENSE.txt
 
-RUN_DEPENDS=	${LOCALBASE}/openjdk17/bin/java:java/openjdk17
-BUILD_DEPENDS=	${LOCALBASE}/openjdk17/bin/java:java/openjdk17
+RUN_DEPENDS=	${LOCALBASE}/openjdk21/bin/java:java/openjdk21
+BUILD_DEPENDS=	${LOCALBASE}/openjdk21/bin/java:java/openjdk21
 
 USES=		cpe
 CPE_VENDOR=	sonatype
@@ -21,6 +21,11 @@ CPE_PRODUCT=	nexus_repository
 NO_ARCH=	yes
 NO_BUILD=	yes
 NO_TEST=	yes
+
+# Version for download filenames (PORTVERSION with last . replaced by -)
+NX_VER=		${PORTVERSION:C/^(.+)\.(.+)$/\1-\2/}
+# Architecture mapping for download filenames
+_NX_ARCH=	${ARCH:S/amd64/x86_64/:S/aarch64/aarch_64/}
 
 USE_RC_SUBR=	nexus3
 
@@ -36,9 +41,9 @@ NEXUS_RUNDIR=	${VARRUN}
 NEXUS_LOGDIR=	${VARDIR}/log/${PORTNAME}
 NEXUS_WORKDIR=	${VARDIR}/sonatype-work/${PORTNAME}
 
-JAVA_HOME=	${LOCALBASE}/openjdk17
+JAVA_HOME=	${LOCALBASE}/openjdk21
 
-WRKSRC=		${WRKDIR}/nexus-3.77.2-02
+WRKSRC=		${WRKDIR}/nexus-${NX_VER}
 
 SUB_FILES=	pkg-message pkg-deinstall pkg-install
 SUB_LIST=	NEXUS_RC=${PORTNAME} \
@@ -65,7 +70,10 @@ PLIST_SUB=	USER=${NEXUS_USER} \
 
 do-install:
 	@${MKDIR} ${STAGEDIR}${NEXUS_HOME}
+	@# Copy everything
 	@(cd ${WRKSRC} && ${COPYTREE_SHARE} . ${STAGEDIR}${NEXUS_HOME})
+	@# Remove bundled JDK - use system JDK instead
+	@${RM} -rf ${STAGEDIR}${NEXUS_HOME}/jdk
 	@${CHMOD} +x ${STAGEDIR}${NEXUS_HOME}/bin/nexus
 	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}
 	@${MKDIR} ${STAGEDIR}${NEXUS_WORKDIR}/log
