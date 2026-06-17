@@ -1,12 +1,11 @@
 PORTNAME=	wf-config
 DISTVERSIONPREFIX=	v
-DISTVERSION=0.11.0
-WRKSRC=		${WRKDIR}/wf-config-0.11.0
+DISTVERSION=	0.10.0
 CATEGORIES=	devel
 
-MAINTAINER=	mark@revytechinc.com
+MAINTAINER=	ports@FreeBSD.org
 COMMENT=	Library for managing configuration files, written for wayfire
-WWW=		https://github.com/revytechinc/wf-config
+WWW=		https://wayfire.org/
 
 LICENSE=	MIT
 LICENSE_FILE=	${WRKSRC}/LICENSE
@@ -20,12 +19,11 @@ TEST_DEPENDS=	doctest>0:devel/doctest
 
 USES=		cmake:indirect compiler:c++17-lang gnome meson pkgconfig
 USE_GITHUB=	yes
-GH_ACCOUNT=	revytechinc
 USE_GNOME=	libxml2
 USE_LDCONFIG=	yes
-
+GH_ACCOUNT=	WayfireWM
 MESON_ARGS=	-Dtests=disabled
-PLIST_SUB=	VERSION=${DISTVERSION}
+PLIST_SUB=	VERSION=${PORTVERSION}
 
 pre-test:
 	@if [ ! -e ${WRKDIR}/.meson_build_tests ]; then \

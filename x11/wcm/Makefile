@@ -1,6 +1,6 @@
 PORTNAME=	wcm
 DISTVERSIONPREFIX=	v
-DISTVERSION=	0.11.0
+DISTVERSION=	0.10.0
 CATEGORIES=	x11 wayland
 
 MAINTAINER=	ports@FreeBSD.org
@@ -14,7 +14,6 @@ BUILD_DEPENDS=	evdev-proto>0:devel/evdev-proto \
 		wayland-protocols>0:graphics/wayland-protocols \
 		wayfire>0:x11-wm/wayfire
 LIB_DEPENDS=	libevdev.so:devel/libevdev \
-		libfmt.so:devel/libfmt \
 		libwf-config.so:devel/wf-config \
 		libwayland-client.so:graphics/wayland
 RUN_DEPENDS=	wayfire>0:x11-wm/wayfire
@@ -24,7 +23,7 @@ CONFLICTS_INSTALL=	wcmcommander # bin/wcm
 USES=		compiler:c++17-lang gnome meson pkgconfig
 USE_GITHUB=	yes
 USE_GNOME=	gdkpixbuf gtk30 libxml2
-GH_ACCOUNT=	revytechinc
+GH_ACCOUNT=	WayfireWM
 
 OPTIONS_DEFINE=	WDISPLAYS WFSHELL
 OPTIONS_DEFAULT=WDISPLAYS WFSHELL

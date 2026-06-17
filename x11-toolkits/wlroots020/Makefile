@@ -3,9 +3,9 @@ DISTVERSION=	0.20.1
 CATEGORIES=	x11-toolkits
 PKGNAMESUFFIX=	020
 
-MAINTAINER=	mark@revytechinc.com
+MAINTAINER=	jbeich@FreeBSD.org
 COMMENT=	Modular Wayland compositor library (current 0.20.* series)
-WWW=		https://github.com/revytechinc/wlroots
+WWW=		https://gitlab.freedesktop.org/wlroots/wlroots
 
 LICENSE=	MIT
 LICENSE_FILE=	${WRKSRC}/LICENSE
@@ -18,29 +18,11 @@ LIB_DEPENDS=	libdrm.so:graphics/libdrm \
 RUN_DEPENDS=	wayland-protocols>0:graphics/wayland-protocols
 
 USES=		compiler:c11 gl meson pkgconfig xorg
-USE_GITHUB=	nodefault
-GH_ACCOUNT=	revytechinc
-GH_PROJECT=	wlroots
-GH_TAGNAME=	0.20.1-revytech.1
-
-# Fetch distfile using git clone over SSH (private repo), then package
-DISTFILES=	${PORTNAME}-${DISTVERSION}.tar.gz
-MASTER_SITES=	EMPTY_SITE
-
-do-fetch:
-	@${RM} -rf ${WRKDIR}/.dist-fetch && \
-	${MKDIR} ${WRKDIR}/.dist-fetch && \
-	git clone --depth 1 --branch ${GH_TAGNAME} \
-		git@github.com:${GH_ACCOUNT}/${GH_PROJECT}.git \
-		${WRKDIR}/.dist-fetch/wlroots && \
-	git -C ${WRKDIR}/.dist-fetch/wlroots archive \
-		--prefix=${PORTNAME}-${DISTVERSION}/ HEAD | \
-		gzip -cn > ${DISTDIR}/${DISTFILES} && \
-	${RM} -rf ${WRKDIR}/.dist-fetch
-
+USE_GITLAB=	yes
 USE_GL=		gbm
 USE_XORG=	pixman
 USE_LDCONFIG=	yes
+GL_SITE=	https://gitlab.freedesktop.org
 MESON_FALSE=	examples
 MESON_ARGS=	-Dallocators=gbm \
 		-Dbackends=${BACKENDS:ts,} -Drenderers=${RENDERERS:ts,}
