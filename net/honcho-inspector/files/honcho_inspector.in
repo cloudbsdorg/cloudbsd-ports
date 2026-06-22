@@ -1,0 +1,78 @@
+#!/bin/sh
+#
+# PROVIDE: honcho_inspector
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+#
+# Configuration variables (override in /etc/rc.conf or rc.conf.local):
+#   honcho_inspector_enable="YES"
+#   honcho_inspector_user="www"
+#   honcho_inspector_java="%%LOCALBASE%%/openjdk25/bin/java"
+#   honcho_inspector_jar="%%JAVASHAREDIR%%/%%PORTNAME%%/%%PORTNAME%%.jar"
+#   honcho_inspector_config_dir="%%ETCDIR%%"
+#   honcho_inspector_env_file="%%ETCDIR%%/honcho-inspector.env"
+#   honcho_inspector_log_dir="/var/log/honcho_inspector"
+#   honcho_inspector_data_dir="/var/db/honcho_inspector"
+#   honcho_inspector_pidfile="/var/run/honcho_inspector.pid"
+#   honcho_inspector_java_opts="-Xms64m -Xmx256m"
+
+. /etc/rc.subr
+
+name="honcho_inspector"
+rcvar="${name}_enable"
+
+load_rc_config "${name}"
+
+: "${honcho_inspector_enable:=NO}"
+: "${honcho_inspector_user:=www}"
+: "${honcho_inspector_java:=%%LOCALBASE%%/openjdk25/bin/java}"
+: "${honcho_inspector_jar:=%%JAVASHAREDIR%%/%%PORTNAME%%/%%PORTNAME%%.jar}"
+: "${honcho_inspector_config_dir:=%%ETCDIR%%}"
+: "${honcho_inspector_env_file:=%%ETCDIR%%/honcho-inspector.env}"
+: "${honcho_inspector_log_dir:=/var/log/honcho_inspector}"
+: "${honcho_inspector_data_dir:=/var/db/honcho_inspector}"
+: "${honcho_inspector_pidfile:=/var/run/${name}.pid}"
+: "${honcho_inspector_java_opts:=-Xms64m -Xmx256m}"
+
+# Default DB path: absolute path under /var/db so the service
+# works regardless of the working directory.
+: "${HONCHO_DB_PATH:=jdbc:sqlite:${honcho_inspector_data_dir}/honcho-inspector.db}"
+export HONCHO_DB_PATH
+export HONCHO_CONFIG_DIR="${honcho_inspector_config_dir}"
+
+command="/usr/sbin/daemon"
+command_args="-P ${honcho_inspector_pidfile} -r -f -o ${honcho_inspector_log_dir}/daemon.log \
+    /bin/sh -c 'set -a; [ -f ${honcho_inspector_env_file} ] && . ${honcho_inspector_env_file}; set +a; \
+    exec ${honcho_inspector_java} ${honcho_inspector_java_opts} \
+        -Dhoncho.config.dir=${honcho_inspector_config_dir} \
+        -Dlogging.file.name=${honcho_inspector_log_dir}/honcho-inspector-backend.log \
+        -jar ${honcho_inspector_jar}'"
+
+start_precmd="${name}_prestart"
+
+honcho_inspector_prestart()
+{
+    # Ensure the data dir exists and is owned by the service user.
+    if [ ! -d "${honcho_inspector_data_dir}" ]; then
+        install -d -o "${honcho_inspector_user}" -g "${honcho_inspector_user}" \
+            -m 0750 "${honcho_inspector_data_dir}"
+    fi
+    # Ensure the log dir exists and is owned by the service user.
+    if [ ! -d "${honcho_inspector_log_dir}" ]; then
+        install -d -o "${honcho_inspector_user}" -g "${honcho_inspector_user}" \
+            -m 0750 "${honcho_inspector_log_dir}"
+    fi
+    # Ensure the runtime directory for the pidfile exists.
+    if [ ! -d "$(dirname "${honcho_inspector_pidfile}")" ]; then
+        install -d -o "${honcho_inspector_user}" -g "${honcho_inspector_user}" \
+            -m 0750 "$(dirname "${honcho_inspector_pidfile}")"
+    fi
+    # Loudly warn if the crypto key is unset, but do not refuse to start.
+    if [ ! -f "${honcho_inspector_env_file}" ] || ! grep -q '^HONCHO_CRYPTO_KEY=' \
+            "${honcho_inspector_env_file}"; then
+        warn "HONCHO_CRYPTO_KEY is not set in ${honcho_inspector_env_file}."
+        warn "  The service will start, but encrypted values will not survive a restart."
+    fi
+}
+
+run_rc_command "$1"

@@ -1,0 +1,12 @@
+Honcho Inspector is a multi-tenant inspector and dashboard for
+Honcho workspaces, with admin RBAC, user management, audit logging,
+and a JSONL application log. It is the operator-facing companion
+to the Honcho memory and social-cognition platform.
+
+This port installs the Spring Boot 3.5 / Java 25 service jar, a
+launcher that runs as the unprivileged `www` user, a `rc.d` service
+script, a sample configuration at %%ETCDIR%%/application.yml.sample,
+and a placeholder env file for the crypto key at
+%%ETCDIR%%/honcho-inspector.env.sample.
+
+WWW: https://github.com/cloudbsdorg/honcho-inspector-backend

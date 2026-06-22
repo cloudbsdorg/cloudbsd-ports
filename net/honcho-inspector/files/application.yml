@@ -1,0 +1,30 @@
+server:
+  port: 8080
+  address: 127.0.0.1
+
+  # Spring Boot 3.5 ErrorProperties.IncludeAttribute: ALWAYS, NEVER, ON_PARAM
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+
+honcho:
+  base-url: "https://api.honcho.dev"
+
+  # First admin: created on empty DB. Blank values disable bootstrap;
+  # use POST /api/admin/users with an authenticated admin session to add
+  # additional admins thereafter.
+  bootstrap:
+    admin-username: ""
+    admin-password: ""
+    admin-firstname: ""
+    admin-lastname: ""
+    admin-email: ""
+
+  # Audit retention: OR-combine of retention-days and max-rows.
+  # AuditRetentionJob runs at the cron schedule below.
+  audit:
+    retention-days: 90
+    max-rows: 1000000
+    purge-cron: "0 0 3 * * *"
