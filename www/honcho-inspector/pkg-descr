@@ -1,0 +1,20 @@
+Honcho Inspector is a multi-user admin dashboard for the Honcho AI
+memory layer. It pairs a Java/Spring Boot backend (REST API, SQLite
+storage, Honcho proxy) with an Angular view-only frontend.
+
+This is a META-PACKAGE. It does not install any files of its own --
+it depends on both component packages and pulls them in as transitive
+dependencies when the operator runs `pkg install honcho-inspector`.
+
+Components installed by this meta-package:
+  - net/honcho-inspector        Backend service (Java 25, Spring Boot 3.5)
+  - www/honcho-inspector-frontend  Frontend service (Angular)
+
+After installation:
+  - Enable the backend:    sysrc honcho_inspector_enable=YES
+  - Enable the frontend:   sysrc honcho_inspector_frontend_enable=YES
+  - Start both:            service honcho_inspector start && service honcho_inspector_frontend start
+  - See each component's pkg-descr for its own configuration, env-file
+    locations, and service-management details.
+
+WWW: https://github.com/cloudbsdorg/honcho-inspector-backend

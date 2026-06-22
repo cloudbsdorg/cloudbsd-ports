@@ -1,0 +1,6 @@
+Honcho Inspector is a multi-user admin dashboard for the Honcho AI
+memory layer. This is a META-PACKAGE that installs both the backend
+(Java 25, Spring Boot 3.5) and the frontend (Angular). It depends on
+net/honcho-inspector and www/honcho-inspector-frontend.
+
+WWW: https://github.com/cloudbsdorg/honcho-inspector-backend
