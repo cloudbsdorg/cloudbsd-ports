@@ -2030,6 +2030,7 @@
     SUBDIR += p5-CHI-Driver-DBI
     SUBDIR += p5-CLASS
     SUBDIR += p5-CLI-Osprey
+    SUBDIR += p5-CLI-Simple
     SUBDIR += p5-CPAN-Changes
     SUBDIR += p5-CPAN-Checksums
     SUBDIR += p5-CPAN-Common-Index
@@ -2921,6 +2922,7 @@
     SUBDIR += p5-Lexical-Var
     SUBDIR += p5-Lingua-JA-Fold
     SUBDIR += p5-Lingua-Translit
+    SUBDIR += p5-Linux-Inotify2
     SUBDIR += p5-List-AllUtils
     SUBDIR += p5-List-BinarySearch
     SUBDIR += p5-List-Cycle
@@ -3699,6 +3701,7 @@
     SUBDIR += p5-Test-Deep-UnorderedPairs
     SUBDIR += p5-Test-Dependencies
     SUBDIR += p5-Test-DependentModules
+    SUBDIR += p5-Test-DescribeMe
     SUBDIR += p5-Test-DiagINC
     SUBDIR += p5-Test-Differences
     SUBDIR += p5-Test-Distribution
@@ -4752,6 +4755,7 @@
     SUBDIR += py-click-repl
     SUBDIR += py-click-threading
     SUBDIR += py-click7
+    SUBDIR += py-clickdc
     SUBDIR += py-cliff
     SUBDIR += py-cligj
     SUBDIR += py-clikit
@@ -4906,6 +4910,8 @@
     SUBDIR += py-dj52-django-rq
     SUBDIR += py-dj52-graphene-django
     SUBDIR += py-dj52-strawberry-graphql
+    SUBDIR += py-dj60-django-rq
+    SUBDIR += py-dj60-strawberry-graphql
     SUBDIR += py-django-rq
     SUBDIR += py-dlinfo
     SUBDIR += py-dm-tree
@@ -5422,6 +5428,8 @@
     SUBDIR += py-mutmut
     SUBDIR += py-mygpoclient
     SUBDIR += py-mypy
+    SUBDIR += py-mypy-boto3-dynamodb
+    SUBDIR += py-mypy-boto3-glue
     SUBDIR += py-mypy-boto3-s3
     SUBDIR += py-mypy-protobuf
     SUBDIR += py-mypy_extensions
@@ -5701,6 +5709,7 @@
     SUBDIR += py-ptvsd
     SUBDIR += py-pudb
     SUBDIR += py-pure-eval
+    SUBDIR += py-pure-sasl
     SUBDIR += py-purl
     SUBDIR += py-py
     SUBDIR += py-py-deviceid
@@ -5719,6 +5728,7 @@
     SUBDIR += py-pyasn1-modules
     SUBDIR += py-pybase64
     SUBDIR += py-pybind11
+    SUBDIR += py-pybind11-stubgen
     SUBDIR += py-pybix
     SUBDIR += py-pybreaker
     SUBDIR += py-pycadf
@@ -5819,6 +5829,7 @@
     SUBDIR += py-pyquery
     SUBDIR += py-pyquil
     SUBDIR += py-pyral
+    SUBDIR += py-pyrate-limiter
     SUBDIR += py-pyrepl
     SUBDIR += py-pyrfc3339
     SUBDIR += py-pyright
@@ -6225,6 +6236,7 @@
     SUBDIR += py-threadpoolctl
     SUBDIR += py-threema-msgapi
     SUBDIR += py-thrift
+    SUBDIR += py-thrift_sasl
     SUBDIR += py-thriftpy2
     SUBDIR += py-throttler
     SUBDIR += py-tiamat
@@ -6396,6 +6408,7 @@
     SUBDIR += py-wlc
     SUBDIR += py-woops
     SUBDIR += py-wrapt
+    SUBDIR += py-wrapt1
     SUBDIR += py-wsgi-intercept
     SUBDIR += py-wsgi_xmlrpc
     SUBDIR += py-wsgitools
@@ -6600,6 +6613,7 @@
     SUBDIR += resolv_wrapper
     SUBDIR += revive
     SUBDIR += rgbds
+    SUBDIR += rgx
     SUBDIR += rgxg
     SUBDIR += rhtvision
     SUBDIR += rinutils
@@ -7602,6 +7616,7 @@
     SUBDIR += rubygem-gitlab-chronic
     SUBDIR += rubygem-gitlab-dangerfiles
     SUBDIR += rubygem-gitlab-experiment
+    SUBDIR += rubygem-gitlab-grape-openapi
     SUBDIR += rubygem-gitlab-labkit
     SUBDIR += rubygem-gitlab-license
     SUBDIR += rubygem-gitlab-pygments.rb
@@ -8227,6 +8242,7 @@
     SUBDIR += rubygem-semi_semantic
     SUBDIR += rubygem-semver2
     SUBDIR += rubygem-semver_dialects
+    SUBDIR += rubygem-semver_dialects-gitlab
     SUBDIR += rubygem-semverse
     SUBDIR += rubygem-sentry-rails
     SUBDIR += rubygem-sentry-raven
@@ -8469,6 +8485,7 @@
     SUBDIR += rubygem-zhexdump
     SUBDIR += rubygem-zlib
     SUBDIR += rubygem-zstd-ruby
+    SUBDIR += rubygem-zstd-ruby-gitlab
     SUBDIR += rubymine
     SUBDIR += rudeconfig
     SUBDIR += rudiments

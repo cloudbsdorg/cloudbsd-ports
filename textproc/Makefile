@@ -482,6 +482,7 @@
     SUBDIR += mantra
     SUBDIR += markdown
     SUBDIR += markdown-mode.el
+    SUBDIR += markdown-oxide
     SUBDIR += markdownfmt
     SUBDIR += markdownpart
     SUBDIR += markless
@@ -2138,7 +2139,6 @@
     SUBDIR += sr-hunspell
     SUBDIR += ss-hunspell
     SUBDIR += stardict-dict-fa_IR
-    SUBDIR += stardict-dictd_mova
     SUBDIR += stardict-rptts
     SUBDIR += stardict3
     SUBDIR += sttr

@@ -21,7 +21,6 @@
     SUBDIR += amnezia-tools
     SUBDIR += amneziawg-go
     SUBDIR += amqpcat
-    SUBDIR += aoe
     SUBDIR += apache-commons-net
     SUBDIR += apinger
     SUBDIR += aprsc
@@ -1520,9 +1519,7 @@
     SUBDIR += sdl3_net
     SUBDIR += sdl_net
     SUBDIR += seaweedfs
-    SUBDIR += seda
     SUBDIR += self-service-password
-    SUBDIR += sems
     SUBDIR += sendemail
     SUBDIR += sendme
     SUBDIR += sendsms
@@ -1616,6 +1613,7 @@
     SUBDIR += td-system-tools
     SUBDIR += tdetect
     SUBDIR += teddycloud
+    SUBDIR += telemt
     SUBDIR += termshark
     SUBDIR += tftpgrab
     SUBDIR += throttled
