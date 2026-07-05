@@ -14,7 +14,6 @@
     SUBDIR += R-cran-pool
     SUBDIR += R-cran-sqldf
     SUBDIR += WWWdb
-    SUBDIR += adminer
     SUBDIR += adodb5
     SUBDIR += akonadi
     SUBDIR += apache-commons-dbutils
@@ -172,8 +171,6 @@
     SUBDIR += mariadb-java-client
     SUBDIR += mariadb1011-client
     SUBDIR += mariadb1011-server
-    SUBDIR += mariadb106-client
-    SUBDIR += mariadb106-server
     SUBDIR += mariadb114-client
     SUBDIR += mariadb114-server
     SUBDIR += mariadb118-client
@@ -203,8 +200,6 @@
     SUBDIR += mysql80-server
     SUBDIR += mysql84-client
     SUBDIR += mysql84-server
-    SUBDIR += mysql96-client
-    SUBDIR += mysql96-server
     SUBDIR += mysql97-client
     SUBDIR += mysql97-server
     SUBDIR += mysqlbackup
@@ -222,6 +217,7 @@
     SUBDIR += neo4j
     SUBDIR += ocaml-dbm
     SUBDIR += ocaml-mysql
+    SUBDIR += ocaml-pgocaml
     SUBDIR += ocaml-sqlite3
     SUBDIR += octosql
     SUBDIR += odbc-cpp-wrapper
@@ -649,6 +645,18 @@
     SUBDIR += php85-pdo_sqlite
     SUBDIR += php85-pgsql
     SUBDIR += php85-sqlite3
+    SUBDIR += php86-dba
+    SUBDIR += php86-mysqli
+    SUBDIR += php86-odbc
+    SUBDIR += php86-pdo
+    SUBDIR += php86-pdo_dblib
+    SUBDIR += php86-pdo_firebird
+    SUBDIR += php86-pdo_mysql
+    SUBDIR += php86-pdo_odbc
+    SUBDIR += php86-pdo_pgsql
+    SUBDIR += php86-pdo_sqlite
+    SUBDIR += php86-pgsql
+    SUBDIR += php86-sqlite3
     SUBDIR += phpliteadmin
     SUBDIR += phpminiadmin
     SUBDIR += phpmyadmin
@@ -735,8 +743,6 @@
     SUBDIR += prometheus-postgresql-adapter
     SUBDIR += proxysql
     SUBDIR += pspg
-    SUBDIR += puppetdb-terminus8
-    SUBDIR += puppetdb8
     SUBDIR += puredb
     SUBDIR += pxlib
     SUBDIR += pxtools
@@ -775,7 +781,6 @@
     SUBDIR += py-duckdb
     SUBDIR += py-duckdb_engine
     SUBDIR += py-fakeredis
-    SUBDIR += py-fastparquet
     SUBDIR += py-fdb
     SUBDIR += py-firebirdsql
     SUBDIR += py-flask-pymongo
@@ -1163,6 +1168,7 @@
     SUBDIR += tredis
     SUBDIR += trilogy
     SUBDIR += tuning-primer
+    SUBDIR += turso
     SUBDIR += twemproxy
     SUBDIR += unixODBC
     SUBDIR += usql

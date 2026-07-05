@@ -915,6 +915,8 @@
     SUBDIR += php84-gmp
     SUBDIR += php85-bcmath
     SUBDIR += php85-gmp
+    SUBDIR += php86-bcmath
+    SUBDIR += php86-gmp
     SUBDIR += physcalc
     SUBDIR += picosat
     SUBDIR += piranha
@@ -1082,6 +1084,7 @@
     SUBDIR += py-osqp
     SUBDIR += py-pandas
     SUBDIR += py-pandas-datareader
+    SUBDIR += py-pandas-stubs
     SUBDIR += py-patsy
     SUBDIR += py-pcodec
     SUBDIR += py-pdal
@@ -1187,7 +1190,6 @@
     SUBDIR += randlib
     SUBDIR += rankwidth
     SUBDIR += readstat
-    SUBDIR += reduce
     SUBDIR += reduce-psl
     SUBDIR += reed-solomon
     SUBDIR += rehearse

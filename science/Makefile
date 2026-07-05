@@ -25,6 +25,7 @@
     SUBDIR += afni
     SUBDIR += agrum
     SUBDIR += aircraft-datcom
+    SUBDIR += amrex
     SUBDIR += antioch
     SUBDIR += apbs
     SUBDIR += arbor
@@ -357,9 +358,11 @@
     SUBDIR += py-h5netcdf
     SUBDIR += py-h5py
     SUBDIR += py-h5pyd
+    SUBDIR += py-hdmf
     SUBDIR += py-hiPhive
     SUBDIR += py-hoomd-blue
     SUBDIR += py-icet
+    SUBDIR += py-igor2
     SUBDIR += py-inequality
     SUBDIR += py-ipygany
     SUBDIR += py-jupyter_jsmol
@@ -367,6 +370,7 @@
     SUBDIR += py-kimpy
     SUBDIR += py-kinematics
     SUBDIR += py-kliff
+    SUBDIR += py-klusta
     SUBDIR += py-kpLib
     SUBDIR += py-liac-arff
     SUBDIR += py-libgetar
@@ -391,6 +395,7 @@
     SUBDIR += py-netcdf-flattener
     SUBDIR += py-nglview
     SUBDIR += py-nibabel
+    SUBDIR += py-nixio
     SUBDIR += py-obspy
     SUBDIR += py-oddt
     SUBDIR += py-openEMS
@@ -403,8 +408,10 @@
     SUBDIR += py-periodictable
     SUBDIR += py-phono3py
     SUBDIR += py-phonopy
+    SUBDIR += py-phonors
     SUBDIR += py-plumed
     SUBDIR += py-pnetcdf
+    SUBDIR += py-probeinterface
     SUBDIR += py-pupynere
     SUBDIR += py-py3Dmol
     SUBDIR += py-pyaixi
@@ -422,6 +429,7 @@
     SUBDIR += py-pymbd
     SUBDIR += py-pymol
     SUBDIR += py-pynrrd
+    SUBDIR += py-pynwb
     SUBDIR += py-pyosf
     SUBDIR += py-pyphot
     SUBDIR += py-pyprecice
@@ -455,6 +463,7 @@
     SUBDIR += py-skrebate
     SUBDIR += py-spaghetti
     SUBDIR += py-spglib
+    SUBDIR += py-spml
     SUBDIR += py-symfc
     SUBDIR += py-tensorflow
     SUBDIR += py-thewalrus

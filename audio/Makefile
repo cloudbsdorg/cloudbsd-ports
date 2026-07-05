@@ -499,7 +499,6 @@
     SUBDIR += mpz
     SUBDIR += mumble
     SUBDIR += mumble-server
-    SUBDIR += murmur
     SUBDIR += murmur-cli
     SUBDIR += muse-sequencer
     SUBDIR += musepack
@@ -818,6 +817,7 @@
     SUBDIR += timidity++-xskin
     SUBDIR += tkeca
     SUBDIR += toccata-lv2
+    SUBDIR += toneshifteq-lv2
     SUBDIR += tosha
     SUBDIR += triceratops-lv2
     SUBDIR += tse3

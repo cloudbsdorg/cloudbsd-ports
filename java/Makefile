@@ -35,7 +35,6 @@
     SUBDIR += intellij-fsnotifier
     SUBDIR += intellij-pty4j
     SUBDIR += intellij-ultimate
-    SUBDIR += jad
     SUBDIR += jai
     SUBDIR += jakarta-oro
     SUBDIR += jasmin
@@ -52,7 +51,7 @@
     SUBDIR += jcalendar
     SUBDIR += jcckit
     SUBDIR += jcommon
-    SUBDIR += jd-gui
+    SUBDIR += jd-gui-duo
     SUBDIR += jdk11-doc
     SUBDIR += jdk8-doc
     SUBDIR += jflex

@@ -115,15 +115,15 @@ LUAJIT_DEFAULT?=	luajit
 .  endif
 # Possible values: 5.10, 5.20, 6.8
 MONO_DEFAULT?=		5.20
-# Possible values: 8.0, 8.4, 9.6, 9.7, 10.6m, 10.11m, 11.4m, 11.8m
+# Possible values: 8.0, 8.4, 9.7, 10.11m, 11.4m, 11.8m
 MYSQL_DEFAULT?=		8.4
 # Possible values: ninja, samurai
 NINJA_DEFAULT?=		ninja
-# Possible value: 20, 22, 24, 25, 26, current, lts (Note: current = 26 and lts = 24)
+# Possible value: 20, 22, 24, 26, current, lts (Note: current = 26 and lts = 24)
 NODEJS_DEFAULT?=	lts
 # Possible value: 25, 26
 OPENLDAP_DEFAULT?=	26
-# Possible values: 5.38, 5.40, 5.42, devel
+# Possible values: 5.40, 5.42, 5.44, devel
 .  if !exists(${LOCALBASE}/bin/perl) || (!defined(_PORTS_ENV_CHECK) && \
     defined(PACKAGE_BUILDING))
 # When changing the default here, make sure the DEPRECATED/EXPIRATION lines in
@@ -142,7 +142,7 @@ PERL5_DEFAULT:=		${_PERL5_FROM_BIN:R}
 .  endif
 # Possible values: 13, 14, 15, 16, 17, 18
 PGSQL_DEFAULT?=		18
-# Possible values: 8.2, 8.3, 8.4, 8.5
+# Possible values: 8.2, 8.3, 8.4, 8.5, 8.6
 PHP_DEFAULT?=		8.4
 # Possible values: rust, legacy
 .  if empty(ARCH:Naarch64:Namd64:Narmv7:Ni386:Npowerpc64:Npowerpc64le:Npowerpc:Nriscv64)
@@ -150,7 +150,7 @@ PYCRYPTOGRAPHY_DEFAULT?=	rust
 .  else
 PYCRYPTOGRAPHY_DEFAULT?=	legacy
 .  endif
-# Possible values: 3.10, 3.11, 3.12, 3.13, 3.13t, 3.14, 3.14t
+# Possible values: 3.10, 3.11, 3.12, 3.13, 3.13t, 3.14, 3.14t, 3.15
 PYTHON_DEFAULT?=	3.12
 # Possible values: 2.7
 PYTHON2_DEFAULT?=	2.7

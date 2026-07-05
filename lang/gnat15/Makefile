@@ -6,7 +6,7 @@ MASTER_SITES=	${MASTER_SITE_GCC:C|%SUBDIR%|${MASTER_SITE_SUBDIR}|}:gcc \
 MASTER_SITE_SUBDIR=	releases/gcc-${DISTVERSION}
 DISTFILES=	gcc-${DISTVERSION}.tar.xz:gcc
 
-MAINTAINER=	thierry@FreeBSD.org
+MAINTAINER=	ada@FreeBSD.org
 COMMENT=	GNAT (GNU Ada) compiler
 WWW=		https://www.gnu.org/software/gnat/
 
@@ -153,6 +153,9 @@ PLIST_SUB+=	ARM="@comment " \
 pre-configure:
 	${FIND} ${WRKSRC}/gcc/config -name "*freebsd.h" -o -name "*freebsd64.h" | \
 		${XARGS} ${REINPLACE_CMD} -e 's|!static:[[:blank:]]|!static: --hash-style=gnu -rpath ${PREFIX}/gnat${_GCC_VER}/lib |'
+.for f in libgcc/config/aarch64/t-aarch64 libgcc/configure
+	${REINPLACE_CMD} -e 's|-Werror||' ${WRKSRC}/${f}
+.endfor
 	${ECHO} "-=> GNAT ${_OS_LABEL4VERS}" > ${_REV_FILE}
 	${ECHO} "release" > ${_PHASE_FILE}
 

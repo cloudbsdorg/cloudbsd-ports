@@ -332,7 +332,7 @@ goimapnotify:*:387:
 autopulse:*:388:
 ldap:*:389:
 bunkerweb:*:390:
-# free: 391
+dirsrv:*:391:
 # free: 392
 # free: 393
 # free: 394
@@ -744,7 +744,7 @@ healthchecks:*:790:
 # free: 799
 clickhouse:*:800:
 # free: 801
-# free: 802
+languagetool:*:802:
 # free: 803
 # free: 804
 # free: 805

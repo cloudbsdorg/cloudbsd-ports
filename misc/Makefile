@@ -21,6 +21,7 @@
     SUBDIR += asbutton
     SUBDIR += asr-manpages
     SUBDIR += astc-encoder
+    SUBDIR += auto-tempo
     SUBDIR += bb
     SUBDIR += bbjd
     SUBDIR += bdelta
@@ -176,6 +177,7 @@
     SUBDIR += ggml
     SUBDIR += gimp-help-en
     SUBDIR += github-copilot-cli
+    SUBDIR += github-copilot-cli-legacy
     SUBDIR += github-copilot-language-server
     SUBDIR += gitlogue
     SUBDIR += gkrellm-gamma
@@ -430,6 +432,7 @@
     SUBDIR += php83-calendar
     SUBDIR += php84-calendar
     SUBDIR += php85-calendar
+    SUBDIR += php86-calendar
     SUBDIR += picoclaw
     SUBDIR += pinfo
     SUBDIR += pipe
@@ -470,7 +473,9 @@
     SUBDIR += py-comfyui-frontend-package
     SUBDIR += py-comfyui-workflow-templates
     SUBDIR += py-comfyui-workflow-templates-core
+    SUBDIR += py-comfyui-workflow-templates-json
     SUBDIR += py-comfyui-workflow-templates-media-api
+    SUBDIR += py-comfyui-workflow-templates-media-assets-01
     SUBDIR += py-comfyui-workflow-templates-media-image
     SUBDIR += py-comfyui-workflow-templates-media-other
     SUBDIR += py-comfyui-workflow-templates-media-video
@@ -551,6 +556,8 @@
     SUBDIR += py-mistral-common
     SUBDIR += py-mixpanel
     SUBDIR += py-ml-collections
+    SUBDIR += py-mlflow-skinny
+    SUBDIR += py-mlflow-tracing
     SUBDIR += py-mmcv
     SUBDIR += py-mmdet
     SUBDIR += py-mmengine
@@ -567,6 +574,7 @@
     SUBDIR += py-onnx
     SUBDIR += py-onnx-tf
     SUBDIR += py-onnxconverter-common
+    SUBDIR += py-onnxruntime
     SUBDIR += py-openai
     SUBDIR += py-openai-harmony
     SUBDIR += py-openai-whisper
@@ -609,6 +617,7 @@
     SUBDIR += py-safetensors
     SUBDIR += py-sagemaker
     SUBDIR += py-sagemaker-core
+    SUBDIR += py-sagemaker-mlflow
     SUBDIR += py-sagemaker-mlops
     SUBDIR += py-sagemaker-schema-inference-artifacts
     SUBDIR += py-sagemaker-serve
@@ -622,6 +631,7 @@
     SUBDIR += py-shap2
     SUBDIR += py-shell-gpt
     SUBDIR += py-sigopt
+    SUBDIR += py-skops
     SUBDIR += py-smdebug-rulesconfig
     SUBDIR += py-snakemake-interface-common
     SUBDIR += py-snakemake-interface-executor-plugins
@@ -650,6 +660,7 @@
     SUBDIR += py-torchvision
     SUBDIR += py-tqdm
     SUBDIR += py-transformers
+    SUBDIR += py-tritonclient
     SUBDIR += py-tvm
     SUBDIR += py-uhi
     SUBDIR += py-uuid-utils

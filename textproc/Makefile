@@ -183,7 +183,6 @@
     SUBDIR += el-aspell
     SUBDIR += el-hyphen
     SUBDIR += elasticsearch-plugin-head
-    SUBDIR += elasticsearch7
     SUBDIR += elasticsearch8
     SUBDIR += en-aspell
     SUBDIR += en-hunspell
@@ -386,6 +385,7 @@
     SUBDIR += l2a
     SUBDIR += la-aspell
     SUBDIR += lacheck
+    SUBDIR += languagetool
     SUBDIR += lasem
     SUBDIR += latex-service
     SUBDIR += latex2html
@@ -1319,6 +1319,14 @@
     SUBDIR += php85-xmlreader
     SUBDIR += php85-xmlwriter
     SUBDIR += php85-xsl
+    SUBDIR += php86-ctype
+    SUBDIR += php86-dom
+    SUBDIR += php86-enchant
+    SUBDIR += php86-simplexml
+    SUBDIR += php86-xml
+    SUBDIR += php86-xmlreader
+    SUBDIR += php86-xmlwriter
+    SUBDIR += php86-xsl
     SUBDIR += pict
     SUBDIR += po4a
     SUBDIR += pod2mdoc
@@ -1371,6 +1379,7 @@
     SUBDIR += py-custom_inherit
     SUBDIR += py-cyclonedx-python-lib
     SUBDIR += py-dbfread
+    SUBDIR += py-deepsearch-glm
     SUBDIR += py-dialect
     SUBDIR += py-dict2xml
     SUBDIR += py-diff-match-patch
@@ -1392,7 +1401,6 @@
     SUBDIR += py-elasticsearch-curator
     SUBDIR += py-elasticsearch-dsl
     SUBDIR += py-elasticsearch-dsl6
-    SUBDIR += py-elasticsearch5
     SUBDIR += py-elasticsearch6
     SUBDIR += py-elasticsearch7
     SUBDIR += py-elementpath
@@ -1806,7 +1814,6 @@
     SUBDIR += redet
     SUBDIR += redisearch
     SUBDIR += redisearch2
-    SUBDIR += redisearch20
     SUBDIR += redisearch22
     SUBDIR += redisearch24
     SUBDIR += redisearch26
@@ -1989,7 +1996,6 @@
     SUBDIR += rubygem-prism
     SUBDIR += rubygem-psych
     SUBDIR += rubygem-psych3
-    SUBDIR += rubygem-puppet-strings
     SUBDIR += rubygem-raabro
     SUBDIR += rubygem-rails-dom-testing
     SUBDIR += rubygem-rails-dom-testing-rails-gitlab
@@ -2161,6 +2167,7 @@
     SUBDIR += textnote
     SUBDIR += textogif
     SUBDIR += textql
+    SUBDIR += tgrep
     SUBDIR += the_silver_searcher
     SUBDIR += ti-hunspell
     SUBDIR += tinyxml
