@@ -1,5 +1,5 @@
 PORTNAME=	fastfetch
-DISTVERSION=	2.64.2
+DISTVERSION=	2.65.2
 CATEGORIES=	sysutils
 
 MAINTAINER=	pkubaj@FreeBSD.org
@@ -40,7 +40,7 @@ WAYLAND_CMAKE_BOOL=	ENABLE_WAYLAND
 WAYLAND_BUILD_DEPENDS=	${LOCALBASE}/lib/libwayland-server.so:graphics/wayland
 
 XRANDR_CMAKE_BOOL=	ENABLE_XRANDR
-XRANDR_BUILD_DEPENDS=	${LOCALBASE}/libdata/pkgconfig/xrandr.pc:x11/libXrandr:x11/libXrandr
+XRANDR_BUILD_DEPENDS=	${LOCALBASE}/libdata/pkgconfig/xrandr.pc:x11/libXrandr
 
 LIBDRM_CMAKE_BOOL=	ENABLE_DRM
 LIBDRM_BUILD_DEPENDS=	${LOCALBASE}/lib/libdrm.so:graphics/libdrm
@@ -74,7 +74,7 @@ OPENCL_BUILD_DEPENDS=	${LOCALBASE}/lib/libOpenCL.so:devel/ocl-icd \
 LUA_CMAKE_BOOL=	ENABLE_LUA
 LUA_USES=		lua:build
 
-CODEC_CMAKE_BOOL=	ENABLE_VA ENABLE_VDPAU
+CODEC_CMAKE_BOOL=	ENABLE_VADRM ENABLE_VAX11 ENABLE_VDPAU
 CODEC_BUILD_DEPENDS=	${LOCALBASE}/lib/libva.so:multimedia/libva \
 			${LOCALBASE}/lib/libvdpau.so:multimedia/libvdpau
 
