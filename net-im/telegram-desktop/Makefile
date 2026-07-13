@@ -1,12 +1,12 @@
 PORTNAME=	telegram-desktop
 DISTVERSION=	6.9.3
-PORTREVISION=	1
+PORTREVISION=	2
 CATEGORIES=	net-im
 MASTER_SITES=	https://github.com/${GH_ACCOUNT}/${GH_PROJECT}/releases/download/v${DISTVERSION}/
 DISTNAME=	tdesktop-${DISTVERSION}-full
 DISTFILES=	${DISTNAME}${EXTRACT_SUFX}
 
-MAINTAINER=	osa@FreeBSD.org
+MAINTAINER=	fluffy@FreeBSD.org
 COMMENT=	Telegram Desktop messaging app
 WWW=		https://desktop.telegram.org/
 

@@ -1,5 +1,5 @@
 PORTNAME=	redis
-PORTVERSION=	7.4.0
+PORTVERSION=	7.4.1
 CATEGORIES=	databases python
 MASTER_SITES=	PYPI
 PKGNAMEPREFIX=	${PYTHON_PKGNAMEPREFIX}
@@ -32,14 +32,14 @@ OTEL_DESC=	OpenTelemetry support
 XXHASH_DESC=	Compute digest locally via xxHash
 
 HIREDIS_RUN_DEPENDS=	${PYTHON_PKGNAMEPREFIX}hiredis>=3.2.0:databases/py-hiredis@${PY_FLAVOR}
-JWT_RUN_DEPENDS=	${PYTHON_PKGNAMEPREFIX}pyjwt>=2.9.0:www/py-pyjwt@${PY_FLAVOR}
+JWT_RUN_DEPENDS=	${PYTHON_PKGNAMEPREFIX}pyjwt>=2.13.0:www/py-pyjwt@${PY_FLAVOR}
 OCSP_RUN_DEPENDS=	${PYTHON_PKGNAMEPREFIX}pyopenssl>=20.0.1,1:security/py-pyopenssl@${PY_FLAVOR} \
 			${PYTHON_PKGNAMEPREFIX}requests>=2.31.0:www/py-requests@${PY_FLAVOR}
 OCSP_USE=		PYTHON=cryptography
 OTEL_RUN_DEPENDS=	${PYTHON_PKGNAMEPREFIX}opentelemetry-api>=1.39.1:devel/py-opentelemetry-api@${PY_FLAVOR} \
 			${PYTHON_PKGNAMEPREFIX}opentelemetry-exporter-otlp-proto-http>=1.39.1:devel/py-opentelemetry-exporter-otlp-proto-http@${PY_FLAVOR} \
 			${PYTHON_PKGNAMEPREFIX}opentelemetry-sdk>=1.39.1:devel/py-opentelemetry-sdk@${PY_FLAVOR}
-XXHASH_RUN_DEPENDS=	${PYTHON_PKGNAMEPREFIX}xxhash>=3.6.0<3.7:devel/py-xxhash@${PY_FLAVOR}
+XXHASH_RUN_DEPENDS=	${PYTHON_PKGNAMEPREFIX}xxhash>=3.6.0:devel/py-xxhash@${PY_FLAVOR}
 
 .include <bsd.port.pre.mk>
 

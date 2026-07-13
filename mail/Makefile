@@ -29,6 +29,7 @@
     SUBDIR += bmf
     SUBDIR += bogofilter
     SUBDIR += bogofilter-kc
+    SUBDIR += bogofilter-lmdb1
     SUBDIR += bogofilter-sqlite
     SUBDIR += bsd-vacation
     SUBDIR += bsfilter
@@ -241,7 +242,6 @@
     SUBDIR += milter-regex
     SUBDIR += milter-skem
     SUBDIR += mime-construct
-    SUBDIR += mime4j
     SUBDIR += mimedefang
     SUBDIR += mini_sendmail
     SUBDIR += minimalist
@@ -699,6 +699,7 @@
     SUBDIR += spampd
     SUBDIR += spamprobe
     SUBDIR += spamstats
+    SUBDIR += spf-tools
     SUBDIR += spfmilter
     SUBDIR += spfval
     SUBDIR += spmfilter

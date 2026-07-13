@@ -1,5 +1,5 @@
 PORTNAME=	pipenv
-PORTVERSION=	2026.6.1
+PORTVERSION=	2026.6.2
 CATEGORIES=	devel python
 MASTER_SITES=	PYPI
 PKGNAMEPREFIX=	${PYTHON_PKGNAMEPREFIX}
@@ -20,10 +20,11 @@ RUN_DEPENDS=	${PYTHON_PKGNAMEPREFIX}certifi>=0:security/py-certifi@${PY_FLAVOR} 
 		${PYTHON_PKGNAMEPREFIX}virtualenv>=20.24.2:devel/py-virtualenv@${PY_FLAVOR}
 
 USES=		cpe python
-CPE_VENDOR=	pypa
 USE_PYTHON=	autoplist concurrent pep517
 
 NO_ARCH=	yes
+
+CPE_VENDOR=	pypa
 
 OPTIONS_DEFINE=	COMPLETION
 COMPLETION_DESC=Completion support

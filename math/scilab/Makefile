@@ -1,6 +1,6 @@
 PORTNAME=	scilab
 DISTVERSION=	6.1.1
-PORTREVISION=	28
+PORTREVISION=	30
 CATEGORIES=	math cad java
 MASTER_SITES=	https://www.scilab.org/download/${DISTVERSION}/
 DISTFILES=	${DISTNAME}-src${EXTRACT_SUFX}
@@ -14,7 +14,10 @@ LICENSE_COMB=	dual
 LICENSE_FILE_GPLv2=	${WRKSRC}/COPYING
 LICENSE_FILE_BSD3CLAUSE=	${WRKSRC}/COPYING-BSD
 
-NO_SHLIB_REQUIRES_GLOB=	libjava.so
+DEPRECATED=	No maintainer, old version, did not keep up with upstream, does not build with Java 11. Mail the maintainer if you use this.
+EXPIRATION_DATE=	2026-11-09
+
+NO_SHLIB_REQUIRES_GLOB=	libjava.so libjvm.so libverify.so
 
 LIB_DEPENDS=	libpcre.so:devel/pcre \
 		libcurl.so:ftp/curl \
@@ -31,7 +34,6 @@ USES=		compiler:c++17-lang cpe desktop-file-utils eigen:3,build \
 		localbase ncurses pathfix pkgconfig shared-mime-info
 USE_GNOME=	libxml2
 JAVA_VERSION=	8
-USE_LOCALE=	en_US.UTF-8
 
 GNU_CONFIGURE=	yes
 

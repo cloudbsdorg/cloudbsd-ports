@@ -1,6 +1,6 @@
 PORTNAME=	odin
 DISTVERSIONPREFIX=	dev-
-DISTVERSION=	2026-06
+DISTVERSION=	2026-07
 CATEGORIES=	lang devel
 PKGNAMESUFFIX=	-lang
 
@@ -9,7 +9,7 @@ COMMENT=	Odin programming language
 WWW=		https://odin-lang.org \
 		https://github.com/odin-lang/Odin
 
-LICENSE=	BSD3CLAUSE
+LICENSE=	ZLIB
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
 BROKEN_armv7=	compilation fails:  use of undeclared identifier 'LLVMInitializeWebAssemblyTargetInfo'
@@ -64,5 +64,8 @@ do-test:
 
 # tests as of 2026-06:
 # Finished 507 tests in 2.454120088s. 1 test failed.
+
+# tests as of 2026-07:
+# Finished 509 tests in 1m0.034987463s. 3 tests failed. see https://github.com/odin-lang/Odin/issues/6965
 
 .include <bsd.port.mk>

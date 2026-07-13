@@ -1,5 +1,5 @@
 PORTNAME=	google-protobuf
-PORTVERSION=	4.35.0
+PORTVERSION=	4.35.1
 CATEGORIES=	devel rubygems
 MASTER_SITES=	RG
 
@@ -16,8 +16,8 @@ RUN_DEPENDS=	rubygem-bigdecimal>=0:math/rubygem-bigdecimal \
 
 USES=		cpe gem shebangfix
 
-CPE_PRODUCT=	protobuf
 CPE_VENDOR=	google
+CPE_PRODUCT=	protobuf
 
 SHEBANG_GLOB=	*.rb
 

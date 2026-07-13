@@ -2,8 +2,8 @@
 #
 # Feature:	linux:args
 # Usage:	USES=linux or USES=linux:args
-# Valid args:	c7	Depend on CentOS 7 packages (default)
-#		rl9	Depend on Rocky Linux 9 packages
+# Valid args:	c7	Depend on CentOS 7 packages (default on i386)
+#		rl9	Depend on Rocky Linux 9 packages (default on all other arches)
 # Additional variables:
 # USE_LINUX	List of Linux packages to depend on.
 # USE_LINUX_RPM	When defined, additional variables and targets useful to Linux
@@ -37,7 +37,7 @@ linux_ARGS=		${LINUX_DEFAULT}
 .  if ${linux_ARGS} == c7
 LINUX_DIST_VER?=	7.9.2009
 .  elif ${linux_ARGS} == rl9
-LINUX_DIST_VER?=	9.7
+LINUX_DIST_VER?=	9.8
 .  else
 ERROR+=			"Invalid Linux distribution: ${linux_ARGS}"
 .  endif

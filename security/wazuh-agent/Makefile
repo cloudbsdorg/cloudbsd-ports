@@ -1,8 +1,8 @@
 PORTNAME=	wazuh
-DISTVERSION=	4.14.5
+DISTVERSION=	4.14.6
 DISTVERSIONPREFIX=	v
 CATEGORIES=	security
-MASTER_SITES=	https://packages.wazuh.com/deps/51/libraries/sources/:wazuh_sources
+MASTER_SITES=	https://packages.wazuh.com/deps/53/libraries/sources/:wazuh_sources
 PKGNAMESUFFIX=	-agent
 DISTFILES=	${EXTERNAL_DISTFILES}
 DIST_SUBDIR=	${PORTNAME}-${DISTVERSION}
@@ -23,7 +23,7 @@ USES=		cmake:indirect cpe gmake perl5 readline shebangfix sqlite:3 uidfix
 USE_GITHUB=	yes
 GH_ACCOUNT=	alonsobsd
 GH_PROJECT=	wazuh-freebsd
-GH_TAGNAME=	22e254c6366d51a38792163162dd019a45a00c55
+GH_TAGNAME=	62e1b663bbec762efd9d71bf5bdd33134e028d0a
 
 USE_RC_SUBR=	${PORTNAME}${PKGNAMESUFFIX}
 
@@ -49,17 +49,14 @@ EXTERNAL_DISTFILES=	cJSON.tar.gz:wazuh_sources \
 			popt.tar.gz:wazuh_sources
 
 OPTIONS_DEFAULT=	INOTIFY
-OPTIONS_DEFINE=		INOTIFY PRELUDE ZEROMQ
+OPTIONS_DEFINE=		INOTIFY ZEROMQ
 
-PRELUDE_LIB_DEPENDS=	libprelude.so:security/libprelude
 ZEROMQ_LIB_DEPENDS=	libczmq.so:net/czmq
 
 INOTIFY_DESC=	Kevent based real time monitoring
-PRELUDE_DESC=	Sensor support from Prelude SIEM
 ZEROMQ_DESC=	ZeroMQ support
 
 ZEROMQ_MAKE_ENV=	USE_ZEROMQ=yes
-PRELUDE_MAKE_ENV=	USE_PRELUDE=yes
 INOTIFY_MAKE_ENV=	USE_INOTIFY=yes \
 			INOTIFY_LIB=${INOTIFY_LIB}
 INOTIFY_USES=	pkgconfig inotify

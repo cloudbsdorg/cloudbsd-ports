@@ -1,5 +1,5 @@
 PORTNAME=	aws-sdk-resources
-PORTVERSION=	3.262.0
+PORTVERSION=	3.267.0
 CATEGORIES=	devel rubygems
 MASTER_SITES=	RG
 
@@ -204,8 +204,6 @@ RUN_DEPENDS=	rubygem-aws-sdk-accessanalyzer>=1<2:devel/rubygem-aws-sdk-accessana
 		rubygem-aws-sdk-iot>=1<2:devel/rubygem-aws-sdk-iot \
 		rubygem-aws-sdk-iotdataplane>=1<2:devel/rubygem-aws-sdk-iotdataplane \
 		rubygem-aws-sdk-iotdeviceadvisor>=1<2:devel/rubygem-aws-sdk-iotdeviceadvisor \
-		rubygem-aws-sdk-iotevents>=1<2:devel/rubygem-aws-sdk-iotevents \
-		rubygem-aws-sdk-ioteventsdata>=1<2:devel/rubygem-aws-sdk-ioteventsdata \
 		rubygem-aws-sdk-iotfleetwise>=1<2:devel/rubygem-aws-sdk-iotfleetwise \
 		rubygem-aws-sdk-iotjobsdataplane>=1<2:devel/rubygem-aws-sdk-iotjobsdataplane \
 		rubygem-aws-sdk-iotmanagedintegrations>=1<2:devel/rubygem-aws-sdk-iotmanagedintegrations \
@@ -234,6 +232,8 @@ RUN_DEPENDS=	rubygem-aws-sdk-accessanalyzer>=1<2:devel/rubygem-aws-sdk-accessana
 		rubygem-aws-sdk-kms>=1<2:devel/rubygem-aws-sdk-kms \
 		rubygem-aws-sdk-lakeformation>=1<2:devel/rubygem-aws-sdk-lakeformation \
 		rubygem-aws-sdk-lambda>=1<2:devel/rubygem-aws-sdk-lambda \
+		rubygem-aws-sdk-lambdacore>=1<2:devel/rubygem-aws-sdk-lambdacore \
+		rubygem-aws-sdk-lambdamicrovms>=1<2:devel/rubygem-aws-sdk-lambdamicrovms \
 		rubygem-aws-sdk-launchwizard>=1<2:devel/rubygem-aws-sdk-launchwizard \
 		rubygem-aws-sdk-lex>=1<2:devel/rubygem-aws-sdk-lex \
 		rubygem-aws-sdk-lexmodelbuildingservice>=1<2:devel/rubygem-aws-sdk-lexmodelbuildingservice \
@@ -301,10 +301,10 @@ RUN_DEPENDS=	rubygem-aws-sdk-accessanalyzer>=1<2:devel/rubygem-aws-sdk-accessana
 		rubygem-aws-sdk-organizations>=1<2:devel/rubygem-aws-sdk-organizations \
 		rubygem-aws-sdk-osis>=1<2:devel/rubygem-aws-sdk-osis \
 		rubygem-aws-sdk-outposts>=1<2:devel/rubygem-aws-sdk-outposts \
-		rubygem-aws-sdk-panorama>=1<2:devel/rubygem-aws-sdk-panorama \
 		rubygem-aws-sdk-partnercentralaccount>=1<2:devel/rubygem-aws-sdk-partnercentralaccount \
 		rubygem-aws-sdk-partnercentralbenefits>=1<2:devel/rubygem-aws-sdk-partnercentralbenefits \
 		rubygem-aws-sdk-partnercentralchannel>=1<2:devel/rubygem-aws-sdk-partnercentralchannel \
+		rubygem-aws-sdk-partnercentralrevenuemeasurement>=1<2:devel/rubygem-aws-sdk-partnercentralrevenuemeasurement \
 		rubygem-aws-sdk-partnercentralselling>=1<2:devel/rubygem-aws-sdk-partnercentralselling \
 		rubygem-aws-sdk-paymentcryptography>=1<2:devel/rubygem-aws-sdk-paymentcryptography \
 		rubygem-aws-sdk-paymentcryptographydata>=1<2:devel/rubygem-aws-sdk-paymentcryptographydata \
@@ -338,6 +338,7 @@ RUN_DEPENDS=	rubygem-aws-sdk-accessanalyzer>=1<2:devel/rubygem-aws-sdk-accessana
 		rubygem-aws-sdk-rekognition>=1<2:devel/rubygem-aws-sdk-rekognition \
 		rubygem-aws-sdk-repostspace>=1<2:devel/rubygem-aws-sdk-repostspace \
 		rubygem-aws-sdk-resiliencehub>=1<2:devel/rubygem-aws-sdk-resiliencehub \
+		rubygem-aws-sdk-resiliencehubv2>=1<2:devel/rubygem-aws-sdk-resiliencehubv2 \
 		rubygem-aws-sdk-resourceexplorer2>=1<2:devel/rubygem-aws-sdk-resourceexplorer2 \
 		rubygem-aws-sdk-resourcegroups>=1<2:devel/rubygem-aws-sdk-resourcegroups \
 		rubygem-aws-sdk-resourcegroupstaggingapi>=1<2:devel/rubygem-aws-sdk-resourcegroupstaggingapi \
@@ -361,6 +362,7 @@ RUN_DEPENDS=	rubygem-aws-sdk-accessanalyzer>=1<2:devel/rubygem-aws-sdk-accessana
 		rubygem-aws-sdk-sagemakeredgemanager>=1<2:devel/rubygem-aws-sdk-sagemakeredgemanager \
 		rubygem-aws-sdk-sagemakerfeaturestoreruntime>=1<2:devel/rubygem-aws-sdk-sagemakerfeaturestoreruntime \
 		rubygem-aws-sdk-sagemakergeospatial>=1<2:devel/rubygem-aws-sdk-sagemakergeospatial \
+		rubygem-aws-sdk-sagemakerjobruntime>=1<2:devel/rubygem-aws-sdk-sagemakerjobruntime \
 		rubygem-aws-sdk-sagemakermetrics>=1<2:devel/rubygem-aws-sdk-sagemakermetrics \
 		rubygem-aws-sdk-sagemakerruntime>=1<2:devel/rubygem-aws-sdk-sagemakerruntime \
 		rubygem-aws-sdk-sagemakerruntimehttp2>=1<2:devel/rubygem-aws-sdk-sagemakerruntimehttp2 \
@@ -383,7 +385,6 @@ RUN_DEPENDS=	rubygem-aws-sdk-accessanalyzer>=1<2:devel/rubygem-aws-sdk-accessana
 		rubygem-aws-sdk-signerdata>=1<2:devel/rubygem-aws-sdk-signerdata \
 		rubygem-aws-sdk-simpledb>=1<2:devel/rubygem-aws-sdk-simpledb \
 		rubygem-aws-sdk-simpledbv2>=1<2:devel/rubygem-aws-sdk-simpledbv2 \
-		rubygem-aws-sdk-simspaceweaver>=1<2:devel/rubygem-aws-sdk-simspaceweaver \
 		rubygem-aws-sdk-snowball>=1<2:devel/rubygem-aws-sdk-snowball \
 		rubygem-aws-sdk-snowdevicemanagement>=1<2:devel/rubygem-aws-sdk-snowdevicemanagement \
 		rubygem-aws-sdk-sns>=1<2:devel/rubygem-aws-sdk-sns \
@@ -401,6 +402,7 @@ RUN_DEPENDS=	rubygem-aws-sdk-accessanalyzer>=1<2:devel/rubygem-aws-sdk-accessana
 		rubygem-aws-sdk-supplychain>=1<2:devel/rubygem-aws-sdk-supplychain \
 		rubygem-aws-sdk-support>=1<2:devel/rubygem-aws-sdk-support \
 		rubygem-aws-sdk-supportapp>=1<2:devel/rubygem-aws-sdk-supportapp \
+		rubygem-aws-sdk-supportauthz>=1<2:devel/rubygem-aws-sdk-supportauthz \
 		rubygem-aws-sdk-sustainability>=1<2:devel/rubygem-aws-sdk-sustainability \
 		rubygem-aws-sdk-swf>=1<2:devel/rubygem-aws-sdk-swf \
 		rubygem-aws-sdk-synthetics>=1<2:devel/rubygem-aws-sdk-synthetics \

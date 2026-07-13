@@ -1,5 +1,5 @@
 PORTNAME=	globalid
-PORTVERSION=	1.3.0
+PORTVERSION=	1.4.0
 CATEGORIES=	databases rubygems
 MASTER_SITES=	RG
 PKGNAMESUFFIX=	-rails81
@@ -15,7 +15,8 @@ RUN_DEPENDS=	rubygem-activesupport81>=6.1:devel/rubygem-activesupport81
 
 USES=		cpe gem
 
-CPE_VENDOR=	rubyonrails
 NO_ARCH=	yes
+
+CPE_VENDOR=	rubyonrails
 
 .include <bsd.port.mk>

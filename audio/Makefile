@@ -499,7 +499,6 @@
     SUBDIR += mpz
     SUBDIR += mumble
     SUBDIR += mumble-server
-    SUBDIR += murmur
     SUBDIR += murmur-cli
     SUBDIR += muse-sequencer
     SUBDIR += musepack
@@ -601,6 +600,7 @@
     SUBDIR += piper-phonemize
     SUBDIR += pipewire-module-xrdp
     SUBDIR += pipewire-spa-oss
+    SUBDIR += pipewire-spa-oss-ng
     SUBDIR += pithos
     SUBDIR += plasma6-kpipewire
     SUBDIR += plasma6-ocean-sound-theme
@@ -672,6 +672,7 @@
     SUBDIR += py-speechrecognition
     SUBDIR += py-spotipy
     SUBDIR += py-supysonic
+    SUBDIR += py-tinytag
     SUBDIR += py-torchaudio
     SUBDIR += py-vosk
     SUBDIR += py-wavio
@@ -817,6 +818,7 @@
     SUBDIR += timidity++-xskin
     SUBDIR += tkeca
     SUBDIR += toccata-lv2
+    SUBDIR += toneshifteq-lv2
     SUBDIR += tosha
     SUBDIR += triceratops-lv2
     SUBDIR += tse3

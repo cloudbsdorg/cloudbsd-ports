@@ -1,6 +1,6 @@
 PORTNAME=	zli
 DISTVERSIONPREFIX=v
-DISTVERSION=	2.1.17
+DISTVERSION=	2.1.18
 PORTREVISION=	1
 CATEGORIES=	sysutils
 
@@ -11,7 +11,7 @@ WWW=		https://zotregistry.dev/
 LICENSE=	APACHE20
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
-USES=		go:modules
+USES=		go:1.26+,modules
 USE_GITHUB=	yes
 GH_ACCOUNT=	project-zot
 GH_PROJECT=	zot

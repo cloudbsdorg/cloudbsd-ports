@@ -8,6 +8,7 @@
     SUBDIR += aravis
     SUBDIR += arcan
     SUBDIR += aribb24
+    SUBDIR += asdcplib
     SUBDIR += assimp
     SUBDIR += atomicparsley
     SUBDIR += audacious
@@ -44,7 +45,6 @@
     SUBDIR += dtv-scan-tables
     SUBDIR += dv2sub
     SUBDIR += dvb-apps
-    SUBDIR += dvbcut
     SUBDIR += dvbsnoop
     SUBDIR += dvd-slideshow
     SUBDIR += dvdauthor
@@ -253,11 +253,9 @@
     SUBDIR += navidrome
     SUBDIR += neolink
     SUBDIR += nostt
-    SUBDIR += nymphcast
     SUBDIR += nymphcastlib
     SUBDIR += nymphrpc
     SUBDIR += obs-multi-rtmp
-    SUBDIR += obs-streamfx
     SUBDIR += obs-studio
     SUBDIR += obs-text-pthread
     SUBDIR += obs-waveform
@@ -342,10 +340,12 @@
     SUBDIR += rubygem-gstreamer
     SUBDIR += rubygem-streamio-ffmpeg
     SUBDIR += scte35dump
+    SUBDIR += shaka-packager
     SUBDIR += shotcut
     SUBDIR += shotcut-qt6
     SUBDIR += showtime
     SUBDIR += simplescreenrecorder
+    SUBDIR += smelter
     SUBDIR += smpeg
     SUBDIR += smpeg2
     SUBDIR += smplayer
