@@ -1,5 +1,5 @@
 PORTNAME=	freenginx
-PORTVERSION=	1.30.0
+PORTVERSION=	1.30.1
 PORTREVISION?=	3
 CATEGORIES=	www
 MASTER_SITES=	https://freenginx.org/download/ \

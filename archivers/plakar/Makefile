@@ -1,7 +1,7 @@
 PORTNAME=	plakar
 DISTVERSIONPREFIX=	v
-DISTVERSION=	1.0.6
-PORTREVISION=	7
+DISTVERSION=	1.1.3
+PORTREVISION=	1
 CATEGORIES=	archivers
 
 MAINTAINER=	twisla@twis.la
@@ -10,6 +10,9 @@ WWW=		https://docs.plakar.io/
 
 LICENSE=	ISCL
 LICENSE_FILE=	${WRKSRC}/LICENSE
+
+ONLY_FOR_ARCHS=	aarch64 amd64
+ONLY_FOR_ARCHS_REASON=	module modernc.org/sqlite only supported on aarch64 and amd64
 
 USES=		go:1.25+,modules
 GO_MODULE=	github.com/PlakarKorp/plakar

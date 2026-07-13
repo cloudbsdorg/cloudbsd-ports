@@ -20,7 +20,9 @@
     SUBDIR += bun
     SUBDIR += bwbasic
     SUBDIR += c
+    SUBDIR += c3c
     SUBDIR += cairo
+    SUBDIR += cairo-language-server
     SUBDIR += cbmbasic
     SUBDIR += cbqn
     SUBDIR += ccl
@@ -43,7 +45,6 @@
     SUBDIR += cparser
     SUBDIR += crumb
     SUBDIR += crystal
-    SUBDIR += csharp-mode.el
     SUBDIR += cython
     SUBDIR += cython0
     SUBDIR += dhall
@@ -110,6 +111,7 @@
     SUBDIR += gnat12
     SUBDIR += gnat13
     SUBDIR += gnat14
+    SUBDIR += gnat15
     SUBDIR += gnatcross-binutils-aarch64
     SUBDIR += gnatcross-sysroot-aarch64
     SUBDIR += gnatdroid-binutils
@@ -260,10 +262,11 @@
     SUBDIR += p5-v6
     SUBDIR += pbasic
     SUBDIR += pcc
+    SUBDIR += perl-lsp
     SUBDIR += perl5-devel
-    SUBDIR += perl5.38
     SUBDIR += perl5.40
     SUBDIR += perl5.42
+    SUBDIR += perl5.44
     SUBDIR += petite-chez
     SUBDIR += pfe
     SUBDIR += pharo
@@ -276,6 +279,8 @@
     SUBDIR += php84-extensions
     SUBDIR += php85
     SUBDIR += php85-extensions
+    SUBDIR += php86
+    SUBDIR += php86-extensions
     SUBDIR += picoc
     SUBDIR += picolisp
     SUBDIR += pkl
@@ -360,13 +365,13 @@
     SUBDIR += smlnj
     SUBDIR += snobol4
     SUBDIR += solidity
-    SUBDIR += spidermonkey115
     SUBDIR += spidermonkey128
     SUBDIR += spidermonkey140
     SUBDIR += squeak
     SUBDIR += squirrel
     SUBDIR += starlark-rust
     SUBDIR += swift510
+    SUBDIR += swift6
     SUBDIR += swipl
     SUBDIR += tauthon
     SUBDIR += tcbasic

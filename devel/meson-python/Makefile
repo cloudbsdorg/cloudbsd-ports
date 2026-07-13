@@ -30,10 +30,8 @@ TEST_DEPENDS=	${PYTHON_PKGNAMEPREFIX}build>0:devel/py-build@${PY_FLAVOR} \
 		git:devel/git
 
 USES=		python
-USE_PYTHON=	allflavors autoplist concurrent cython_test pep517 pytest
+USE_PYTHON=	autoplist concurrent cython_test pep517 pytest
 
-# tarball has UTF-8 filenames
-EXTRACT_CMD=	env LANG=C.UTF-8 LC_ALL=C.UTF-8 ${TAR}
 NO_ARCH=	yes
 
 .include <bsd.port.mk>

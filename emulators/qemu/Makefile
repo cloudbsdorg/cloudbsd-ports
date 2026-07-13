@@ -1,5 +1,5 @@
 PORTNAME=	qemu
-DISTVERSION=	11.0.1
+DISTVERSION=	11.0.2
 CATEGORIES=	emulators
 MASTER_SITES=	https://download.qemu.org/
 DIST_SUBDIR=	qemu/${PORTVERSION}
@@ -277,6 +277,7 @@ post-install:
 
 post-install-DOCS-on:
 	@(cd ${WRKSRC} && ${COPYTREE_SHARE} docs ${STAGEDIR}${DOCSDIR}/)
+	@${RMDIR} ${STAGEDIR}${DOCSDIR}/_sources
 .endif
 
 .include <bsd.port.mk>

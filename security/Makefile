@@ -122,6 +122,7 @@
     SUBDIR += crowdsec-firewall-bouncer
     SUBDIR += cryptlib
     SUBDIR += cryptopp
+    SUBDIR += cryptopp-modern
     SUBDIR += ct-submit
     SUBDIR += cvechecker
     SUBDIR += cvm
@@ -144,6 +145,7 @@
     SUBDIR += distcache
     SUBDIR += diswall
     SUBDIR += doas
+    SUBDIR += dogtag-pki
     SUBDIR += dotdotpwn
     SUBDIR += dropbear
     SUBDIR += dsniff
@@ -191,7 +193,6 @@
     SUBDIR += gnupg
     SUBDIR += gnupg-pkcs11-scd
     SUBDIR += gnupg1
-    SUBDIR += gnupg25
     SUBDIR += gnutls
     SUBDIR += go-cve-dictionary
     SUBDIR += go-tuf
@@ -282,7 +283,6 @@
     SUBDIR += kpkpass
     SUBDIR += kpmenu
     SUBDIR += krb5
-    SUBDIR += krb5-121
     SUBDIR += krb5-122
     SUBDIR += krb5-devel
     SUBDIR += kstart
@@ -391,7 +391,6 @@
     SUBDIR += mate-pam-helper
     SUBDIR += mbedtls3
     SUBDIR += mbedtls4
-    SUBDIR += mcrypt
     SUBDIR += md5deep
     SUBDIR += medusa
     SUBDIR += meek
@@ -431,6 +430,7 @@
     SUBDIR += obfs4proxy-tor
     SUBDIR += ocaml-cryptgps
     SUBDIR += ocaml-cryptokit
+    SUBDIR += ocaml-digestif
     SUBDIR += ocaml-lwt_ssl
     SUBDIR += ocaml-ssl
     SUBDIR += oidentd
@@ -639,6 +639,7 @@
     SUBDIR += p5-Crypt-Sodium
     SUBDIR += p5-Crypt-Solitaire
     SUBDIR += p5-Crypt-SysRandom
+    SUBDIR += p5-Crypt-SysRandom-XS
     SUBDIR += p5-Crypt-TEA
     SUBDIR += p5-Crypt-T_e_a
     SUBDIR += p5-Crypt-Tea_JS
@@ -844,6 +845,8 @@
     SUBDIR += php84-sodium
     SUBDIR += php85-filter
     SUBDIR += php85-sodium
+    SUBDIR += php86-filter
+    SUBDIR += php86-sodium
     SUBDIR += picocrypt
     SUBDIR += picosha2
     SUBDIR += pidgin-encryption
@@ -990,6 +993,7 @@
     SUBDIR += py-joserfc
     SUBDIR += py-jwcrypto
     SUBDIR += py-k5test
+    SUBDIR += py-kdcproxy
     SUBDIR += py-keepkey
     SUBDIR += py-kerberos
     SUBDIR += py-keyring
@@ -1080,6 +1084,7 @@
     SUBDIR += py-ropgadget
     SUBDIR += py-ropper
     SUBDIR += py-rsa
+    SUBDIR += py-rtls
     SUBDIR += py-safe
     SUBDIR += py-scp
     SUBDIR += py-scramp
@@ -1113,6 +1118,7 @@
     SUBDIR += py-txtorcon
     SUBDIR += py-uhashring
     SUBDIR += py-unicode-show
+    SUBDIR += py-utls
     SUBDIR += py-vici
     SUBDIR += py-virustotal-api
     SUBDIR += py-volatility3
@@ -1188,6 +1194,7 @@
     SUBDIR += rubygem-encryptor
     SUBDIR += rubygem-ezcrypto
     SUBDIR += rubygem-gitlab-cloud-connector
+    SUBDIR += rubygem-gitlab-glaz
     SUBDIR += rubygem-gitlab-secret_detection
     SUBDIR += rubygem-googleauth
     SUBDIR += rubygem-googleauth-gitlab
@@ -1372,7 +1379,6 @@
     SUBDIR += ssss
     SUBDIR += sst
     SUBDIR += starttls
-    SUBDIR += steghide
     SUBDIR += stegify
     SUBDIR += step-certificates
     SUBDIR += step-cli

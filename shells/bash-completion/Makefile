@@ -1,6 +1,5 @@
 PORTNAME=	bash-completion
-PORTVERSION=	2.17.0
-PORTREVISION=	3
+PORTVERSION=	2.18.0
 PORTEPOCH=	2
 CATEGORIES=	shells
 MASTER_SITES=	https://github.com/scop/bash-completion/releases/download/${PORTVERSION}/
@@ -37,12 +36,6 @@ ZFS_DESC=		Add OpenZFS completion
 
 FREEBSD_RUN_DEPENDS=	bash-completion-freebsd>=0:shells/bash-completion-freebsd
 ZFS_RUN_DEPENDS=	bash-completion-zfs>=0:shells/bash-completion-zfs
-
-.include <bsd.port.options.mk>
-
-.if ${ARCH} == riscv64
-EXTRACT_CMD=	${SETENV} LC_ALL=en_US.UTF-8 /usr/bin/bsdtar
-.endif
 
 post-configure:
 	@${REINPLACE_CMD} \

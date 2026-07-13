@@ -1,6 +1,6 @@
 PORTNAME=	sphinx_material
 DISTVERSION=	0.0.36
-PORTREVISION=	3
+PORTREVISION=	4
 CATEGORIES=	textproc python
 MASTER_SITES=	PYPI
 PKGNAMEPREFIX=	${PYTHON_PKGNAMEPREFIX}
@@ -10,6 +10,9 @@ COMMENT=	Responsive Material Design theme for Sphinx documentation
 WWW=		https://bashtage.github.io/sphinx-material/
 
 LICENSE=	MIT
+
+# See https://github.com/bashtage/sphinx-material/issues/141
+DEPRECATED=	No longer maintained
 
 BUILD_DEPENDS=	${PY_DEPENDS}
 RUN_DEPENDS=	${PY_DEPENDS}
@@ -24,5 +27,7 @@ PY_DEPENDS=	sphinx-build:textproc/py-sphinx@${PY_FLAVOR}	\
 
 USES=		python
 USE_PYTHON=	distutils
+
+NO_ARCH=	yes
 
 .include <bsd.port.mk>

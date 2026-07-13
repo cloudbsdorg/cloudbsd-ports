@@ -1,6 +1,6 @@
 PORTNAME=	llvm
 DISTVERSION=	22.1.7
-PORTREVISION=	0
+PORTREVISION=	1
 CATEGORIES=	devel lang
 MASTER_SITES=	https://github.com/llvm/llvm-project/releases/download/llvmorg-${DISTVERSION}/
 #MASTER_SITES=	https://github.com/llvm/llvm-project/releases/download/llvmorg-${DISTVERSION:S/rc/-rc/}/
@@ -95,7 +95,7 @@ OPTIONS_DEFAULT_aarch64=	${_BE_${FLAVOR}}
 OPTIONS_DEFAULT_amd64=		${_BE_${FLAVOR}}
 OPTIONS_DEFAULT_powerpc64=	${_BE_${FLAVOR}}
 OPTIONS_DEFAULT_powerpc64le=	${_BE_${FLAVOR}}
-OPTIONS_DEFAULT_risccv64=	${_BE_${FLAVOR}}
+OPTIONS_DEFAULT_riscv64=	${_BE_${FLAVOR}}
 
 OPTIONS_EXCLUDE_armv6=	COMPILER_RT
 OPTIONS_EXCLUDE_armv7=	COMPILER_RT

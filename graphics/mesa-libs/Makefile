@@ -14,12 +14,11 @@ BUILD_DEPENDS=	libglvnd>=0:graphics/libglvnd \
 		${PYTHON_PKGNAMEPREFIX}ply>0:devel/py-ply@${PY_FLAVOR} \
 		libclc-${LLVM_PORT:T}>0:devel/libclc@${LLVM_PORT:T} \
 		spirv-tools>0:graphics/spirv-tools \
-		spirv-llvm-translator-${LLVM_PORT:T}>0:devel/spirv-llvm-translator@${LLVM_PORT:T}
+		spirv-llvm-translator-${LLVM_PORT:T}>0:devel/spirv-llvm-translator@${LLVM_PORT:T} \
+		libva>=0:multimedia/libva
 LIB_DEPENDS=	libdisplay-info.so:sysutils/libdisplay-info
 RUN_DEPENDS=	spirv-tools>0:graphics/spirv-tools \
 		spirv-llvm-translator-${LLVM_PORT:T}>0:devel/spirv-llvm-translator@${LLVM_PORT:T}
-
-CONFIGURE_ENV+=	PKG_CONFIG_PATH="${LLVM_PREFIX}/libdata/pkgconfig"
 
 OPTIONS_GROUP=		PLATFORM
 OPTIONS_GROUP_PLATFORM=	X11 WAYLAND
@@ -48,19 +47,22 @@ LDFLAGS_i386=	-Wl,-znotext
 # a real gallium driver set so install_megadrivers actually ships the lib;
 # the per-driver lib/dri/*_dri.so shims that fall out of this build are
 # stripped in post-install (they belong to graphics/mesa-dri).
-GALLIUM_DRIVERS=	crocus i915 iris llvmpipe panfrost r300 r600 radeonsi svga zink
+GALLIUM_DRIVERS=	crocus i915 iris llvmpipe panfrost r300 r600 radeonsi \
+			svga virgl zink
 .if ${ARCH} != amd64 && ${ARCH} != i386 && ${ARCH} != x86_64
 GALLIUM_DRIVERS:=	${GALLIUM_DRIVERS:Ncrocus:Ni915:Niris:Nsvga}
 .endif
 .if ${ARCH} == armv7
-GALLIUM_DRIVERS=	llvmpipe
+# These require llvm to be compiled with the amdgpu backend, which is not default on armv7
+GALLIUM_DRIVERS:=       ${GALLIUM_DRIVERS:Nr600:Nradeonsi}
 .endif
 
 MESON_ARGS+=	-Dgallium-drivers=${GALLIUM_DRIVERS:ts,}
 MESON_ARGS+=	-Dvulkan-drivers=""
 
+MESON_ARGS+=	-Dvideo-codecs="all"
+
 MESON_ARGS+=	-Dandroid-libbacktrace=disabled \
-		-Dgallium-va=disabled \
 		-Dlmsensors=disabled \
 		-Dmicrosoft-clc=disabled \
 		-Dtools="" \
