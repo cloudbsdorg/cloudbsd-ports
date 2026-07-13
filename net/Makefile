@@ -203,6 +203,7 @@
     SUBDIR += gnome-nettool
     SUBDIR += gnome-online-accounts
     SUBDIR += gnu-radius
+    SUBDIR += gnunet
     SUBDIR += go-bapu
     SUBDIR += go-cs
     SUBDIR += go-pkgsite
@@ -332,6 +333,7 @@
     SUBDIR += kf6-kcontacts
     SUBDIR += kf6-kdav
     SUBDIR += kf6-kholidays
+    SUBDIR += kf6-kmime
     SUBDIR += kf6-syndication
     SUBDIR += kget
     SUBDIR += kidentitymanagement
@@ -1414,6 +1416,7 @@
     SUBDIR += rubygem-netrc
     SUBDIR += rubygem-network_interface
     SUBDIR += rubygem-nkf
+    SUBDIR += rubygem-nkf-gitlab
     SUBDIR += rubygem-no_proxy_fix
     SUBDIR += rubygem-oauth
     SUBDIR += rubygem-oauth-tty

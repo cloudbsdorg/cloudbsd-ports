@@ -452,12 +452,16 @@
     SUBDIR += py-SimpleSoapy
     SUBDIR += py-SoapySDR
     SUBDIR += py-accelerate
+    SUBDIR += py-ag2
     SUBDIR += py-aistudio-sdk
     SUBDIR += py-alive-progress
+    SUBDIR += py-analysis-framework-base
     SUBDIR += py-anthropic
     SUBDIR += py-apache-beam
     SUBDIR += py-ascii-magic
     SUBDIR += py-ast-comments
+    SUBDIR += py-autogen
+    SUBDIR += py-banks
     SUBDIR += py-bce-python-sdk
     SUBDIR += py-bitsandbytes
     SUBDIR += py-boost-histogram
@@ -483,6 +487,7 @@
     SUBDIR += py-cppman
     SUBDIR += py-crudini
     SUBDIR += py-csvw
+    SUBDIR += py-cvat-sdk
     SUBDIR += py-datasets
     SUBDIR += py-detecta
     SUBDIR += py-diffusers
@@ -496,6 +501,7 @@
     SUBDIR += py-facenet-pytorch
     SUBDIR += py-fal-client
     SUBDIR += py-fast-histogram
+    SUBDIR += py-faster-coco-eval
     SUBDIR += py-fastmcp
     SUBDIR += py-fastmcp-slim
     SUBDIR += py-fastscapelib
@@ -516,6 +522,10 @@
     SUBDIR += py-histoprint
     SUBDIR += py-huepy
     SUBDIR += py-huggingface-hub
+    SUBDIR += py-ibm-cos-sdk
+    SUBDIR += py-ibm-cos-sdk-core
+    SUBDIR += py-ibm-cos-sdk-s3transfer
+    SUBDIR += py-ibm-watsonx-ai
     SUBDIR += py-icoextract
     SUBDIR += py-instructor
     SUBDIR += py-ipyfastscape
@@ -545,6 +555,11 @@
     SUBDIR += py-litellm
     SUBDIR += py-litellm-proxy-extras
     SUBDIR += py-llama-cpp-python
+    SUBDIR += py-llama-index-core
+    SUBDIR += py-llama-index-embeddings-huggingface
+    SUBDIR += py-llama-index-llms-ibm
+    SUBDIR += py-llama-index-llms-openai
+    SUBDIR += py-llama-index-llms-openai-like
     SUBDIR += py-llm
     SUBDIR += py-llm-claude-3
     SUBDIR += py-lm-format-enforcer
@@ -564,6 +579,7 @@
     SUBDIR += py-mmsegmentation
     SUBDIR += py-model-hosting-container-standards
     SUBDIR += py-modelscope
+    SUBDIR += py-modelscope-hub
     SUBDIR += py-molequeue
     SUBDIR += py-napari
     SUBDIR += py-napari-svg
@@ -578,6 +594,9 @@
     SUBDIR += py-openai
     SUBDIR += py-openai-harmony
     SUBDIR += py-openai-whisper
+    SUBDIR += py-openinference-instrumentation
+    SUBDIR += py-openinference-instrumentation-smolagents
+    SUBDIR += py-openinference-semantic-conventions
     SUBDIR += py-openpaperwork-core
     SUBDIR += py-openpaperwork-gtk
     SUBDIR += py-openvdb
@@ -633,6 +652,8 @@
     SUBDIR += py-sigopt
     SUBDIR += py-skops
     SUBDIR += py-smdebug-rulesconfig
+    SUBDIR += py-smolagents
+    SUBDIR += py-smolagents-agentfolio
     SUBDIR += py-snakemake-interface-common
     SUBDIR += py-snakemake-interface-executor-plugins
     SUBDIR += py-snakemake-interface-logger-plugins

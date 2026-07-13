@@ -361,6 +361,7 @@
     SUBDIR += byaccj
     SUBDIR += c-stdaux
     SUBDIR += c2mdoc
+    SUBDIR += c3-lsp
     SUBDIR += c4core
     SUBDIR += calibrator
     SUBDIR += caliper
@@ -748,6 +749,7 @@
     SUBDIR += freebsd-gcc14
     SUBDIR += freebsd-gcc15
     SUBDIR += freebsd-git-arc
+    SUBDIR += freebsd-git-mfc
     SUBDIR += freebsd-git-pr
     SUBDIR += freebsd-nvme-shim
     SUBDIR += freebsd-sysroot
@@ -1715,10 +1717,10 @@
     SUBDIR += mm
     SUBDIR += modd
     SUBDIR += mold
-    SUBDIR += moon
     SUBDIR += mongo-c-driver
     SUBDIR += mongo-cxx-driver
     SUBDIR += mono-addins
+    SUBDIR += moon
     SUBDIR += mpatrol
     SUBDIR += mph
     SUBDIR += mrc
@@ -4279,7 +4281,6 @@
     SUBDIR += pecl-event
     SUBDIR += pecl-excimer
     SUBDIR += pecl-expect
-    SUBDIR += pecl-grpc
     SUBDIR += pecl-inotify
     SUBDIR += pecl-json_post
     SUBDIR += pecl-msgpack
@@ -4288,9 +4289,7 @@
     SUBDIR += pecl-pcov
     SUBDIR += pecl-protobuf
     SUBDIR += pecl-psr
-    SUBDIR += pecl-raphf2
     SUBDIR += pecl-runkit7
-    SUBDIR += pecl-swoole
     SUBDIR += pecl-sync
     SUBDIR += pecl-uploadprogress
     SUBDIR += pecl-uuid
@@ -4302,6 +4301,7 @@
     SUBDIR += pecl-zookeeper
     SUBDIR += pegtl
     SUBDIR += pep8
+    SUBDIR += perfetto
     SUBDIR += performance
     SUBDIR += perlconsole
     SUBDIR += phabricator
@@ -4312,9 +4312,13 @@
     SUBDIR += php-Psr_Log
     SUBDIR += php-composer
     SUBDIR += php-geshi
+    SUBDIR += php-grpc
     SUBDIR += php-ice37
     SUBDIR += php-libawl
     SUBDIR += php-maxminddb
+    SUBDIR += php-pie
+    SUBDIR += php-raphf
+    SUBDIR += php-swoole
     SUBDIR += php82-ffi
     SUBDIR += php82-gettext
     SUBDIR += php82-intl
@@ -4594,6 +4598,7 @@
     SUBDIR += py-azure-mgmt-deploymentmanager
     SUBDIR += py-azure-mgmt-devtestlabs
     SUBDIR += py-azure-mgmt-dns
+    SUBDIR += py-azure-mgmt-domainregistration
     SUBDIR += py-azure-mgmt-eventgrid
     SUBDIR += py-azure-mgmt-eventhub
     SUBDIR += py-azure-mgmt-extendedlocation
@@ -4629,7 +4634,9 @@
     SUBDIR += py-azure-mgmt-resource-deployments
     SUBDIR += py-azure-mgmt-resource-deploymentscripts
     SUBDIR += py-azure-mgmt-resource-deploymentstacks
+    SUBDIR += py-azure-mgmt-resource-subscriptions
     SUBDIR += py-azure-mgmt-resource-templatespecs
+    SUBDIR += py-azure-mgmt-resource24
     SUBDIR += py-azure-mgmt-search
     SUBDIR += py-azure-mgmt-security
     SUBDIR += py-azure-mgmt-servicebus
@@ -4647,6 +4654,8 @@
     SUBDIR += py-azure-monitor-opentelemetry-exporter
     SUBDIR += py-azure-monitor-query
     SUBDIR += py-azure-multiapi-storage
+    SUBDIR += py-azure-search
+    SUBDIR += py-azure-search-documents
     SUBDIR += py-azure-storage-blob
     SUBDIR += py-azure-storage-common
     SUBDIR += py-azure-storage-file-datalake
@@ -4982,6 +4991,7 @@
     SUBDIR += py-envier
     SUBDIR += py-envisage
     SUBDIR += py-envs
+    SUBDIR += py-envwrap
     SUBDIR += py-epc
     SUBDIR += py-epdb
     SUBDIR += py-epsilon
@@ -5008,6 +5018,7 @@
     SUBDIR += py-factory-boy
     SUBDIR += py-faicons
     SUBDIR += py-fam
+    SUBDIR += py-fast-depends
     SUBDIR += py-fastbencode
     SUBDIR += py-fastcache
     SUBDIR += py-fastcore
@@ -5290,6 +5301,7 @@
     SUBDIR += py-jstyleson
     SUBDIR += py-junitparser
     SUBDIR += py-jupyter
+    SUBDIR += py-jupyter-builder
     SUBDIR += py-jupyter-client
     SUBDIR += py-jupyter-collaboration
     SUBDIR += py-jupyter-collaboration-ui
@@ -5407,6 +5419,7 @@
     SUBDIR += py-mediafile
     SUBDIR += py-mediapy
     SUBDIR += py-medikit
+    SUBDIR += py-mellea
     SUBDIR += py-memory-allocator
     SUBDIR += py-memory-graph
     SUBDIR += py-memory-profiler
@@ -5526,6 +5539,7 @@
     SUBDIR += py-opentelemetry-exporter-otlp-proto-common
     SUBDIR += py-opentelemetry-exporter-otlp-proto-grpc
     SUBDIR += py-opentelemetry-exporter-otlp-proto-http
+    SUBDIR += py-opentelemetry-exporter-prometheus
     SUBDIR += py-opentelemetry-instrumentation
     SUBDIR += py-opentelemetry-instrumentation-asgi
     SUBDIR += py-opentelemetry-instrumentation-dbapi
@@ -5548,6 +5562,7 @@
     SUBDIR += py-opster
     SUBDIR += py-optik
     SUBDIR += py-optree
+    SUBDIR += py-optype
     SUBDIR += py-orca
     SUBDIR += py-ordered-set
     SUBDIR += py-ordereddict
@@ -6648,6 +6663,7 @@
     SUBDIR += rgbds
     SUBDIR += rgx
     SUBDIR += rgxg
+    SUBDIR += rhg
     SUBDIR += rhtvision
     SUBDIR += rinutils
     SUBDIR += riscv32-unknown-elf-gcc
@@ -6740,6 +6756,7 @@
     SUBDIR += rubygem-amazing_print
     SUBDIR += rubygem-analogger
     SUBDIR += rubygem-annoy
+    SUBDIR += rubygem-anonymous_loader
     SUBDIR += rubygem-ansi
     SUBDIR += rubygem-apipie-bindings
     SUBDIR += rubygem-apipie-params
@@ -7071,6 +7088,7 @@
     SUBDIR += rubygem-aws-sdk-partnercentralaccount
     SUBDIR += rubygem-aws-sdk-partnercentralbenefits
     SUBDIR += rubygem-aws-sdk-partnercentralchannel
+    SUBDIR += rubygem-aws-sdk-partnercentralrevenuemeasurement
     SUBDIR += rubygem-aws-sdk-partnercentralselling
     SUBDIR += rubygem-aws-sdk-paymentcryptography
     SUBDIR += rubygem-aws-sdk-paymentcryptographydata
@@ -7172,6 +7190,7 @@
     SUBDIR += rubygem-aws-sdk-supplychain
     SUBDIR += rubygem-aws-sdk-support
     SUBDIR += rubygem-aws-sdk-supportapp
+    SUBDIR += rubygem-aws-sdk-supportauthz
     SUBDIR += rubygem-aws-sdk-sustainability
     SUBDIR += rubygem-aws-sdk-swf
     SUBDIR += rubygem-aws-sdk-synthetics
@@ -7454,11 +7473,15 @@
     SUBDIR += rubygem-cucumber-ci-environment11
     SUBDIR += rubygem-cucumber-core
     SUBDIR += rubygem-cucumber-core15
+    SUBDIR += rubygem-cucumber-core16
     SUBDIR += rubygem-cucumber-cucumber-expressions
+    SUBDIR += rubygem-cucumber-cucumber-expressions19
     SUBDIR += rubygem-cucumber-messages
+    SUBDIR += rubygem-cucumber-messages32
     SUBDIR += rubygem-cucumber-rails
     SUBDIR += rubygem-cucumber-tag-expressions
     SUBDIR += rubygem-cucumber-tag-expressions8
+    SUBDIR += rubygem-cucumber-tag-expressions9
     SUBDIR += rubygem-cucumber-wire
     SUBDIR += rubygem-cucumber10
     SUBDIR += rubygem-curses
@@ -8206,6 +8229,7 @@
     SUBDIR += rubygem-resque-scheduler
     SUBDIR += rubygem-retriable
     SUBDIR += rubygem-retriable-gitlab
+    SUBDIR += rubygem-retriable3
     SUBDIR += rubygem-retryable
     SUBDIR += rubygem-rgen
     SUBDIR += rubygem-rgl
