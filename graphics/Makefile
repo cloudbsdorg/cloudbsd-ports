@@ -828,7 +828,6 @@
     SUBDIR += pear-Image_Transform
     SUBDIR += pecl-geospatial
     SUBDIR += pecl-imagick
-    SUBDIR += pecl-qrencode
     SUBDIR += pecl-vips
     SUBDIR += pencil2d
     SUBDIR += perceptualdiff
@@ -843,6 +842,7 @@
     SUBDIR += phototonic
     SUBDIR += php-facedetect
     SUBDIR += php-geos
+    SUBDIR += php-qrencode
     SUBDIR += php82-exif
     SUBDIR += php82-gd
     SUBDIR += php83-exif
@@ -999,6 +999,8 @@
     SUBDIR += py-pandana
     SUBDIR += py-pandarm
     SUBDIR += py-pdf2image
+    SUBDIR += py-pdfminer-six
+    SUBDIR += py-pdfplumber
     SUBDIR += py-photocollage
     SUBDIR += py-piexif
     SUBDIR += py-pillow
@@ -1030,6 +1032,7 @@
     SUBDIR += py-pymaging-png
     SUBDIR += py-pyocr
     SUBDIR += py-pyogrio
+    SUBDIR += py-pypdf2
     SUBDIR += py-pypdfium2
     SUBDIR += py-pypillowfight
     SUBDIR += py-pyproj
