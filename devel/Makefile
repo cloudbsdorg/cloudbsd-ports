@@ -834,6 +834,7 @@
     SUBDIR += gengetopt
     SUBDIR += genht
     SUBDIR += genie
+    SUBDIR += getopt-ada
     SUBDIR += getoptions
     SUBDIR += gettext
     SUBDIR += gettext-lint
@@ -846,6 +847,7 @@
     SUBDIR += gflags
     SUBDIR += gfold
     SUBDIR += gh
+    SUBDIR += ghgrab
     SUBDIR += ghidra
     SUBDIR += ghostie
     SUBDIR += ghpr
@@ -918,6 +920,8 @@
     SUBDIR += glog
     SUBDIR += gmake
     SUBDIR += gn
+    SUBDIR += gnatcoll-core
+    SUBDIR += gnatcoll-minimal
     SUBDIR += gnome-builder
     SUBDIR += gnome-common
     SUBDIR += gnu-efi
@@ -987,6 +991,7 @@
     SUBDIR += gwenhywfar
     SUBDIR += gwenhywfar-gtk3
     SUBDIR += gwenhywfar-qt6
+    SUBDIR += gwm
     SUBDIR += gzstream
     SUBDIR += hapy
     SUBDIR += hare
@@ -1061,6 +1066,7 @@
     SUBDIR += ignition-utils
     SUBDIR += ikos
     SUBDIR += imake
+    SUBDIR += immanent-checker
     SUBDIR += immer
     SUBDIR += imtui
     SUBDIR += include-what-you-use
@@ -4286,7 +4292,6 @@
     SUBDIR += pecl-msgpack
     SUBDIR += pecl-mustache
     SUBDIR += pecl-opentelemetry
-    SUBDIR += pecl-pcov
     SUBDIR += pecl-protobuf
     SUBDIR += pecl-psr
     SUBDIR += pecl-runkit7
@@ -4316,6 +4321,7 @@
     SUBDIR += php-ice37
     SUBDIR += php-libawl
     SUBDIR += php-maxminddb
+    SUBDIR += php-pcov
     SUBDIR += php-pie
     SUBDIR += php-raphf
     SUBDIR += php-swoole
@@ -5439,6 +5445,7 @@
     SUBDIR += py-mmh3
     SUBDIR += py-mock
     SUBDIR += py-molecule
+    SUBDIR += py-molecule-plugins
     SUBDIR += py-mondrian
     SUBDIR += py-mongokit
     SUBDIR += py-monkeytype
@@ -8767,6 +8774,7 @@
     SUBDIR += tkcvs
     SUBDIR += tkp4
     SUBDIR += tl-expected
+    SUBDIR += tla+
     SUBDIR += tllist
     SUBDIR += tlsh
     SUBDIR += tlx

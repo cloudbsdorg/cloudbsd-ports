@@ -1506,6 +1506,7 @@
     SUBDIR += py-aiohttp-jinja2
     SUBDIR += py-aiohttp-middlewares
     SUBDIR += py-aiohttp-oauthlib
+    SUBDIR += py-aiohttp-retry
     SUBDIR += py-aiohttp-session
     SUBDIR += py-aiohttp-wsgi
     SUBDIR += py-aiolimiter
@@ -1791,8 +1792,11 @@
     SUBDIR += py-google-cloud-container
     SUBDIR += py-google-cloud-core
     SUBDIR += py-google-cloud-datastore
+    SUBDIR += py-google-cloud-discoveryengine
     SUBDIR += py-google-cloud-dlp
+    SUBDIR += py-google-cloud-documentai
     SUBDIR += py-google-cloud-logging
+    SUBDIR += py-google-cloud-modelarmor
     SUBDIR += py-google-cloud-monitoring
     SUBDIR += py-google-cloud-resource-manager
     SUBDIR += py-google-cloud-speech
