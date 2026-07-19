@@ -11,6 +11,9 @@ WWW=		https://ollama.com \
 LICENSE=	MIT
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
+ONLY_FOR_ARCHS=		amd64
+ONLY_FOR_ARCHS_REASON=	heavily relies on SIMD, no HW to test on arm and other architectures, also errors out: Unsupported ARM target OS: FreeBSD # patches are welcome
+
 BROKEN_i386=	fails to compile: x/mlxrunner/mlx/memory.go:40:11: 1 << (4 * 10) (untyped int constant 1099511627776) overflows int
 
 BUILD_DEPENDS=	bash:shells/bash \
