@@ -1,0 +1,41 @@
+#!/bin/sh
+# POST-INSTALL: validate desktop privileges, then add what is missing.
+# $1 = package name, $2 = PRE-INSTALL | POST-INSTALL | ...
+#
+# Never fails the package install hard: configuration problems print warnings
+# and leave a clear re-run command.
+
+PREFIX="${PKG_PREFIX:-/usr/local}"
+ENABLE="${PREFIX}/sbin/revytech-desktop-privileges-enable"
+
+case "$2" in
+POST-INSTALL)
+	if [ ! -x "$ENABLE" ]; then
+		echo "revytech-wayfire: WARNING: $ENABLE missing after install" >&2
+		exit 0
+	fi
+	echo "revytech-wayfire: validating desktop privileges (groups, seatd, doas, system defaults)..."
+	# Prefer the user who invoked pkg (doas/sudo); else discover all desktop users
+	_user=""
+	if [ -n "${SUDO_USER:-}" ] && [ "${SUDO_USER}" != "root" ]; then
+		_user=$SUDO_USER
+	elif [ -n "${DOAS_USER:-}" ] && [ "${DOAS_USER}" != "root" ]; then
+		_user=$DOAS_USER
+	fi
+	if [ -n "$_user" ]; then
+		if "$ENABLE" "$_user"; then
+			echo "revytech-wayfire: privileges OK for $_user (re-login if groups changed)"
+		else
+			echo "revytech-wayfire: WARNING: privileges incomplete for $_user; run: $ENABLE $_user" >&2
+		fi
+	else
+		if "$ENABLE"; then
+			echo "revytech-wayfire: privileges OK for discovered desktop users"
+		else
+			echo "revytech-wayfire: WARNING: privileges incomplete; run: $ENABLE" >&2
+		fi
+	fi
+	;;
+esac
+
+exit 0

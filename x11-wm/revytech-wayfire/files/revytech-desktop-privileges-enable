@@ -1,111 +1,424 @@
 #!/bin/sh
-# Configure FreeBSD so a desktop user can change seat/session settings without
-# interactive sudo/doas for day-to-day work.
+# REVYTECH desktop privileges — VALIDATE then APPLY.
 #
-# - video   → seatd / DRM (Wayfire)
-# - operator → setuid /sbin/shutdown (power off / reboot without doas)
-# - optional narrow doas rules for ifconfig / wpa / zzz (network + suspend)
+# On package install (and when re-run as root), discover what the FreeBSD
+# Wayfire stack needs for day-to-day Settings without interactive sudo/doas,
+# report each check, and only change what is missing.
 #
-# Usage: doas revytech-desktop-privileges-enable [username]
-# Safe to re-run.
+# Usage:
+#   revytech-desktop-privileges-enable              # validate+apply all desktop users
+#   revytech-desktop-privileges-enable USER         # one user
+#   revytech-desktop-privileges-enable --check      # validate only (exit 1 if any fail)
+#   revytech-desktop-privileges-enable --check USER
+#
+# Safe to re-run. Never deletes groups or users.
 set -eu
 
-TARGET="${1:-}"
-if [ -z "$TARGET" ]; then
-  if [ -n "${SUDO_USER:-}" ]; then
-    TARGET=$SUDO_USER
-  elif [ -n "${DOAS_USER:-}" ]; then
-    TARGET=$DOAS_USER
-  else
-    TARGET=$(id -un 2>/dev/null || echo "")
-  fi
-fi
+PREFIX="${PREFIX:-/usr/local}"
+DOAS_CONF="${DOAS_CONF:-/usr/local/etc/doas.conf}"
+DOAS_DROPIN_DIR="${DOAS_DROPIN_DIR:-/usr/local/etc/doas.d}"
+DOAS_DROPIN="${DOAS_DROPIN_DIR}/revytech-desktop.conf"
+STATEDIR=/var/db/revytech-desktop-privileges
+STATEFILE="${STATEDIR}/last-run"
+LOG_TAG=revytech-desktop-privileges
 
-if [ -z "$TARGET" ] || [ "$TARGET" = "root" ]; then
-  echo "usage: $0 <desktop-username>" >&2
-  echo "  (run as root via doas; pass the login user who runs Wayfire)" >&2
+CHECK_ONLY=0
+TARGETS=""
+FAIL=0
+PASS=0
+FIX=0
+
+log()  { printf '%s: %s\n' "$LOG_TAG" "$*"; }
+pass() { printf '%s: PASS %s\n' "$LOG_TAG" "$*"; PASS=$((PASS + 1)); }
+need() { printf '%s: NEED %s\n' "$LOG_TAG" "$*"; }
+fail() { printf '%s: FAIL %s\n' "$LOG_TAG" "$*" >&2; FAIL=$((FAIL + 1)); }
+fixed(){ printf '%s: FIXED %s\n' "$LOG_TAG" "$*"; FIX=$((FIX + 1)); }
+
+usage() {
+  sed -n '2,18p' "$0" | sed 's/^# \{0,1\}//'
   exit 2
-fi
+}
 
-if ! id "$TARGET" >/dev/null 2>&1; then
-  echo "revytech-desktop-privileges: no such user: $TARGET" >&2
-  exit 1
-fi
-
-if [ "$(id -u)" -ne 0 ]; then
-  echo "revytech-desktop-privileges: must run as root (doas $0 $TARGET)" >&2
-  exit 1
-fi
-
-log() { printf 'revytech-desktop-privileges: %s\n' "$*"; }
-
-# --- groups ---
-for g in video operator; do
-  if ! getent group "$g" >/dev/null 2>&1; then
-    log "group $g missing — skip (unexpected on FreeBSD)"
-    continue
-  fi
-  if id -nG "$TARGET" | tr ' ' '\n' | grep -qx "$g"; then
-    log "user $TARGET already in $g"
-  else
-    pw groupmod "$g" -m "$TARGET"
-    log "added $TARGET to group $g"
-  fi
+# --- args ---
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help) usage ;;
+    --check|-n|--dry-run) CHECK_ONLY=1; shift ;;
+    --) shift; break ;;
+    -*)
+      echo "$LOG_TAG: unknown option: $1" >&2
+      usage
+      ;;
+    *)
+      TARGETS="$TARGETS $1"
+      shift
+      ;;
+  esac
 done
 
-# --- seatd ---
-if command -v sysrc >/dev/null 2>&1; then
-  sysrc seatd_enable="YES" >/dev/null
-  service seatd onestart >/dev/null 2>&1 || service seatd start >/dev/null 2>&1 || true
-  log "seatd_enable=YES"
-fi
+# --- helpers ---
+user_in_group() {
+  # $1=user $2=group
+  id -nG "$1" 2>/dev/null | tr ' ' '\n' | grep -qx "$2"
+}
 
-# --- narrow doas (optional but recommended) ---
-DOAS_CONF=/usr/local/etc/doas.conf
-DOAS_DROPIN_DIR=/usr/local/etc/doas.d
-DOAS_DROPIN="${DOAS_DROPIN_DIR}/revytech-desktop.conf"
-mkdir -p "$DOAS_DROPIN_DIR"
+group_exists() {
+  getent group "$1" >/dev/null 2>&1
+}
 
-# Detect wide-open sample that is dangerous
-if [ -f "$DOAS_CONF" ] && grep -qE '^permit[[:space:]]+nopass[[:space:]]+:wheel[[:space:]]*$' "$DOAS_CONF"; then
-  log "WARNING: $DOAS_CONF has unrestricted 'permit nopass :wheel'"
-  log "  That is passwordless root for every command. Prefer narrow rules."
-  log "  Leaving it alone (admin must edit). Installing drop-in for documentation."
-fi
+is_desktop_user() {
+  # $1=username — human login accounts only
+  _u=$1
+  [ "$_u" = "root" ] && return 1
+  _uid=$(id -u "$_u" 2>/dev/null) || return 1
+  [ "$_uid" -ge 1000 ] || return 1
+  _shell=$(getent passwd "$_u" | awk -F: '{print $7}')
+  case "$_shell" in
+    */nologin|*/false|'' ) return 1 ;;
+  esac
+  return 0
+}
 
-cat >"$DOAS_DROPIN" <<'EOF'
-# REVYTECH desktop — narrow elevation (include from doas.conf if your doas supports it).
-# FreeBSD doas traditionally uses a single doas.conf; if drop-ins are not read,
-# merge these lines into /usr/local/etc/doas.conf and remove sample "nopass :wheel".
-#
-# Network / Wi‑Fi (panel + settings)
+discover_desktop_users() {
+  # Prefer wheel members (admins/desktop); also video; always include console owner if any
+  _list=""
+  if group_exists wheel; then
+    _mem=$(getent group wheel | awk -F: '{print $4}' | tr ',' ' ')
+    for _u in $_mem; do
+      [ -n "$_u" ] || continue
+      is_desktop_user "$_u" && _list="$_list $_u"
+    done
+  fi
+  if group_exists video; then
+    _mem=$(getent group video | awk -F: '{print $4}' | tr ',' ' ')
+    for _u in $_mem; do
+      [ -n "$_u" ] || continue
+      is_desktop_user "$_u" || continue
+      case " $_list " in *" $_u "*) ;; *) _list="$_list $_u" ;; esac
+    done
+  fi
+  # Fallback: all passwd UIDs >= 1000 with a real shell
+  if [ -z "$(echo "$_list" | tr -d '[:space:]')" ]; then
+    while IFS=: read -r _u _x _uid _g _gecos _home _shell; do
+      [ -n "$_u" ] || continue
+      is_desktop_user "$_u" || continue
+      _list="$_list $_u"
+    done < /etc/passwd
+  fi
+  # SUDO_USER / DOAS_USER installing the package
+  for _envu in "${SUDO_USER:-}" "${DOAS_USER:-}"; do
+    [ -n "$_envu" ] || continue
+    is_desktop_user "$_envu" || continue
+    case " $_list " in *" $_envu "*) ;; *) _list="$_list $_envu" ;; esac
+  done
+  echo "$_list" | tr -s ' ' '\n' | sed '/^$/d' | sort -u
+}
+
+ensure_group_member() {
+  # $1=user $2=group
+  _u=$1; _g=$2
+  if ! group_exists "$_g"; then
+    fail "group $_g does not exist on this system"
+    return 1
+  fi
+  if user_in_group "$_u" "$_g"; then
+    pass "user $_u in group $_g"
+    return 0
+  fi
+  need "user $_u missing group $_g"
+  if [ "$CHECK_ONLY" -eq 1 ]; then
+    FAIL=$((FAIL + 1))
+    return 1
+  fi
+  if [ "$(id -u)" -ne 0 ]; then
+    fail "cannot add $_u to $_g (not root)"
+    return 1
+  fi
+  pw groupmod "$_g" -m "$_u"
+  fixed "added $_u to group $_g"
+  return 0
+}
+
+validate_seatd() {
+  if command -v sysrc >/dev/null 2>&1; then
+    _en=$(sysrc -n seatd_enable 2>/dev/null || echo NO)
+    case "$_en" in
+      [Yy][Ee][Ss]|[Tt][Rr][Uu][Ee]|[Oo][Nn]|1)
+        pass "seatd_enable=$_en"
+        ;;
+      *)
+        need "seatd_enable is '$_en' (want YES)"
+        if [ "$CHECK_ONLY" -eq 1 ]; then
+          FAIL=$((FAIL + 1))
+        elif [ "$(id -u)" -eq 0 ]; then
+          sysrc seatd_enable="YES" >/dev/null
+          fixed "seatd_enable=YES"
+        else
+          fail "cannot set seatd_enable (not root)"
+        fi
+        ;;
+    esac
+  else
+    need "sysrc missing — cannot persist seatd_enable"
+  fi
+
+  if [ -S /var/run/seatd.sock ]; then
+    pass "seatd.sock present"
+  else
+    need "seatd.sock missing"
+    if [ "$CHECK_ONLY" -eq 1 ]; then
+      FAIL=$((FAIL + 1))
+    elif [ "$(id -u)" -eq 0 ]; then
+      service seatd onestart >/dev/null 2>&1 || service seatd start >/dev/null 2>&1 || true
+      if [ -S /var/run/seatd.sock ]; then
+        fixed "started seatd"
+      else
+        fail "seatd still not running after start attempt"
+      fi
+    else
+      fail "cannot start seatd (not root)"
+    fi
+  fi
+
+  # socket should be group video (or world — warn if only root)
+  if [ -S /var/run/seatd.sock ]; then
+    _own=$(ls -l /var/run/seatd.sock | awk '{print $3":"$4}')
+    case "$_own" in
+      *:video|root:video)
+        pass "seatd.sock ownership $_own"
+        ;;
+      *)
+        need "seatd.sock ownership is $_own (expected *:video)"
+        # do not chown aggressively — seatd daemon flags own this
+        ;;
+    esac
+  fi
+}
+
+validate_system_configs() {
+  _wf="${PREFIX}/etc/wayfire/wayfire.ini"
+  _ws="${PREFIX}/etc/wf-shell/wf-shell.ini"
+  if [ -f "$_wf" ]; then
+    pass "system wayfire.ini present ($_wf)"
+    _dpms=$(awk '/^\[idle\]/{p=1;next}/^\[/{p=0} p&&/^dpms_timeout/{sub(/.*= */,"");gsub(/[[:space:]]/,"");print;exit}' "$_wf" 2>/dev/null || true)
+    case "$_dpms" in
+      -1|0|never)
+        pass "system idle/dpms_timeout=$_dpms (never)"
+        ;;
+      "")
+        need "system wayfire.ini missing [idle] dpms_timeout"
+        if [ "$CHECK_ONLY" -eq 1 ]; then
+          FAIL=$((FAIL + 1))
+        elif [ "$(id -u)" -eq 0 ]; then
+          printf '\n[idle]\ndpms_timeout = -1\nscreensaver_timeout = -1\n' >>"$_wf"
+          fixed "appended [idle] dpms_timeout=-1 to $_wf"
+        else
+          fail "cannot add dpms_timeout (not root)"
+        fi
+        ;;
+      *)
+        need "system idle/dpms_timeout=$_dpms (want -1 never)"
+        if [ "$CHECK_ONLY" -eq 1 ]; then
+          FAIL=$((FAIL + 1))
+        elif [ "$(id -u)" -eq 0 ]; then
+          sed -i '' -e 's/^dpms_timeout = .*/dpms_timeout = -1/' "$_wf"
+          if ! grep -q '^screensaver_timeout' "$_wf"; then
+            sed -i '' '/^dpms_timeout = -1/a\
+screensaver_timeout = -1
+' "$_wf"
+          else
+            sed -i '' -e 's/^screensaver_timeout = .*/screensaver_timeout = -1/' "$_wf"
+          fi
+          fixed "set system dpms_timeout=-1 in $_wf"
+        else
+          fail "cannot fix system dpms_timeout (not root)"
+        fi
+        ;;
+    esac
+  else
+    fail "missing system wayfire.ini ($_wf) — install revytech-wayfire"
+  fi
+
+  if [ -f "$_ws" ]; then
+    pass "system wf-shell.ini present"
+    _pos=$(awk '/^\[panel\]/{p=1;next}/^\[/{p=0} p&&/^position/{sub(/.*= */,"");gsub(/[[:space:]]/,"");print;exit}' "$_ws" 2>/dev/null || true)
+    if [ "$_pos" = "top" ]; then
+      pass "system panel/position=top"
+    else
+      need "system panel/position='$_pos' (want top)"
+      if [ "$CHECK_ONLY" -eq 1 ]; then
+        FAIL=$((FAIL + 1))
+      elif [ "$(id -u)" -eq 0 ]; then
+        awk '
+          BEGIN { p=0 }
+          /^\[panel\]/ { p=1; print; next }
+          /^\[/ { p=0 }
+          p && /^position[[:space:]]*=/ { print "position = top"; next }
+          { print }
+        ' "$_ws" > "${_ws}.tmp.revytech" && mv "${_ws}.tmp.revytech" "$_ws"
+        fixed "set system panel/position=top in $_ws"
+      else
+        fail "system panel/position not top (not root to fix)"
+      fi
+    fi
+  else
+    need "system wf-shell.ini missing (install revytech-wf-shell)"
+    # soft: package may install later in the same transaction
+  fi
+}
+
+validate_doas_narrow() {
+  # We do not force-remove open sample rules; we VALIDATE and ADD narrow rules.
+  if [ ! -f "$DOAS_CONF" ]; then
+    need "doas.conf missing at $DOAS_CONF"
+    if [ "$CHECK_ONLY" -eq 1 ]; then
+      FAIL=$((FAIL + 1))
+      return 0
+    fi
+    if [ "$(id -u)" -ne 0 ]; then
+      fail "cannot create doas.conf (not root)"
+      return 0
+    fi
+    mkdir -p "$(dirname "$DOAS_CONF")"
+    printf '# Managed base — REVYTECH desktop\npermit persist :wheel\n' >"$DOAS_CONF"
+    fixed "created $DOAS_CONF with permit persist :wheel"
+  else
+    pass "doas.conf present"
+  fi
+
+  if grep -qE '^permit[[:space:]]+nopass[[:space:]]+:wheel[[:space:]]*$' "$DOAS_CONF" 2>/dev/null; then
+    need "doas.conf has unrestricted 'permit nopass :wheel' (passwordless root for ALL cmds)"
+    log "  recommend commenting that sample line; keep narrow REVYTECH rules"
+    # not a hard FAIL on apply — security hygiene warning
+  else
+    pass "doas.conf has no unrestricted nopass :wheel"
+  fi
+
+  _need_rules=0
+  for _cmd in ifconfig wpa_cli zzz acpiconf; do
+    if grep -qE "permit[[:space:]]+nopass[[:space:]].*cmd[[:space:]]+${_cmd}" "$DOAS_CONF" 2>/dev/null \
+       || { [ -f "$DOAS_DROPIN" ] && grep -qE "cmd[[:space:]]+${_cmd}" "$DOAS_DROPIN" 2>/dev/null; }; then
+      pass "doas allows nopass cmd ${_cmd} (or drop-in)"
+    else
+      need "doas missing nopass rule for cmd ${_cmd}"
+      _need_rules=1
+    fi
+  done
+
+  # shutdown rule optional if operator group is used
+  if grep -qE 'cmd[[:space:]]+(/sbin/)?shutdown' "$DOAS_CONF" 2>/dev/null \
+     || { [ -f "$DOAS_DROPIN" ] && grep -q shutdown "$DOAS_DROPIN" 2>/dev/null; }; then
+    pass "doas has shutdown rule (backup if not in operator)"
+  else
+    need "doas has no shutdown rule (ok if all users in operator)"
+  fi
+
+  if [ "$_need_rules" -eq 1 ]; then
+    if [ "$CHECK_ONLY" -eq 1 ]; then
+      FAIL=$((FAIL + 1))
+      return 0
+    fi
+    if [ "$(id -u)" -ne 0 ]; then
+      fail "cannot write doas rules (not root)"
+      return 0
+    fi
+    mkdir -p "$DOAS_DROPIN_DIR"
+    cat >"$DOAS_DROPIN" <<'EOF'
+# REVYTECH desktop — narrow passwordless elevation for GUI tools.
+# FreeBSD doas(1) reads a single doas.conf by default; this file is also
+# appended into doas.conf once (see MARKER below).
 permit nopass :wheel cmd ifconfig
 permit nopass :wheel cmd wpa_cli
 permit nopass :wheel cmd wpa_supplicant
 permit nopass :wheel cmd sysrc
-# Suspend if operator/setuid path is insufficient
 permit nopass :wheel cmd zzz
 permit nopass :wheel cmd acpiconf
-# Power (backup if user not in operator)
 permit nopass :wheel cmd shutdown
 permit nopass :wheel cmd /sbin/shutdown
 EOF
-log "wrote $DOAS_DROPIN (merge into doas.conf if your doas does not load doas.d/)"
+    fixed "wrote $DOAS_DROPIN"
+    MARKER="# REVYTECH-desktop-privileges-begin"
+    if ! grep -q "$MARKER" "$DOAS_CONF" 2>/dev/null; then
+      {
+        echo ""
+        echo "$MARKER"
+        cat "$DOAS_DROPIN"
+        echo "# REVYTECH-desktop-privileges-end"
+      } >>"$DOAS_CONF"
+      fixed "appended narrow rules to $DOAS_CONF"
+    else
+      pass "doas.conf already contains REVYTECH privileges block"
+    fi
+  fi
+}
 
-# If doas.conf is still the stock sample-only free-for-all, append a marker block
-# once for operators who want the narrow set in the main file.
-MARKER="# REVYTECH-desktop-privileges-begin"
-if [ -f "$DOAS_CONF" ] && ! grep -q "$MARKER" "$DOAS_CONF"; then
-  {
-    echo ""
-    echo "$MARKER"
-    echo "# Optional: comment out sample 'permit nopass :wheel' above, keep these:"
-    cat "$DOAS_DROPIN"
-    echo "# REVYTECH-desktop-privileges-end"
-  } >>"$DOAS_CONF"
-  log "appended REVYTECH block to $DOAS_CONF (review and disable sample nopass :wheel)"
+validate_user() {
+  _u=$1
+  log "---- user $_u ----"
+  if ! is_desktop_user "$_u"; then
+    fail "$_u is not a desktop login account (uid>=1000, real shell)"
+    return 1
+  fi
+  ensure_group_member "$_u" video
+  ensure_group_member "$_u" operator
+  # wheel is optional but helps wpa socket + doas rules above
+  if group_exists wheel; then
+    if user_in_group "$_u" wheel; then
+      pass "user $_u in group wheel (admin/wpa/doas path)"
+    else
+      need "user $_u not in wheel (Wi‑Fi elevation via doas :wheel won't apply)"
+      # do not auto-add to wheel — security-sensitive; only operator+video required
+    fi
+  fi
+  # Can this user execute setuid shutdown once groups apply?
+  if user_in_group "$_u" operator; then
+    pass "user $_u can use setuid /sbin/shutdown after re-login (operator)"
+  fi
+}
+
+# --- main ---
+if [ -z "$(echo "$TARGETS" | tr -d '[:space:]')" ]; then
+  TARGETS=$(discover_desktop_users)
 fi
 
-log "done for user=$TARGET"
-log "user must re-login (or newgrp) for group changes to apply to GUI session"
-log "verify: id $TARGET; groups $TARGET; ls -l /sbin/shutdown /var/run/seatd.sock"
+if [ -z "$(echo "$TARGETS" | tr -d '[:space:]')" ]; then
+  log "no desktop users discovered; nothing to do for groups"
+else
+  log "targets:$(echo "$TARGETS" | tr '\n' ' ')"
+fi
+
+if [ "$CHECK_ONLY" -eq 0 ] && [ "$(id -u)" -ne 0 ]; then
+  echo "$LOG_TAG: apply mode requires root (doas $0 …); use --check as user" >&2
+  exit 1
+fi
+
+log "======== VALIDATE ========"
+validate_seatd
+validate_system_configs
+validate_doas_narrow
+
+for _u in $TARGETS; do
+  validate_user "$_u" || true
+done
+
+if [ "$CHECK_ONLY" -eq 0 ]; then
+  mkdir -p "$STATEDIR"
+  {
+    echo "stamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    echo "pass=$PASS fix=$FIX fail=$FAIL"
+    echo "targets=$(echo $TARGETS | tr '\n' ' ')"
+  } >"$STATEFILE"
+fi
+
+log "======== SUMMARY ========"
+log "PASS=$PASS FIXED=$FIX FAIL=$FAIL check_only=$CHECK_ONLY"
+if [ "$FAIL" -ne 0 ]; then
+  log "RESULT=FAIL — re-run as root without --check to apply fixes, or fix manually"
+  log "After group changes: desktop user must re-login for getgroups() to update"
+  exit 1
+fi
+log "RESULT=OK"
+if [ "$FIX" -gt 0 ]; then
+  log "users with new groups must re-login (or reboot) for Wayfire/session to pick them up"
+fi
+exit 0

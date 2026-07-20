@@ -161,6 +161,7 @@ libdata/pkgconfig/wf-utils.pc
 libexec/wayfire-config-path.sh
 libexec/wayfire-session-launch
 libexec/wayfire-xwayland-ready
+sbin/revytech-desktop-privileges-enable
 share/examples/revytech-wayfire/wayfire.ini
 share/locale/ro/LC_MESSAGES/wf-plugin-alpha.mo
 share/locale/ro/LC_MESSAGES/wf-plugin-animate.mo
@@ -259,4 +260,3 @@ share/wayfire/protocols/unstable/wayfire-shell-unstable-v2.xml
 share/wayland-sessions/wayfire.desktop
 share/wayland-sessions/wayfire.desktop.bak
 share/xdg-desktop-portal/wayfire-portals.conf
-sbin/revytech-desktop-privileges-enable

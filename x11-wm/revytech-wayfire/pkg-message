@@ -1,21 +1,27 @@
 [
 { type: install
   message: <<EOM
-REVYTECH Wayfire has been installed.
+REVYTECH Wayfire stack — post-install privilege validation
 
-Quick start (VT console recommended):
-  1. Enable seatd:  sysrc seatd_enable=YES && service seatd start
-  2. Add your user to the "video" group if needed
-  3. Install the shell/panel:  pkg install revytech-wf-shell
-     (or the meta port revytech-wayfire-desktop)
-  4. Launch with a session script that sets XDG_RUNTIME_DIR and
-     LIBSEAT_BACKEND=seatd (see examples under share/examples/wayfire)
+On install, revytech-desktop-privileges-enable VALIDATE-then-APPLYs:
 
-Configuration:
-  ~/.config/wayfire.ini
-  ~/.config/wf-shell.ini and ~/.config/wf-shell/config.json
+  * group video     — seatd / DRM (display modeset, compositor)
+  * group operator  — setuid /sbin/shutdown (power off/reboot without doas)
+  * seatd_enable    — and start seatd if needed
+  * narrow doas rules for ifconfig / wpa_cli / zzz (network + suspend)
+  * system defaults (dpms never, panel top) when package files are present
 
-This package conflicts with stock FreeBSD wayfire — do not install both.
+Re-run anytime:
+  doas revytech-desktop-privileges-enable
+  doas revytech-desktop-privileges-enable --check   # validate only
+
+After group membership changes, log out and log back in (or reboot) so the
+Wayfire session picks up operator/video in getgroups().
+
+Session launch: /usr/local/libexec/wayfire-session-launch
+Config hierarchy: ~/.config/wayfire.ini → /usr/local/etc/wayfire/wayfire.ini
+Docs: /usr/local/share/doc may not include DESKTOP-PRIVILEGES.md; see
+  https://github.com/revytechinc/wf-shell/blob/master/docs/DESKTOP-PRIVILEGES.md
 EOM
 }
 ]
