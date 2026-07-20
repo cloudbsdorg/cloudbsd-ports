@@ -1,0 +1,6 @@
+CloudBSD parallel packaging of the i915kms DRM 6.6 kernel module.
+
+Depends on graphics/cloudbsd-drm-66-core-kmod. Coexists with other CloudBSD
+vendor modules for the same DRM version line.
+
+Enable with: kld_list="i915kms" in /etc/rc.conf

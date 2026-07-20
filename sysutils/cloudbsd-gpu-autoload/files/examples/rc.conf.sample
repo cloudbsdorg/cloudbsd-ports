@@ -1,0 +1,10 @@
+# CloudBSD GPU autoload (default OFF). Enable only if you want boot-time kldload.
+cloudbsd_gpu_enable="NO"
+
+# When YES, also attempt NVIDIA modules and remind about modeset.
+cloudbsd_gpu_nvidia_modeset="NO"
+
+# Manual alternative (no rc.d): list modules yourself
+# kld_list="nvidia-modeset nvidia-drm"
+# kld_list="amdgpu"
+# kld_list="i915kms"

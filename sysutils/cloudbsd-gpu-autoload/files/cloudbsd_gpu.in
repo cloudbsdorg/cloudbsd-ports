@@ -1,0 +1,61 @@
+#!/bin/sh
+
+# PROVIDE: cloudbsd_gpu
+# REQUIRE: FILESYSTEMS
+# KEYWORD: nojail
+
+. /etc/rc.subr
+
+name="cloudbsd_gpu"
+rcvar="cloudbsd_gpu_enable"
+start_cmd="cloudbsd_gpu_start"
+stop_cmd=":"
+
+load_rc_config $name
+
+: ${cloudbsd_gpu_enable:="NO"}
+: ${cloudbsd_gpu_nvidia_modeset:="NO"}
+
+cloudbsd_gpu_load()
+{
+	mod="$1"
+	if kldstat -q -m "$mod" 2>/dev/null || kldstat -q -n "${mod}.ko" 2>/dev/null; then
+		debug "${name}: $mod already loaded"
+		return 0
+	fi
+	echo "${name}: loading $mod"
+	kldload "$mod" || warn "${name}: failed to load $mod"
+}
+
+cloudbsd_gpu_start()
+{
+	# Map PCI display devices → modules (same rules as cloudbsd-gpu-detect)
+	pciconf -l 2>/dev/null | while read -r line; do
+		case "$line" in
+		*class=0x03*)
+			# Match PCI vendor= not subvendor=
+			vendhex=$(echo "$line" | sed -n 's/.*[[:space:]]vendor=\(0x[0-9a-fA-F]*\).*/\1/p')
+			case "$vendhex" in
+			0x10de)
+				if checkyesno cloudbsd_gpu_nvidia_modeset; then
+					# modeset sysctl only helps if set early; warn if missing
+					if ! sysctl -n hw.nvidiadrm.modeset 2>/dev/null | grep -q 1; then
+						warn "${name}: set hw.nvidiadrm.modeset=1 in loader.conf for NVIDIA KMS"
+					fi
+				fi
+				cloudbsd_gpu_load nvidia-modeset
+				cloudbsd_gpu_load nvidia-drm
+				;;
+			0x1002)
+				cloudbsd_gpu_load amdgpu
+				;;
+			0x8086)
+				cloudbsd_gpu_load i915kms
+				;;
+			esac
+			;;
+		esac
+	done
+}
+
+run_rc_command "$1"

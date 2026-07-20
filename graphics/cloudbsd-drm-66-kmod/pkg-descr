@@ -1,0 +1,13 @@
+CloudBSD metaport that installs the complete DRM 6.6 GPU driver set:
+
+  - cloudbsd-drm-66-core-kmod (drm, ttm, dmabuf)
+  - cloudbsd-drm-66-amdgpu-kmod
+  - cloudbsd-drm-66-i915-kmod
+  - cloudbsd-drm-66-radeon-kmod
+  - cloudbsd-nvidia-drm-66-kmod
+  - gpu-firmware-kmod
+  - cloudbsd-gpu-autoload (detect / optional autoload)
+
+Parallel to stock graphics/drm-66-kmod, but split so vendor packages can
+co-exist and be managed independently. Conflicts with stock drm-*-kmod
+at the package file level (same /boot/modules basenames).

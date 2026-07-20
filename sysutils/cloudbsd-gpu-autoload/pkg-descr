@@ -1,0 +1,10 @@
+CloudBSD GPU detection and optional autoload helpers for DRM kmods.
+
+cloudbsd-gpu-detect lists PCI display devices and prints suggested
+kld_list / loader.conf settings for NVIDIA, AMD (amdgpu/radeonkms), and
+Intel (i915kms).
+
+Optional rc.d service cloudbsd_gpu loads modules when
+cloudbsd_gpu_enable=YES (off by default). NVIDIA modesetting remains
+opt-in via cloudbsd_gpu_nvidia_modeset=YES and still requires
+hw.nvidiadrm.modeset=1 in loader.conf before boot-time load.

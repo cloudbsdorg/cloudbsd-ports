@@ -1,0 +1,57 @@
+# Common rules for CloudBSD open DRM 6.6 split kmod ports.
+# Consumer must define:
+#   PORTNAME
+#   COMMENT
+#   CLOUDBSD_DRM_KMODS  - space-separated KMODS tokens (dmabuf ttm drm / amd / i915 / radeon)
+#   PLIST_FILES or pkg-plist entries for installed .ko files
+
+MAINTAINER=	ports@cloudbsd.org
+WWW=		https://github.com/freebsd/drm-kmod/
+
+LICENSE=	BSD2CLAUSE MIT GPLv2
+LICENSE_COMB=	multi
+
+.include "${.CURDIR}/../cloudbsd-drm-66-kmod/Makefile.version"
+
+PORTVERSION=	${DRM_KMOD_DISTVERSION}
+CATEGORIES=	graphics kld
+
+# Parallel CloudBSD stack: conflict with stock monorepo packages that ship the
+# same basenames under KMODDIR. Vendors within this version line do not conflict
+# with each other (only with stock / other DRM version lines).
+CONFLICTS_INSTALL?=	drm-515-kmod \
+			drm-61-kmod \
+			drm-66-kmod \
+			drm-612-kmod \
+			drm-latest-kmod
+
+USES=		kmod uidfix compiler:c++11-lang
+
+USE_GITHUB=	yes
+GH_ACCOUNT=	freebsd
+GH_PROJECT=	drm-kmod
+GH_TAGNAME=	${DRM_KMOD_GH_TAGNAME}
+
+.include <bsd.port.options.mk>
+
+.if ${OPSYS} == FreeBSD && ${OSVERSION} < 1500031
+IGNORE=		not supported on older than 1500031, no kernel support
+.endif
+.if ${OPSYS} != FreeBSD
+IGNORE=		not supported on anything but FreeBSD (missing linuxkpi functionality)
+.endif
+
+MAKE_ENV+=	MAKEOBJDIRPREFIX=${WRKSRC}/obj \
+		KMODS="${CLOUDBSD_DRM_KMODS}"
+
+.include <bsd.port.pre.mk>
+
+.if ${COMPILER_TYPE} == clang && ${COMPILER_VERSION} >= 211
+CFLAGS+=	-Wno-default-const-init-var-unsafe
+.endif
+
+pre-build:
+	${MKDIR} ${WRKSRC}/obj
+	(cd ${WRKSRC} ; ${SETENV} ${MAKE_ENV} ${MAKE_CMD} obj)
+
+.include <bsd.port.post.mk>

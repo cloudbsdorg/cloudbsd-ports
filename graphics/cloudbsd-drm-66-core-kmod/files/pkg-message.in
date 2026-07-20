@@ -1,0 +1,18 @@
+[
+{ type: install
+  message: <<EOM
+CloudBSD DRM core (%%PORTNAME%%) provides drm/ttm/dmabuf for %%OPSYS%% %%OSREL%%.
+
+Install vendor modules separately, or the full set via:
+  pkg install cloudbsd-drm-66-kmod
+  # or umbrella: cloudbsd-drm-kmod
+
+For GPU detection hints:
+  cloudbsd-gpu-detect   (sysutils/cloudbsd-gpu-autoload)
+
+Users needing graphics should be in the "video" group.
+
+Rebuild from ports if this package was not built for your running kernel.
+EOM
+}
+]

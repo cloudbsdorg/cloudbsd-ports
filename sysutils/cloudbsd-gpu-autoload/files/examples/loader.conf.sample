@@ -1,0 +1,2 @@
+# CloudBSD GPU — NVIDIA DRM modesetting (must be set before module load)
+hw.nvidiadrm.modeset=1

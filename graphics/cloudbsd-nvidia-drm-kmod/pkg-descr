@@ -1,0 +1,5 @@
+CloudBSD metaport selecting the NVIDIA DRM module matching the host
+FreeBSD version, parallel to stock graphics/nvidia-drm-kmod.
+
+Prefers CloudBSD split ports (cloudbsd-nvidia-drm-66-kmod, etc.) when
+available for that OSVERSION.

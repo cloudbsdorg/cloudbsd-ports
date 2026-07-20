@@ -1,0 +1,8 @@
+CloudBSD packaging of NVIDIA's nvidia-drm.ko for DRM 6.6, parallel to
+stock graphics/nvidia-drm-66-kmod.
+
+Depends on graphics/cloudbsd-drm-66-core-kmod so it can be installed with
+the CloudBSD split open drivers (amdgpu/i915/radeon) without using the
+stock monorepo drm-66-kmod package.
+
+Requires hw.nvidiadrm.modeset=1 in loader.conf before loading the module.

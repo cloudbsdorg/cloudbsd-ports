@@ -1,0 +1,87 @@
+#!/bin/sh
+# cloudbsd-gpu-detect — list PCI display GPUs and suggest DRM kld loads.
+# Safe/non-destructive: prints recommendations only.
+
+set -eu
+
+echo "CloudBSD GPU detect"
+echo "==================="
+echo
+echo "Detected display-class PCI devices:"
+echo
+
+have_gpu=0
+have_nvidia=0
+have_amd=0
+have_intel=0
+
+# pciconf -l: name@pci... class=0x03xxxx vendor=0xVVVV device=0xDDDD
+pciconf -l 2>/dev/null | while read -r line; do
+	case "$line" in
+	*class=0x03*)
+		echo "  $line"
+		# Extract PCI vendor= (not subvendor=)
+		vendhex=$(echo "$line" | sed -n 's/.*[[:space:]]vendor=\(0x[0-9a-fA-F]*\).*/\1/p')
+		case "$vendhex" in
+		0x10de)
+			echo "    -> NVIDIA: suggest modules nvidia-modeset nvidia-drm"
+			echo "    -> loader.conf: hw.nvidiadrm.modeset=1"
+			;;
+		0x1002)
+			echo "    -> AMD: suggest module amdgpu (legacy: radeonkms)"
+			;;
+		0x8086)
+			echo "    -> Intel: suggest module i915kms"
+			;;
+		*)
+			echo "    -> Unknown display vendor ${vendhex:-?} (no automatic mapping)"
+			;;
+		esac
+		echo
+		;;
+	esac
+done
+
+# Second pass for summary (subshell above cannot set parent vars portably)
+mods=""
+if pciconf -l 2>/dev/null | grep 'class=0x03' | grep -q 'vendor=0x10de'; then
+	have_nvidia=1
+	mods="$mods nvidia-modeset nvidia-drm"
+fi
+if pciconf -l 2>/dev/null | grep 'class=0x03' | grep -q 'vendor=0x1002'; then
+	have_amd=1
+	mods="$mods amdgpu"
+fi
+if pciconf -l 2>/dev/null | grep 'class=0x03' | grep -q 'vendor=0x8086'; then
+	have_intel=1
+	mods="$mods i915kms"
+fi
+
+if ! pciconf -l 2>/dev/null | grep -q 'class=0x03'; then
+	echo "  (none found)"
+	echo
+fi
+
+mods=$(echo "$mods" | sed 's/^ *//')
+
+echo "Suggested /etc/rc.conf fragment:"
+echo "--------------------------------"
+if [ -n "$mods" ]; then
+	echo "kld_list=\"$mods\""
+else
+	echo "# no mapped GPUs; leave kld_list unchanged"
+fi
+echo
+
+if [ "$have_nvidia" -eq 1 ]; then
+	echo "Suggested /boot/loader.conf (required for nvidia-drm modeset):"
+	echo "--------------------------------------------------------------"
+	echo "hw.nvidiadrm.modeset=1"
+	echo
+fi
+
+echo "Optional autoload service (off by default):"
+echo "  sysrc cloudbsd_gpu_enable=YES"
+echo "  service cloudbsd_gpu start"
+echo
+echo "Packages: cloudbsd-drm-kmod (all vendors) or individual cloudbsd-drm-66-*-kmod"
