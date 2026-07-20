@@ -1,0 +1,8 @@
+REVYTECH packaging of wcm — Wayfire Config Manager (GTK3).
+
+Prefer wf-settings (from revytech-wf-shell) for shell/panel configuration;
+wcm remains useful for compositor plugin options.
+
+Source: github.com/revytechinc/wcm
+
+WWW: https://github.com/revytechinc/wcm

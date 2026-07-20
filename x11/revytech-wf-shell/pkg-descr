@@ -1,0 +1,9 @@
+REVYTECH, Inc. packaging of wf-shell — GTK4 panel, dock, background,
+stream-chooser, and wf-settings for Wayfire on FreeBSD / CloudBSD.
+
+Source: github.com/revytechinc/wf-shell master (includes network panel,
+theme packs, session-env, and settings app).
+
+Conflicts with stock FreeBSD wf-shell.
+
+WWW: https://github.com/revytechinc/wf-shell

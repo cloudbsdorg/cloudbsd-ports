@@ -1,0 +1,8 @@
+REVYTECH, Inc. packaging of wf-config — the configuration library used by
+the Wayfire compositor and shell.
+
+This is the revytechinc fork (origin: github.com/revytechinc/wf-config)
+with FreeBSD compatibility work. It conflicts with the stock FreeBSD
+ports wf-config package; install only one stack.
+
+WWW: https://github.com/revytechinc/wf-config

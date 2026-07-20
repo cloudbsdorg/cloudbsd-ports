@@ -1,0 +1,10 @@
+REVYTECH, Inc. packaging of Wayfire — a 3D Wayland compositor.
+
+Built from github.com/revytechinc/wayfire (master tip), with FreeBSD
+compat shims and dependency pins for CloudBSD / FreeBSD desktops.
+
+Conflicts with the stock FreeBSD ports "wayfire" package. Install the
+full stack via x11-wm/revytech-wayfire-desktop or
+revytech/wayfire/install.sh.
+
+WWW: https://github.com/revytechinc/wayfire

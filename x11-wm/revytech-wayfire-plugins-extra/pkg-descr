@@ -1,0 +1,8 @@
+REVYTECH packaging of wayfire-plugins-extra — additional plugins for the
+Wayfire compositor (filters, shadows, focus-request, and more).
+
+Source: github.com/revytechinc/wayfire-plugins-extra (master).
+
+Conflicts with stock FreeBSD wayfire-plugins-extra.
+
+WWW: https://github.com/revytechinc/wayfire-plugins-extra

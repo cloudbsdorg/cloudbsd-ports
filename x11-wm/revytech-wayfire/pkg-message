@@ -1,0 +1,21 @@
+[
+{ type: install
+  message: <<EOM
+REVYTECH Wayfire has been installed.
+
+Quick start (VT console recommended):
+  1. Enable seatd:  sysrc seatd_enable=YES && service seatd start
+  2. Add your user to the "video" group if needed
+  3. Install the shell/panel:  pkg install revytech-wf-shell
+     (or the meta port revytech-wayfire-desktop)
+  4. Launch with a session script that sets XDG_RUNTIME_DIR and
+     LIBSEAT_BACKEND=seatd (see examples under share/examples/wayfire)
+
+Configuration:
+  ~/.config/wayfire.ini
+  ~/.config/wf-shell.ini and ~/.config/wf-shell/config.json
+
+This package conflicts with stock FreeBSD wayfire — do not install both.
+EOM
+}
+]

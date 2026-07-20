@@ -1,0 +1,41 @@
+# REVYTECH Wayfire stack — pinned to revytechinc origin master/main tips
+# Generated from local clones under ~/git (2026-07-19).
+# Update with: revytech/wayfire/scripts/refresh-pins.sh
+#
+# Policy: latest product code lives on master/main (not release tags).
+# Ports use GH_TAGNAME=<full sha> for reproducible builds.
+
+GH_ACCOUNT=revytechinc
+
+# Component              branch   full SHA
+revytech-wf-config       master   99e50f85e339657097af3a6071ef6e765a70e0f6
+revytech-wayfire         master   33bdbf3c55d3648a0f3120108a0fc356a0aabb8e
+revytech-wayfire-plugins-extra  master  4290ddf13bfadb344d45cb25c47f7825bbdc8a30
+revytech-wcm             master   84063a07ccfc5be2a96b98d934271761a1730c2b
+revytech-wf-shell        master   a703aad96c5cd62f5471ebecbd12e491984010d8
+revytech-wf-utils        master   11a2e6c9eab310e00e48dc433ad114edca5dfed5
+revytech-wf-touch        master   4d521807db04d40c0db8e1557f4c787e6c226b90
+revytech-wf-json         main     2443ec5d75c52616377c411ba8a9277c20686782
+revytech-wf-osk          master   c305f8d3f0ebade336c62c8b8da1ff86f88b7509
+revytech-wlroots         master   544ab1d5e5615acb3ab981ee756f51746579279e
+
+# Meson project versions (informational; DISTVERSION tracks product line)
+MESON_WAYFIRE=0.11.0
+MESON_WF_CONFIG=0.11.0
+MESON_WF_SHELL=0.11.0
+MESON_WCM=0.11.0
+MESON_PLUGINS=0.11.0
+MESON_WLROOTS=0.21.0-dev
+
+# wayfire git submodules (used when building bundled subprojects from tarball)
+SUB_WF_CONFIG=99e50f85e339657097af3a6071ef6e765a70e0f6
+SUB_WF_JSON=70039e13cdeaebd8ec498ed30bf5ab91c2e313ec
+SUB_WF_TOUCH=093d8943df03cc8a2667990a065513c1bf2b57e0
+SUB_WF_UTILS=329c3ff01724d82947f61c45332f75d3534e8454
+SUB_WLROOTS=544ab1d5e5615acb3ab981ee756f51746579279e
+
+# wayfire-plugins-extra submodules
+SUB_FILTERS=8fcaad8192a2be0566a624cfdb20bb101f0d5ca2
+SUB_FOCUS_REQUEST=b5c5029f1a695bcd79e2fa0de615cd8028f64f62
+SUB_PIXDECOR=76a0e8996b41f0df87f0d9c65c816693f1c3fefc
+SUB_WAYFIRE_SHADOWS=4bfdbbf1abe40519183b9a1e1648a732bc656f13

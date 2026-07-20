@@ -1,0 +1,4 @@
+[wrap-git]
+url = https://github.com/revytechinc/wf-json
+revision = 2443ec5d75c52616377c411ba8a9277c20686782
+directory = wf-json

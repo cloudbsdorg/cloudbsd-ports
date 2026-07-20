@@ -1,0 +1,14 @@
+Meta-port for the REVYTECH Wayfire desktop stack on FreeBSD / CloudBSD.
+
+Installs:
+  - revytech-wf-config
+  - revytech-wayfire
+  - revytech-wayfire-plugins-extra
+  - revytech-wf-shell (panel, dock, background, wf-settings)
+  - revytech-wcm
+  - common session helpers (seatd, kanshi, mako, wlogout, alacritty)
+
+All components are built from github.com/revytechinc/* master/main tips
+pinned in revytech/wayfire/VERSIONS.
+
+WWW: https://github.com/revytechinc/wayfire
