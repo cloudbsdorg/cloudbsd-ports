@@ -38,6 +38,8 @@ GH_TAGNAME=	${REVYTECH_SHA_WAYFIRE}
 USE_GL=		egl glesv2 gbm
 USE_GNOME=	cairo pango
 USE_XORG=	pixman
+# FreeBSD platform GPU probe (platform-factory.cpp) needs GBM at link time
+LDFLAGS+=	-L${LOCALBASE}/lib -lgbm
 
 # Prefer system wf-config + system wlroots packages for packaging.
 # Submodules still fetched for wf-touch / wf-utils / wf-json as needed.
