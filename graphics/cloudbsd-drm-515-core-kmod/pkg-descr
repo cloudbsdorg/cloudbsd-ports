@@ -1,0 +1,5 @@
+CloudBSD parallel packaging of DRM 515 core kernel modules (drm, ttm,
+dmabuf) from freebsd/drm-kmod.
+
+Install vendor modules separately or cloudbsd-drm-515-kmod for the full set.
+Conflicts with stock graphics/drm-*-kmod (same /boot/modules basenames).

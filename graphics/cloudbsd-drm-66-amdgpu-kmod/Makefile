@@ -1,6 +1,6 @@
 PORTNAME=	cloudbsd-drm-66-amdgpu-kmod
 PORTREVISION=	0
-COMMENT=	CloudBSD DRM 6.6 amdgpu kernel module
+COMMENT=	CloudBSD DRM 66 amdgpu kernel module
 
 CLOUDBSD_DRM_KMODS=	amd
 

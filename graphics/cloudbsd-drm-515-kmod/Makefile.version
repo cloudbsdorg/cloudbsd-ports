@@ -1,0 +1,5 @@
+# cloudbsd-drm-515 shared version (mirrors stock drm-515-kmod)
+#
+# Included from core/vendor consumers and nvidia-drm.
+DRM_KMOD_DISTVERSION=	5.15.160
+DRM_KMOD_GH_TAGNAME=	drm_v5.15.160_7

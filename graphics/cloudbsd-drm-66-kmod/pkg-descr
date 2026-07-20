@@ -1,4 +1,4 @@
-CloudBSD metaport that installs the complete DRM 6.6 GPU driver set:
+CloudBSD metaport that installs the complete DRM 66 GPU driver set:
 
   - cloudbsd-drm-66-core-kmod (drm, ttm, dmabuf)
   - cloudbsd-drm-66-amdgpu-kmod

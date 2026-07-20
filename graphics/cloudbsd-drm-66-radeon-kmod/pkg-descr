@@ -1,5 +1,4 @@
-CloudBSD parallel packaging of the radeonkms DRM 6.6 kernel module for
-older AMD GPUs. Prefer cloudbsd-drm-66-amdgpu-kmod for HD7000 / Tahiti and
-newer.
+CloudBSD parallel packaging of the radeonkms DRM 66 kernel module.
 
 Depends on graphics/cloudbsd-drm-66-core-kmod.
+Prefer cloudbsd-drm-66-amdgpu-kmod for modern AMD GPUs.

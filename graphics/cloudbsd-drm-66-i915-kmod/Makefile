@@ -1,11 +1,11 @@
 PORTNAME=	cloudbsd-drm-66-i915-kmod
 PORTREVISION=	0
-COMMENT=	CloudBSD DRM 6.6 i915kms kernel module
+COMMENT=	CloudBSD DRM 66 i915kms kernel module
 
 CLOUDBSD_DRM_KMODS=	i915
 
 ONLY_FOR_ARCHS=	amd64 i386
-ONLY_FOR_ARCHS_REASON=	i915kms is only built on x86 in drm-kmod
+ONLY_FOR_ARCHS_REASON=	i915kms is only built on supported arches in drm-kmod
 
 RUN_DEPENDS=	${KMODDIR}/drm.ko:graphics/cloudbsd-drm-66-core-kmod
 

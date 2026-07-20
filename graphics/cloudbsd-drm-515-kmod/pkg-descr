@@ -1,0 +1,13 @@
+CloudBSD metaport that installs the complete DRM 515 GPU driver set:
+
+  - cloudbsd-drm-515-core-kmod (drm, ttm, dmabuf)
+  - cloudbsd-drm-515-amdgpu-kmod
+  - cloudbsd-drm-515-i915-kmod
+  - cloudbsd-drm-515-radeon-kmod
+  - cloudbsd-nvidia-drm-515-kmod
+  - gpu-firmware-kmod
+  - cloudbsd-gpu-autoload (detect / optional autoload)
+
+Parallel to stock graphics/drm-515-kmod, but split so vendor packages can
+co-exist and be managed independently. Conflicts with stock drm-*-kmod
+at the package file level (same /boot/modules basenames).

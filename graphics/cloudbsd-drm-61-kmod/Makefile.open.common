@@ -1,0 +1,44 @@
+# Common rules for CloudBSD open DRM 61 split kmod ports.
+# Consumer must define: PORTNAME, COMMENT, CLOUDBSD_DRM_KMODS
+
+MAINTAINER=	ports@cloudbsd.org
+WWW=		https://github.com/freebsd/drm-kmod/
+
+LICENSE=	BSD2CLAUSE MIT GPLv2
+LICENSE_COMB=	multi
+
+.include "${.CURDIR}/../cloudbsd-drm-61-kmod/Makefile.version"
+
+PORTVERSION=	${DRM_KMOD_DISTVERSION}
+CATEGORIES=	graphics kld
+
+ONLY_FOR_ARCHS=	amd64 powerpc64 powerpc64le
+ONLY_FOR_ARCHS_REASON=	the new KMS components are only supported on amd64 and powerpc64
+
+CONFLICTS_INSTALL?=	drm-515-kmod \
+			drm-61-kmod \
+			drm-66-kmod \
+			drm-612-kmod \
+			drm-latest-kmod
+
+USES=		kmod uidfix compiler:c++11-lang
+
+USE_GITHUB=	yes
+GH_ACCOUNT=	freebsd
+GH_PROJECT=	drm-kmod
+GH_TAGNAME=	${DRM_KMOD_GH_TAGNAME}
+
+.include <bsd.port.options.mk>
+
+.if ${OPSYS} != FreeBSD
+IGNORE=		not supported on anything but FreeBSD (missing linuxkpi functionality)
+.endif
+
+MAKE_ENV+=	MAKEOBJDIRPREFIX=${WRKSRC}/obj \
+		KMODS="${CLOUDBSD_DRM_KMODS}"
+
+pre-build:
+	${MKDIR} ${WRKSRC}/obj
+	(cd ${WRKSRC} ; ${SETENV} ${MAKE_ENV} ${MAKE_CMD} obj)
+
+.include <bsd.port.mk>

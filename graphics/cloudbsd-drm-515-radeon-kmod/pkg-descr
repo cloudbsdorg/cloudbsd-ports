@@ -1,0 +1,4 @@
+CloudBSD parallel packaging of the radeonkms DRM 515 kernel module.
+
+Depends on graphics/cloudbsd-drm-515-core-kmod.
+Prefer cloudbsd-drm-515-amdgpu-kmod for modern AMD GPUs.

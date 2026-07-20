@@ -1,11 +1,9 @@
 PORTNAME=	cloudbsd-drm-66-core-kmod
 PORTREVISION=	0
-COMMENT=	CloudBSD DRM 6.6 core modules (drm/ttm/dmabuf)
+COMMENT=	CloudBSD DRM 66 core modules (drm/ttm/dmabuf)
 
-# Core modules shared by all vendor drivers in this version line.
 CLOUDBSD_DRM_KMODS=	dmabuf ttm drm
 
-# Also conflict with future CloudBSD cores of other version lines (same basenames).
 CONFLICTS_INSTALL=	drm-515-kmod \
 			drm-61-kmod \
 			drm-66-kmod \
@@ -21,6 +19,6 @@ PLIST_FILES=	${KMODDIR}/dmabuf.ko \
 		${KMODDIR}/ttm.ko
 
 SUB_FILES=	pkg-message
-SUB_LIST=	PORTNAME=${PORTNAME} OPSYS=${OPSYS} OSREL=${OSREL}
+SUB_LIST=	PORTNAME=${PORTNAME} OPSYS=${OPSYS} OSREL=${OSREL} CLOUDBSD_DRM_VER=66
 
 .include "${.CURDIR}/../cloudbsd-drm-66-kmod/Makefile.open.common"

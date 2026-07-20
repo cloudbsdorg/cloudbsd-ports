@@ -1,10 +1,5 @@
-CloudBSD parallel packaging of DRM 6.6 core kernel modules (drm, ttm,
+CloudBSD parallel packaging of DRM 66 core kernel modules (drm, ttm,
 dmabuf) from freebsd/drm-kmod.
 
-This port does not ship vendor GPU drivers. Install
-cloudbsd-drm-66-amdgpu-kmod, cloudbsd-drm-66-i915-kmod,
-cloudbsd-drm-66-radeon-kmod, and/or cloudbsd-nvidia-drm-66-kmod as needed,
-or the metaport cloudbsd-drm-66-kmod for the full set.
-
-Conflicts with stock graphics/drm-*-kmod packages (same module basenames).
-Choose either the stock monorepo package or the CloudBSD split stack.
+Install vendor modules separately or cloudbsd-drm-66-kmod for the full set.
+Conflicts with stock graphics/drm-*-kmod (same /boot/modules basenames).

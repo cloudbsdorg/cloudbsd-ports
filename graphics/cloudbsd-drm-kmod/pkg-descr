@@ -1,9 +1,12 @@
 Umbrella CloudBSD metaport for GPU DRM kernel modules.
 
-Installs the full multi-vendor CloudBSD DRM stack appropriate for the
-running FreeBSD version (currently the 6.6 split line on FreeBSD 15+
-amd64): core modules plus AMD, Intel, Radeon, and NVIDIA DRM drivers,
-firmware, and the cloudbsd-gpu-detect helper.
+Selects the CloudBSD split stack for the running FreeBSD version
+(mirrors stock drm-kmod):
 
-This is the "install them all" package. Individual vendors can also be
-installed via cloudbsd-drm-66-*-kmod ports without this meta.
+  - FreeBSD >= 1500509 amd64 → cloudbsd-drm-612-kmod
+  - FreeBSD >= 1500031 amd64 → cloudbsd-drm-66-kmod
+  - older / other → cloudbsd-drm-61-kmod
+
+Also available explicitly:
+  cloudbsd-drm-515-kmod, cloudbsd-drm-61-kmod, cloudbsd-drm-66-kmod,
+  cloudbsd-drm-612-kmod, cloudbsd-drm-latest-kmod

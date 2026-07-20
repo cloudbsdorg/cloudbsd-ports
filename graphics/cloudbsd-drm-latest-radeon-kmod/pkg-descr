@@ -1,0 +1,4 @@
+CloudBSD parallel packaging of the radeonkms DRM latest kernel module.
+
+Depends on graphics/cloudbsd-drm-latest-core-kmod.
+Prefer cloudbsd-drm-latest-amdgpu-kmod for modern AMD GPUs.

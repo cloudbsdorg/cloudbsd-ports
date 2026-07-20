@@ -1,0 +1,5 @@
+# cloudbsd-drm-latest shared version (mirrors stock drm-latest-kmod)
+#
+# Included from core/vendor consumers and nvidia-drm.
+DRM_KMOD_DISTVERSION=	6.12
+DRM_KMOD_GH_TAGNAME=	drm_v6.12

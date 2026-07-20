@@ -1,6 +1,6 @@
 PORTNAME=	cloudbsd-drm-66-radeon-kmod
 PORTREVISION=	0
-COMMENT=	CloudBSD DRM 6.6 radeonkms kernel module (legacy AMD)
+COMMENT=	CloudBSD DRM 66 radeonkms kernel module (legacy AMD)
 
 CLOUDBSD_DRM_KMODS=	radeon
 

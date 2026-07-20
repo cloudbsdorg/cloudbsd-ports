@@ -20,8 +20,7 @@ RUN_DEPENDS+=	${KMODDIR}/nvidia-drm.ko:graphics/cloudbsd-nvidia-drm-612-kmod${PK
 .  elif ${OSVERSION} >= 1500031 && ${ARCH} == amd64
 RUN_DEPENDS+=	${KMODDIR}/nvidia-drm.ko:graphics/cloudbsd-nvidia-drm-66-kmod${PKGNAMESUFFIX}
 .  else
-# 61 line not packaged yet in CloudBSD split; fall back to stock until added.
-RUN_DEPENDS+=	${KMODDIR}/nvidia-drm.ko:graphics/nvidia-drm-61-kmod${PKGNAMESUFFIX}
+RUN_DEPENDS+=	${KMODDIR}/nvidia-drm.ko:graphics/cloudbsd-nvidia-drm-61-kmod${PKGNAMESUFFIX}
 .  endif
 .endif
 

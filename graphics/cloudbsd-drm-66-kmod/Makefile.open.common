@@ -1,9 +1,5 @@
-# Common rules for CloudBSD open DRM 6.6 split kmod ports.
-# Consumer must define:
-#   PORTNAME
-#   COMMENT
-#   CLOUDBSD_DRM_KMODS  - space-separated KMODS tokens (dmabuf ttm drm / amd / i915 / radeon)
-#   PLIST_FILES or pkg-plist entries for installed .ko files
+# Common rules for CloudBSD open DRM 66 split kmod ports.
+# Consumer must define: PORTNAME, COMMENT, CLOUDBSD_DRM_KMODS
 
 MAINTAINER=	ports@cloudbsd.org
 WWW=		https://github.com/freebsd/drm-kmod/
@@ -16,9 +12,9 @@ LICENSE_COMB=	multi
 PORTVERSION=	${DRM_KMOD_DISTVERSION}
 CATEGORIES=	graphics kld
 
-# Parallel CloudBSD stack: conflict with stock monorepo packages that ship the
-# same basenames under KMODDIR. Vendors within this version line do not conflict
-# with each other (only with stock / other DRM version lines).
+ONLY_FOR_ARCHS=	amd64
+ONLY_FOR_ARCHS_REASON=	the new KMS components are only supported on amd64
+
 CONFLICTS_INSTALL?=	drm-515-kmod \
 			drm-61-kmod \
 			drm-66-kmod \

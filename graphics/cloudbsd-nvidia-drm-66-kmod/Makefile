@@ -2,7 +2,6 @@ PORTNAME=	cloudbsd-nvidia-drm-66-kmod
 PORTREVISION=	0
 CATEGORIES=	graphics
 
-# CloudBSD open DRM core (not stock drm-66-kmod monorepo).
 RUN_DEPENDS+=	${KMODDIR}/drm.ko:graphics/cloudbsd-drm-66-core-kmod
 
 CONFLICTS_INSTALL=	nvidia-drm-515-kmod* \

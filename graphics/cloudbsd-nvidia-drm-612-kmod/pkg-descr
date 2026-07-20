@@ -1,0 +1,4 @@
+CloudBSD packaging of NVIDIA's nvidia-drm.ko for DRM 612.
+
+Depends on graphics/cloudbsd-drm-612-core-kmod.
+Requires hw.nvidiadrm.modeset=1 in loader.conf before loading.

@@ -1,8 +1,4 @@
-CloudBSD parallel packaging of the amdgpu DRM 6.6 kernel module.
+CloudBSD parallel packaging of the amdgpu DRM 66 kernel module.
 
-Depends on graphics/cloudbsd-drm-66-core-kmod. Can be installed alongside
-other CloudBSD vendor modules (i915, radeon, nvidia-drm) for the same
-DRM version line.
-
+Depends on graphics/cloudbsd-drm-66-core-kmod.
 Enable with: kld_list="amdgpu" in /etc/rc.conf
-(or use sysutils/cloudbsd-gpu-autoload).

@@ -1,0 +1,4 @@
+CloudBSD parallel packaging of the amdgpu DRM latest kernel module.
+
+Depends on graphics/cloudbsd-drm-latest-core-kmod.
+Enable with: kld_list="amdgpu" in /etc/rc.conf

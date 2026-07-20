@@ -1,0 +1,4 @@
+CloudBSD packaging of NVIDIA's nvidia-drm.ko for DRM 515.
+
+Depends on graphics/cloudbsd-drm-515-core-kmod.
+Requires hw.nvidiadrm.modeset=1 in loader.conf before loading.

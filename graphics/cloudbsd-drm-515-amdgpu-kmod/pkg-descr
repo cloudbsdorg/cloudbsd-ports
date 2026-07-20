@@ -1,0 +1,4 @@
+CloudBSD parallel packaging of the amdgpu DRM 515 kernel module.
+
+Depends on graphics/cloudbsd-drm-515-core-kmod.
+Enable with: kld_list="amdgpu" in /etc/rc.conf
