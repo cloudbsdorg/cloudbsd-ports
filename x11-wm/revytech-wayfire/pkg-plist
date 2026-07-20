@@ -1,6 +1,6 @@
+%%ETCDIR%%/wayfire.ini
+%%ETCDIR%%/wayfire.ini.sample
 bin/wayfire
-etc/wayfire/wayfire.ini
-etc/wayfire/wayfire.ini.sample
 include/wayfire/action/action.hpp
 include/wayfire/action/action_interface.hpp
 include/wayfire/bindings-repository.hpp
@@ -257,4 +257,5 @@ share/wayfire/metadata/xdg-activation.xml
 share/wayfire/metadata/zoom.xml
 share/wayfire/protocols/unstable/wayfire-shell-unstable-v2.xml
 share/wayland-sessions/wayfire.desktop
+share/wayland-sessions/wayfire.desktop.bak
 share/xdg-desktop-portal/wayfire-portals.conf

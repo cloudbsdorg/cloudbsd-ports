@@ -1,5 +1,3 @@
-bin/ly
-bin/ly_wrapper
 %%ETCDIR%%/config.ini.example
 %%ETCDIR%%/config.ini.sample
 %%ETCDIR%%/custom-sessions/README
@@ -34,6 +32,8 @@ bin/ly_wrapper
 %%ETCDIR%%/setup.sh
 %%ETCDIR%%/setup.sh.sample
 %%ETCDIR%%/startup.sh
+bin/ly
+bin/ly_wrapper
 etc/pam.d/ly
 etc/pam.d/ly-autologin
 sbin/revytech-ly-enable

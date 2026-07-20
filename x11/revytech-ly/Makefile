@@ -2,8 +2,7 @@
 
 PORTNAME=	revytech-ly
 # ly product line (Zig 0.16); not the Wayfire 0.11 product version
-DISTVERSION=	1.5.0.20260719
-PORTREVISION=	1
+DISTVERSION=	1.5.0.20260720
 CATEGORIES=	x11 wayland
 
 MAINTAINER=	${REVYTECH_MAINTAINER}

@@ -61,9 +61,17 @@ build_one() {
     return 1
   fi
 
-  # Fresh plist from staged tree
+  # Fresh plist from staged tree; normalize FreeBSD placeholders
   make makeplist 2>/dev/null | grep -v '^/you' > pkg-plist || true
-  sed -i '' 's/\.so\.%%VERSION%%/.so.0.11.0/g' pkg-plist 2>/dev/null || true
+  # %%PORTEXAMPLES%%%%EXAMPLESDIR%% expands badly when OPTIONS_DEFINE=EXAMPLES
+  # is not defined — rewrite to literal share/examples/${PORTNAME}/
+  sed -i '' \
+    -e 's/\.so\.%%VERSION%%/.so.0.11.0/g' \
+    -e "s|%%PORTEXAMPLES%%%%EXAMPLESDIR%%/|share/examples/${name}/|g" \
+    -e "s|%%EXAMPLESDIR%%/|share/examples/${name}/|g" \
+    pkg-plist 2>/dev/null || true
+  # Drop empty / duplicate lines
+  grep -v '^$' pkg-plist | sort -u > pkg-plist.tmp && mv pkg-plist.tmp pkg-plist
 
   # Drop stale plist/package cookies (root-owned or empty packages)
   rm -f work/.PLIST.* work/.package_done* 2>/dev/null || true
