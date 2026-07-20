@@ -617,6 +617,7 @@
     SUBDIR += py-openpaperwork-core
     SUBDIR += py-openpaperwork-gtk
     SUBDIR += py-openvdb
+    SUBDIR += py-optimum
     SUBDIR += py-optuna
     SUBDIR += py-oterm
     SUBDIR += py-paddlepaddle

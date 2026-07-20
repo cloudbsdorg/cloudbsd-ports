@@ -20,6 +20,7 @@ USE_LINUX=	base
 NO_BUILD=	yes
 NO_WRKSUBDIR=	yes
 EXTRACT_ONLY=
+STRIP=		# elftoolchain strip fails on these Linux binaries
 
 PLIST_FILES=	bin/claude \
 		libexec/claude
