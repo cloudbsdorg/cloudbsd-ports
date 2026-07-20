@@ -102,12 +102,12 @@ build_one() {
 }
 
 : > "$LOG"
-PORTS="${*:-devel/revytech-wf-config x11-wm/revytech-wayfire x11-wm/revytech-wayfire-plugins-extra x11/revytech-wf-shell x11/revytech-wcm x11/revytech-wf-osk}"
+PORTS="${*:-devel/revytech-wf-config x11-wm/revytech-wayfire x11-wm/revytech-wayfire-plugins-extra x11/revytech-wf-shell x11/revytech-wcm x11/revytech-wf-osk x11/revytech-ly}"
 for p in $PORTS; do
   build_one "$p" || exit 1
 done
 log "=== ALL PACKAGES ==="
 pkg info -x revytech || true
-ls -la /usr/local/bin/wayfire /usr/local/bin/wf-panel /usr/local/bin/wf-settings /usr/local/bin/wf-background /usr/local/bin/wcm /usr/local/bin/wf-osk 2>&1 || true
+ls -la /usr/local/bin/wayfire /usr/local/bin/wf-panel /usr/local/bin/wf-settings /usr/local/bin/wf-background /usr/local/bin/wcm /usr/local/bin/wf-osk /usr/local/bin/ly /usr/local/bin/ly_wrapper /usr/local/sbin/revytech-ly-enable 2>&1 || true
 wayfire --version 2>&1 || true
 log DONE

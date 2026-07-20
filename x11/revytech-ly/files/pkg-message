@@ -1,0 +1,31 @@
+[
+{ type: install
+  message: <<EOM
+REVYTECH Ly is installed. To enable the display manager on ttyv1:
+
+  doas /usr/local/sbin/revytech-ly-enable
+
+That will:
+  - append the Ly gettytab entry (lo=/usr/local/bin/ly_wrapper)
+  - set ttyv1 to "/usr/libexec/getty Ly"
+  - ensure seatd is enabled (required for Wayfire)
+  - install /usr/local/etc/ly/config.ini from the sample if missing
+
+Manual alternative:
+  - gettytab snippet: /usr/local/share/examples/revytech-ly/gettytab.ly
+  - ttys snippet:     /usr/local/share/examples/revytech-ly/ttys.snippet
+
+Wayfire appears as a session via:
+  /usr/local/etc/ly/custom-sessions/wayfire.desktop
+  and/or /usr/local/share/wayland-sessions/wayfire.desktop
+
+After enable, reboot (or restart getty on ttyv1).
+EOM
+}
+{ type: upgrade
+  message: <<EOM
+Review /usr/local/etc/ly/config.ini against config.ini.sample after upgrades.
+Ensure /etc/gettytab still points lo= to /usr/local/bin/ly_wrapper.
+EOM
+}
+]

@@ -17,6 +17,7 @@ revytech-wf-utils        master   11a2e6c9eab310e00e48dc433ad114edca5dfed5
 revytech-wf-touch        master   4d521807db04d40c0db8e1557f4c787e6c226b90
 revytech-wf-json         main     d6a43dfdda5717befe0188508d514cbb934c2657
 revytech-wf-osk          master   c305f8d3f0ebade336c62c8b8da1ff86f88b7509
+revytech-ly              master   8d06583ecc05aac479a06c60ea9d0775108dd773
 revytech-wlroots         master   544ab1d5e5615acb3ab981ee756f51746579279e
 
 # Meson project versions (informational; DISTVERSION tracks product line)

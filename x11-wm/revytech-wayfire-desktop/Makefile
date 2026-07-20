@@ -19,6 +19,7 @@ RUN_DEPENDS=	revytech-wf-config>0:devel/revytech-wf-config \
 		revytech-wayfire-plugins-extra>0:x11-wm/revytech-wayfire-plugins-extra \
 		revytech-wf-shell>0:x11/revytech-wf-shell \
 		revytech-wcm>0:x11/revytech-wcm \
+		revytech-ly>0:x11/revytech-ly \
 		seatd>0:sysutils/seatd \
 		kanshi>0:x11/kanshi \
 		mako>0:x11/mako \

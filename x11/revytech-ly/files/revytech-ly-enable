@@ -1,0 +1,71 @@
+#!/bin/sh
+# Configure FreeBSD getty/ttys + seatd for REVYTECH Ly. Run as root.
+set -eu
+PREFIX="/usr/local"
+ETCDIR="${PREFIX}/etc/ly"
+GETTYTAB=/etc/gettytab
+TTYS=/etc/ttys
+WRAPPER="${PREFIX}/bin/ly_wrapper"
+
+if [ "$(id -u)" -ne 0 ]; then
+	echo "revytech-ly-enable: must run as root (doas $0)" >&2
+	exit 1
+fi
+
+if [ ! -x "$WRAPPER" ]; then
+	echo "revytech-ly-enable: missing $WRAPPER — install revytech-ly first" >&2
+	exit 1
+fi
+
+# --- gettytab ---
+if grep -q '^Ly:' "$GETTYTAB" 2>/dev/null; then
+	if ! grep -q ":lo=${WRAPPER}:" "$GETTYTAB"; then
+		cp -p "$GETTYTAB" "${GETTYTAB}.bak.revytech-ly"
+		sed -i '' "s|:lo=[^:]*:|:lo=${WRAPPER}:|g" "$GETTYTAB"
+		echo "updated Ly entry in $GETTYTAB (backup ${GETTYTAB}.bak.revytech-ly)"
+	else
+		echo "gettytab already has Ly entry with $WRAPPER"
+	fi
+else
+	cp -p "$GETTYTAB" "${GETTYTAB}.bak.revytech-ly"
+	printf '\n# REVYTECH Ly\nLy:\\\n\t:lo=%s:\\\n\t:al=root:\n' "$WRAPPER" >>"$GETTYTAB"
+	echo "appended Ly entry to $GETTYTAB (backup ${GETTYTAB}.bak.revytech-ly)"
+fi
+
+# --- ttys (ttyv1) ---
+if grep -q '^ttyv1' "$TTYS"; then
+	cp -p "$TTYS" "${TTYS}.bak.revytech-ly"
+	sed -i '' -E 's|^ttyv1[[:space:]].*|ttyv1	"/usr/libexec/getty Ly"		xterm	on  secure|' "$TTYS"
+	echo "set ttyv1 to getty Ly in $TTYS (backup ${TTYS}.bak.revytech-ly)"
+else
+	echo "warning: no ttyv1 line in $TTYS — add manually" >&2
+fi
+
+# --- config.ini ---
+if [ ! -f "${ETCDIR}/config.ini" ]; then
+	if [ -f "${ETCDIR}/config.ini.sample" ]; then
+		cp "${ETCDIR}/config.ini.sample" "${ETCDIR}/config.ini"
+		echo "installed ${ETCDIR}/config.ini from sample"
+	fi
+fi
+
+if [ -f "${ETCDIR}/config.ini" ]; then
+	if grep -q '^tty[[:space:]]*=' "${ETCDIR}/config.ini"; then
+		sed -i '' -E 's|^tty[[:space:]]*=.*|tty = 1|' "${ETCDIR}/config.ini"
+	fi
+fi
+
+# --- seatd for Wayland ---
+if command -v sysrc >/dev/null 2>&1; then
+	sysrc seatd_enable="YES" >/dev/null
+	service seatd start >/dev/null 2>&1 || true
+	echo "seatd_enable=YES"
+	sysrc lightdm_enable="NO" >/dev/null 2>&1 || true
+	sysrc sddm_enable="NO" >/dev/null 2>&1 || true
+	sysrc gdm_enable="NO" >/dev/null 2>&1 || true
+fi
+
+echo
+echo "Ly enabled on ttyv1. Reboot recommended."
+echo "Sessions: ${ETCDIR}/custom-sessions/ + ${PREFIX}/share/wayland-sessions/"
+echo "Config:   ${ETCDIR}/config.ini"

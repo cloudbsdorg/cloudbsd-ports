@@ -1,0 +1,7 @@
+REVYTECH packaging of Ly — a lightweight TUI (ncurses-like) display manager
+for FreeBSD that supports X11 and Wayland sessions.
+
+Built from revytechinc/ly (synced with fairyglade/ly master) and wired for the
+REVYTECH Wayfire stack: FreeBSD getty wrapper, OpenPAM configs, full config
+tree under etc/ly, Wayfire custom session, and revytech-ly-enable to apply
+gettytab/ttys integration.
