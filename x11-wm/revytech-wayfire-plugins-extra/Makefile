@@ -1,3 +1,5 @@
+.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
+
 PORTNAME=	revytech-wayfire-plugins-extra
 DISTVERSION=	${REVYTECH_DISTVERSION}
 CATEGORIES=	x11-wm wayland
@@ -15,7 +17,7 @@ BUILD_DEPENDS=	boost-libs>0:devel/boost-libs \
 		evdev-proto>0:devel/evdev-proto \
 		wayland-scanner:graphics/wayland \
 		wayland-protocols>=1.12:graphics/wayland-protocols \
-		revytech-wayfire>=0.11.0:x11-wm/revytech-wayfire
+		revytech-wayfire>0:x11-wm/revytech-wayfire
 LIB_DEPENDS=	libevdev.so:devel/libevdev \
 		libwf-config.so:devel/revytech-wf-config \
 		libwayland-server.so:graphics/wayland
@@ -33,7 +35,6 @@ MESON_ARGS=	-Denable_focus_request=true \
 		-Denable_filters=true \
 		-Denable_wayfire_shadows=true
 
-.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
 
 post-patch:
 	@if [ -x ${FILESDIR}/fetch-submodules.sh ]; then \

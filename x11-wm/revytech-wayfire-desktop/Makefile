@@ -1,3 +1,5 @@
+.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
+
 PORTNAME=	revytech-wayfire-desktop
 DISTVERSION=	${REVYTECH_DISTVERSION}
 CATEGORIES=	x11-wm wayland
@@ -12,11 +14,11 @@ WWW=		https://github.com/revytechinc/wayfire
 LICENSE=	MIT
 
 # Meta: pull the whole stack in dependency order
-RUN_DEPENDS=	revytech-wf-config>=0.11.0:devel/revytech-wf-config \
-		revytech-wayfire>=0.11.0:x11-wm/revytech-wayfire \
-		revytech-wayfire-plugins-extra>=0.11.0:x11-wm/revytech-wayfire-plugins-extra \
-		revytech-wf-shell>=0.11.0:x11/revytech-wf-shell \
-		revytech-wcm>=0.11.0:x11/revytech-wcm \
+RUN_DEPENDS=	revytech-wf-config>0:devel/revytech-wf-config \
+		revytech-wayfire>0:x11-wm/revytech-wayfire \
+		revytech-wayfire-plugins-extra>0:x11-wm/revytech-wayfire-plugins-extra \
+		revytech-wf-shell>0:x11/revytech-wf-shell \
+		revytech-wcm>0:x11/revytech-wcm \
 		seatd>0:sysutils/seatd \
 		kanshi>0:x11/kanshi \
 		mako>0:x11/mako \
@@ -25,7 +27,6 @@ RUN_DEPENDS=	revytech-wf-config>=0.11.0:devel/revytech-wf-config \
 
 USES=		metaport
 
-.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
 
 NO_ARCH=	yes
 

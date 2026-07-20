@@ -1,3 +1,5 @@
+.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
+
 PORTNAME=	revytech-wcm
 DISTVERSION=	${REVYTECH_DISTVERSION}
 CATEGORIES=	x11 wayland
@@ -13,19 +15,21 @@ CONFLICTS_INSTALL=	wcm wcmcommander
 
 BUILD_DEPENDS=	evdev-proto>0:devel/evdev-proto \
 		wayland-protocols>0:graphics/wayland-protocols \
-		revytech-wayfire>=0.11.0:x11-wm/revytech-wayfire
+		revytech-wayfire>0:x11-wm/revytech-wayfire
 LIB_DEPENDS=	libevdev.so:devel/libevdev \
 		libfmt.so:devel/libfmt \
 		libwf-config.so:devel/revytech-wf-config \
 		libwayland-client.so:graphics/wayland
-RUN_DEPENDS=	revytech-wayfire>=0.11.0:x11-wm/revytech-wayfire
+RUN_DEPENDS=	revytech-wayfire>0:x11-wm/revytech-wayfire
 
-USES=		compiler:c++17-lang gnome meson pkgconfig
+USES=		compiler:c++17-lang gettext-runtime gnome localbase:ldflags meson pkgconfig
 USE_GITHUB=	yes
 GH_ACCOUNT=	${REVYTECH_GH_ACCOUNT}
 GH_PROJECT=	wcm
 GH_TAGNAME=	${REVYTECH_SHA_WCM}
 USE_GNOME=	gdkpixbuf gtk30 libxml2
+# meson dependency('intl') needs -L${LOCALBASE}/lib (via localbase:ldflags) + -lintl
+LDFLAGS+=	-lintl
 
 OPTIONS_DEFINE=		WDISPLAYS WFSHELL
 OPTIONS_DEFAULT=	WDISPLAYS WFSHELL
@@ -38,6 +42,5 @@ WFSHELL_DESC=		Build with revytech-wf-shell support
 WFSHELL_BUILD_DEPENDS=	revytech-wf-shell>0:x11/revytech-wf-shell
 WFSHELL_MESON_ENABLED=	wf_shell
 
-.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
 
 .include <bsd.port.mk>

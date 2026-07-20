@@ -61,14 +61,31 @@ cd x11-wm/revytech-wayfire-desktop && make install clean
 
 (Requires the leaf ports already present / indexable under `PORTSDIR`.)
 
-## Build a single component
+## Every iteration: build + reinstall via pkg
+
+**Policy:** each change ends with a package build and `pkg install -f`, not
+`~/.local` prefix installs. Use:
 
 ```sh
 export PORTSDIR=$PWD
+./revytech/wayfire/scripts/build-and-pkg-install.sh
+# or one component:
+./revytech/wayfire/scripts/build-and-pkg-install.sh x11/revytech-wf-shell
+```
+
+That script stages, regenerates `pkg-plist`, builds `.pkg`, copies to
+`~/.cache/revytech-packages/`, and `doas pkg install -fy`s it.
+
+## Build a single component (manual)
+
+```sh
+export PORTSDIR=$PWD BATCH=yes
 cd devel/revytech-wf-config
-make makesum
+make makesum stage
+make makeplist 2>/dev/null | grep -v '^/you' > pkg-plist
+rm -f work/.PLIST.* work/.package_done*
 make package
-doas make install
+doas pkg install -fy work/pkg/*.pkg
 ```
 
 ## After install

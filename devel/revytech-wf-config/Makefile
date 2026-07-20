@@ -1,3 +1,5 @@
+.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
+
 PORTNAME=	revytech-wf-config
 DISTVERSION=	${REVYTECH_DISTVERSION}
 CATEGORIES=	devel wayland
@@ -30,7 +32,6 @@ MESON_ARGS=	-Dtests=disabled
 # Provide PLIST_SUB VERSION for @${VERSION} style plists if needed
 PLIST_SUB=	VERSION=0.11.0
 
-.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
 
 post-patch:
 # FreeBSD ports require project() first in meson.build.

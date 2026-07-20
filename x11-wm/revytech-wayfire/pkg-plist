@@ -1,130 +1,255 @@
-===>   revytech-wayfire-0.11.0.r20260719 depends on file: /usr/local/include/xf86drmMode.h - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on package: evdev-proto>0 - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on package: glm>=0.9.8 - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on package: wayland-protocols>=1.37 - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on file: /usr/local/bin/cmake - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on executable: meson - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on executable: ninja - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on package: pkgconf>=1.3.0_1 - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on file: /usr/local/libdata/pkgconfig/pixman-1.pc - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on file: /usr/local/libdata/pkgconfig/xcb.pc - found
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libevdev.so - found (/usr/local/lib/libevdev.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libinotify.so - found (/usr/local/lib/libinotify.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libinput.so - found (/usr/local/lib/libinput.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libpng.so - found (/usr/local/lib/libpng.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libudev.so - found (/usr/local/lib/libudev.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libwayland-server.so - found (/usr/local/lib/libwayland-server.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libwf-config.so - found (/usr/local/lib/libwf-config.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libwlroots-0.20.so - found (/usr/local/lib/libwlroots-0.20.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libxkbcommon.so - found (/usr/local/lib/libxkbcommon.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libyyjson.so - found (/usr/local/lib/libyyjson.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libEGL.so - found (/usr/local/lib/libEGL.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libGLESv2.so - found (/usr/local/lib/libGLESv2.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libcairo.so - found (/usr/local/lib/libcairo.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libglib-2.0.so - found (/usr/local/lib/libglib-2.0.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libintl.so - found (/usr/local/lib/libintl.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libharfbuzz.so - found (/usr/local/lib/libharfbuzz.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libpango-1.0.so - found (/usr/local/lib/libpango-1.0.so)
-===>   revytech-wayfire-0.11.0.r20260719 depends on shared library: libjpeg.so - found (/usr/local/lib/libjpeg.so)
-===>  Configuring for revytech-wayfire-0.11.0.r20260719
-The Meson build system
-Version: 1.10.2
-Source dir: /home/mlapointe/git/cloudbsd-ports/x11-wm/revytech-wayfire/work/wayfire-33bdbf3c55d3648a0f3120108a0fc356a0aabb8e
-Build dir: /home/mlapointe/git/cloudbsd-ports/x11-wm/revytech-wayfire/work/wayfire-33bdbf3c55d3648a0f3120108a0fc356a0aabb8e/_build
-Build type: native build
-Project name: wayfire
-Project version: 0.11.0
-C compiler for the host machine: cc (clang 21.1.8 "FreeBSD clang version 21.1.8 (https://github.com/llvm/llvm-project.git llvmorg-21.1.8-0-g2078da43e25a)")
-C linker for the host machine: cc ld.lld 21.1.8
-C++ compiler for the host machine: c++ (clang 21.1.8 "FreeBSD clang version 21.1.8 (https://github.com/llvm/llvm-project.git llvmorg-21.1.8-0-g2078da43e25a)")
-C++ linker for the host machine: c++ ld.lld 21.1.8
-Host machine cpu family: x86_64
-Host machine cpu: x86_64
-Found pkg-config: YES (/usr/local/bin/pkgconf) 2.4.3
-Run-time dependency wayland-server found: YES 1.25.0
-Run-time dependency wayland-client found: YES 1.25.0
-Run-time dependency wayland-cursor found: YES 1.25.0
-Run-time dependency wayland-protocols found: YES 1.49
-Run-time dependency cairo found: YES 1.18.2
-Run-time dependency pango found: YES 1.57.1
-Run-time dependency pangocairo found: YES 1.57.1
-Run-time dependency libdrm found: YES 2.4.133
-Run-time dependency egl found: YES 1.5
-Run-time dependency glesv2 found: YES 3.2
-Run-time dependency vulkan found: YES 1.4.356
-Found CMake: /usr/local/bin/cmake (3.31.12)
-Run-time dependency glm found: YES 1.0.3
-Run-time dependency libinput found: YES 1.31.1
-Run-time dependency pixman-1 found: YES 0.46.4
-Run-time dependency xkbcommon found: YES 1.13.2
-Library dl found: YES
-Run-time dependency libudev found: YES 243
-
-Executing subproject wf-json 
-
-wf-json| Project name: wf-json
-wf-json| Project version: 0.0
-wf-json| C++ compiler for the host machine: c++ (clang 21.1.8 "FreeBSD clang version 21.1.8 (https://github.com/llvm/llvm-project.git llvmorg-21.1.8-0-g2078da43e25a)")
-wf-json| C++ linker for the host machine: c++ ld.lld 21.1.8
-wf-json| Run-time dependency yyjson found: YES 0.12.0
-wf-json| Build targets in project: 1
-wf-json| Subproject wf-json finished.
-
-Run-time dependency wlroots-0.20 found: YES 0.20.2
-Run-time dependency wf-config found: YES 0.11.0
-Library execinfo found: YES
-
-Executing subproject wf-utils 
-
-wf-utils| Project name: wf-utils
-wf-utils| Project version: 0.4.0
-wf-utils| C++ compiler for the host machine: c++ (clang 21.1.8 "FreeBSD clang version 21.1.8 (https://github.com/llvm/llvm-project.git llvmorg-21.1.8-0-g2078da43e25a)")
-wf-utils| C++ linker for the host machine: c++ ld.lld 21.1.8
-wf-utils| Found pkg-config: YES (/usr/local/bin/pkgconf) 2.4.3
-wf-utils| Program doxygen found: NO
-wf-utils| Build targets in project: 2
-wf-utils| Subproject wf-utils finished.
-
-
-Executing subproject wf-touch 
-
-wf-touch| Project name: wf-touch
-wf-touch| Project version: 0.0
-wf-touch| C++ compiler for the host machine: c++ (clang 21.1.8 "FreeBSD clang version 21.1.8 (https://github.com/llvm/llvm-project.git llvmorg-21.1.8-0-g2078da43e25a)")
-wf-touch| C++ linker for the host machine: c++ ld.lld 21.1.8
-wf-touch| Dependency glm found: YES 1.0.3 (cached)
-wf-touch| Dependency doctest skipped: feature tests disabled
-wf-touch| Build targets in project: 3
-wf-touch| Subproject wf-touch finished.
-
-Run-time dependency libinotify found: YES 20240724
-Run-time dependency libjpeg found: YES 3.1.4.1
-Run-time dependency libpng found: YES 1.6.58
-Library execinfo found: YES
-Compiler for C++ supports arguments -fno-gnu-unique: NO 
-Checking for function "libinput_device_config_3fg_drag_set_enabled" with dependency libinput: YES 
-Compiler for C++ supports link arguments -lc++fs: NO 
-Compiler for C++ supports link arguments -lc++experimental: YES 
-Check usable header "GLES3/gl32.h" with dependency glesv2: YES 
-Run-time dependency xcb found: YES 1.17.0
-Configuring config.h using configuration
-Program wayland-scanner found: YES (/usr/local/bin/wayland-scanner)
-Program addr2line found: YES (/usr/bin/addr2line)
-Program git found: YES (/usr/local/bin/git)
-Configuring wayfire.1 using configuration
-Run-time dependency libevdev found: YES 1.13.2
-Run-time dependency OpenMP found: YES 5.1
-
-locale/meson.build:16:4: ERROR: Program or command 'msgfmt' not found or not executable
-
-A full log can be found at /home/mlapointe/git/cloudbsd-ports/x11-wm/revytech-wayfire/work/wayfire-33bdbf3c55d3648a0f3120108a0fc356a0aabb8e/_build/meson-logs/meson-log.txt
-===>  Script "configure" failed unexpectedly.
-Please report the problem to mark@revytechinc.com [maintainer] and attach the
-"/home/mlapointe/git/cloudbsd-ports/x11-wm/revytech-wayfire/work/wayfire-33bdbf3c55d3648a0f3120108a0fc356a0aabb8e/_build/meson-logs/meson-log.txt"
-including the output of the failure of your make command. Also, it might be
-a good idea to provide an overview of all packages installed on your system
-(e.g. a /usr/local/sbin/pkg-static info -g -Ea).
-*** Error code 1
-
-Stop.
-make: stopped making "makeplist" in /home/mlapointe/git/cloudbsd-ports/x11-wm/revytech-wayfire
+bin/wayfire
+include/wayfire/action/action.hpp
+include/wayfire/action/action_interface.hpp
+include/wayfire/bindings-repository.hpp
+include/wayfire/bindings.hpp
+include/wayfire/compositor-view.hpp
+include/wayfire/condition/access_interface.hpp
+include/wayfire/condition/condition.hpp
+include/wayfire/condition/logic_condition.hpp
+include/wayfire/condition/test_condition.hpp
+include/wayfire/config-backend.hpp
+include/wayfire/config.h
+include/wayfire/core.hpp
+include/wayfire/dassert.hpp
+include/wayfire/debug.hpp
+include/wayfire/geometry.hpp
+include/wayfire/idle.hpp
+include/wayfire/img.hpp
+include/wayfire/input-device.hpp
+include/wayfire/lexer/lexer.hpp
+include/wayfire/lexer/literal.hpp
+include/wayfire/lexer/symbol.hpp
+include/wayfire/matcher.hpp
+include/wayfire/nonstd/json.hpp
+include/wayfire/nonstd/observer_ptr.h
+include/wayfire/nonstd/reverse.hpp
+include/wayfire/nonstd/tracking-allocator.hpp
+include/wayfire/nonstd/wlroots-full.hpp
+include/wayfire/nonstd/wlroots.hpp
+include/wayfire/object.hpp
+include/wayfire/opengl.hpp
+include/wayfire/option-wrapper.hpp
+include/wayfire/output-layout.hpp
+include/wayfire/output.hpp
+include/wayfire/parser/action_parser.hpp
+include/wayfire/parser/condition_parser.hpp
+include/wayfire/parser/lambda_rule_parser.hpp
+include/wayfire/parser/rule_parser.hpp
+include/wayfire/per-output-plugin.hpp
+include/wayfire/platform-backend.hpp
+include/wayfire/plugin.hpp
+include/wayfire/plugins/animate/animate.hpp
+include/wayfire/plugins/blur/blur.hpp
+include/wayfire/plugins/common/cairo-util.hpp
+include/wayfire/plugins/common/geometry-animation.hpp
+include/wayfire/plugins/common/input-grab.hpp
+include/wayfire/plugins/common/key-repeat.hpp
+include/wayfire/plugins/common/move-drag-interface.hpp
+include/wayfire/plugins/common/preview-indication.hpp
+include/wayfire/plugins/common/shared-core-data.hpp
+include/wayfire/plugins/common/simple-text-node.hpp
+include/wayfire/plugins/common/util.hpp
+include/wayfire/plugins/common/workspace-wall.hpp
+include/wayfire/plugins/crossfade.hpp
+include/wayfire/plugins/grid.hpp
+include/wayfire/plugins/input-method-v1/input-method-v1.hpp
+include/wayfire/plugins/ipc/ipc-activator.hpp
+include/wayfire/plugins/ipc/ipc-helpers.hpp
+include/wayfire/plugins/ipc/ipc-method-repository.hpp
+include/wayfire/plugins/ipc/ipc-rules-common.hpp
+include/wayfire/plugins/scale-signal.hpp
+include/wayfire/plugins/vswitch.hpp
+include/wayfire/plugins/wm-actions-signals.hpp
+include/wayfire/plugins/wobbly/wobbly-signal.hpp
+include/wayfire/region.hpp
+include/wayfire/render-manager.hpp
+include/wayfire/render.hpp
+include/wayfire/rule/lambda_rule.hpp
+include/wayfire/rule/rule.hpp
+include/wayfire/scene-input.hpp
+include/wayfire/scene-operations.hpp
+include/wayfire/scene-render.hpp
+include/wayfire/scene.hpp
+include/wayfire/seat.hpp
+include/wayfire/signal-definitions.hpp
+include/wayfire/signal-provider.hpp
+include/wayfire/toplevel-view.hpp
+include/wayfire/toplevel.hpp
+include/wayfire/touch/touch.hpp
+include/wayfire/txn/transaction-manager.hpp
+include/wayfire/txn/transaction-object.hpp
+include/wayfire/txn/transaction.hpp
+include/wayfire/unstable/translation-node.hpp
+include/wayfire/unstable/wlr-subsurface-controller.hpp
+include/wayfire/unstable/wlr-surface-controller.hpp
+include/wayfire/unstable/wlr-surface-node.hpp
+include/wayfire/unstable/wlr-text-input-v3-popup.hpp
+include/wayfire/unstable/wlr-view-events.hpp
+include/wayfire/unstable/wlr-view-keyboard-interaction.hpp
+include/wayfire/unstable/xdg-toplevel-base.hpp
+include/wayfire/unstable/xwl-toplevel-base.hpp
+include/wayfire/util.hpp
+include/wayfire/utils.hpp
+include/wayfire/variant.hpp
+include/wayfire/view-access-interface.hpp
+include/wayfire/view-helpers.hpp
+include/wayfire/view-transform.hpp
+include/wayfire/view.hpp
+include/wayfire/vulkan.hpp
+include/wayfire/window-manager.hpp
+include/wayfire/workarea.hpp
+include/wayfire/workspace-set.hpp
+include/wayfire/workspace-stream.hpp
+lib/libwayfire-blur-base.so
+lib/libwayfire-move-drag-interface.a
+lib/libwayfire-workspace-wall.a
+lib/libwf-utils.so
+lib/libwf-utils.so.0
+lib/libwf-utils.so.0.4.0
+lib/libwftouch.a
+lib/wayfire/libalpha.so
+lib/wayfire/libanimate.so
+lib/wayfire/libautostart.so
+lib/wayfire/libblur.so
+lib/wayfire/libcommand.so
+lib/wayfire/libcube.so
+lib/wayfire/libdecoration.so
+lib/wayfire/libdefault-config-backend.so
+lib/wayfire/libexpo.so
+lib/wayfire/libext-toplevel.so
+lib/wayfire/libextra-gestures.so
+lib/wayfire/libfast-switcher.so
+lib/wayfire/libforeign-toplevel.so
+lib/wayfire/libgrid.so
+lib/wayfire/libgtk-shell.so
+lib/wayfire/libidle.so
+lib/wayfire/libinput-method-v1.so
+lib/wayfire/libinvert.so
+lib/wayfire/libipc-rules.so
+lib/wayfire/libipc.so
+lib/wayfire/libkde-appmenu.so
+lib/wayfire/libmove.so
+lib/wayfire/liboswitch.so
+lib/wayfire/libplace.so
+lib/wayfire/libpreserve-output.so
+lib/wayfire/libresize.so
+lib/wayfire/libscale-title-filter.so
+lib/wayfire/libscale.so
+lib/wayfire/libsecurity-context-v1.so
+lib/wayfire/libsession-lock.so
+lib/wayfire/libshortcuts-inhibit.so
+lib/wayfire/libsimple-tile.so
+lib/wayfire/libstipc.so
+lib/wayfire/libswitcher.so
+lib/wayfire/libvk-color-management.so
+lib/wayfire/libvswipe.so
+lib/wayfire/libvswitch.so
+lib/wayfire/libwayfire-shell.so
+lib/wayfire/libwindow-rules.so
+lib/wayfire/libwm-actions.so
+lib/wayfire/libwobbly.so
+lib/wayfire/libwrot.so
+lib/wayfire/libwsets.so
+lib/wayfire/libxdg-activation.so
+lib/wayfire/libxkb-bindings.so
+lib/wayfire/libzoom.so
+libdata/pkgconfig/wayfire.pc
+libdata/pkgconfig/wf-utils.pc
+share/examples/revytech-wayfire/wayfire.ini
+share/locale/ro/LC_MESSAGES/wf-plugin-alpha.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-animate.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-autostart.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-blur.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-command.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-core.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-cube.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-decoration.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-expo.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-extra-gestures.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-fast-switcher.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-foreign-toplevel.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-grid.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-gtk-shell.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-idle.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-input-device.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-input-method-v1.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-input.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-invert.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-ipc-rules.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-ipc.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-move.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-oswitch.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-place.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-preserve-output.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-resize.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-scale-title-filter.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-scale.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-security-context-v1.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-session-lock.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-shortcuts-inhibit.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-simple-tile.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-switcher.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-vk-color-management.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-vswipe.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-vswitch.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-wayfire-shell.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-window-rules.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-wm-actions.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-wobbly.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-workarounds.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-wrot.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-wsets.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-xdg-activation.mo
+share/locale/ro/LC_MESSAGES/wf-plugin-zoom.mo
+share/man/man1/wayfire.1.gz
+share/wayfire/metadata/alpha.xml
+share/wayfire/metadata/animate.xml
+share/wayfire/metadata/autostart.xml
+share/wayfire/metadata/blur.xml
+share/wayfire/metadata/command.xml
+share/wayfire/metadata/core.xml
+share/wayfire/metadata/cube.xml
+share/wayfire/metadata/decoration.xml
+share/wayfire/metadata/expo.xml
+share/wayfire/metadata/ext-toplevel.xml
+share/wayfire/metadata/extra-gestures.xml
+share/wayfire/metadata/fast-switcher.xml
+share/wayfire/metadata/foreign-toplevel.xml
+share/wayfire/metadata/grid.xml
+share/wayfire/metadata/gtk-shell.xml
+share/wayfire/metadata/idle.xml
+share/wayfire/metadata/input-device.xml
+share/wayfire/metadata/input-method-v1.xml
+share/wayfire/metadata/input.xml
+share/wayfire/metadata/invert.xml
+share/wayfire/metadata/ipc-rules.xml
+share/wayfire/metadata/ipc.xml
+share/wayfire/metadata/kde-appmenu.xml
+share/wayfire/metadata/move.xml
+share/wayfire/metadata/oswitch.xml
+share/wayfire/metadata/output.xml
+share/wayfire/metadata/place.xml
+share/wayfire/metadata/preserve-output.xml
+share/wayfire/metadata/resize.xml
+share/wayfire/metadata/scale-title-filter.xml
+share/wayfire/metadata/scale.xml
+share/wayfire/metadata/security-context-v1.xml
+share/wayfire/metadata/session-lock.xml
+share/wayfire/metadata/shortcuts-inhibit.xml
+share/wayfire/metadata/simple-tile.xml
+share/wayfire/metadata/switcher.xml
+share/wayfire/metadata/vswipe.xml
+share/wayfire/metadata/vswitch.xml
+share/wayfire/metadata/wayfire-shell.xml
+share/wayfire/metadata/window-rules.xml
+share/wayfire/metadata/wm-actions.xml
+share/wayfire/metadata/wobbly.xml
+share/wayfire/metadata/workarounds.xml
+share/wayfire/metadata/wrot.xml
+share/wayfire/metadata/wsets.xml
+share/wayfire/metadata/xdg-activation.xml
+share/wayfire/metadata/zoom.xml
+share/wayfire/protocols/unstable/wayfire-shell-unstable-v2.xml
+share/wayland-sessions/wayfire.desktop
+share/xdg-desktop-portal/wayfire-portals.conf

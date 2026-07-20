@@ -1,3 +1,5 @@
+.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
+
 PORTNAME=	revytech-wayfire
 DISTVERSION=	${REVYTECH_DISTVERSION}
 CATEGORIES=	x11-wm wayland
@@ -59,7 +61,6 @@ OPTIONS_DEFAULT=	X11
 X11_USE=	XORG=xcb
 X11_MESON_ENABLED=	xwayland
 
-.include "${.CURDIR}/../../revytech/wayfire/Makefile.inc"
 
 post-patch:
 	@if [ -x ${FILESDIR}/fix-include.sh ]; then \
