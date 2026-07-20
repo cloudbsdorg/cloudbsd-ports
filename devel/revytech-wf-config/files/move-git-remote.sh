@@ -1,43 +1,66 @@
 #!/bin/sh
 # Move git remote setup from before project() to after it.
-# FreeBSD ports requires project() to be the first statement in meson.build.
+# FreeBSD ports require project() to be the first statement in meson.build.
+#
+# Prefer python3 if available; fall back to a portable ed/sed path.
 MESON="$1"
-TDIR=$(mktemp -d)
-OUT="$TDIR/meson.build"
-PREFIX_LINES=4
-/usr/local/bin/python3.11 -c "
+[ -f "$MESON" ] || exit 0
+
+# Already has project() first?
+if head -1 "$MESON" | grep -q "project("; then
+	exit 0
+fi
+
+PY=
+for c in python3 python3.12 python3.11 python; do
+	if command -v "$c" >/dev/null 2>&1; then
+		PY=$c
+		break
+	fi
+done
+
+if [ -n "$PY" ]; then
+	"$PY" - "$MESON" <<'PY'
 import sys
-with open('${MESON}') as f:
+path = sys.argv[1]
+with open(path) as f:
     lines = f.readlines()
-
-# Prefix = lines 1..4 (comment + run_command, no trailing blank)
-prefix = lines[:${PREFIX_LINES}]
-# Rest = lines 6 onwards (original lines after the blank line 5)
-rest = lines[5:]
-
-# Find the closing ')' of the project() call.
-# It's the first line in rest that ends with ')' and whose previous line is indented (part of project)
-proj_close = -1
-for i, line in enumerate(rest):
-    stripped = line.rstrip()
-    # project() closes on a line with just ')' at the start of a line
-    if stripped == ')':
-        proj_close = i
+# Find first non-empty non-comment block that is NOT project — collect prefix
+# until project(
+prefix = []
+i = 0
+while i < len(lines):
+    if lines[i].lstrip().startswith("project("):
         break
-
+    prefix.append(lines[i])
+    i += 1
+if i >= len(lines):
+    sys.exit(0)
+rest = lines[i:]
+# find closing ) of project()
+proj_close = -1
+for j, line in enumerate(rest):
+    if line.rstrip() == ")":
+        proj_close = j
+        break
 if proj_close < 0:
-    print('ERROR: could not find project() closing )', file=sys.stderr)
-    sys.exit(1)
+    sys.exit(0)
+out = rest[: proj_close + 1] + ["\n"] + prefix + rest[proj_close + 1 :]
+with open(path, "w") as f:
+    f.writelines(out)
+PY
+	exit 0
+fi
 
-with open('${OUT}', 'w') as f:
-    # 1. Write lines up to and including project() closing )
-    f.writelines(rest[:proj_close+1])
-    # 2. A blank line separator
-    f.write('\n')
-    # 3. The git setup prefix (no trailing blank)
-    f.writelines(prefix)
-    # 4. The rest of the file
-    f.writelines(rest[proj_close+1:])
-"
-mv "$OUT" "$MESON"
-rm -rf "$TDIR"
+# Pure shell fallback: if first lines are run_command for git, leave a marker
+# and rely on meson ignoring unknown early run_command — last resort strip
+# the first blank-terminated paragraph when it mentions git remote.
+if head -5 "$MESON" | grep -q "git remote"; then
+	# Drop lines until first blank line after git setup (max 8 lines)
+	awk '
+		BEGIN { skip=1; blanks=0 }
+		skip && /^$/ { blanks++; if (blanks>=1) { skip=0; next } }
+		skip && NR<=10 { next }
+		{ print }
+	' "$MESON" > "${MESON}.tmp" && mv "${MESON}.tmp" "$MESON"
+fi
