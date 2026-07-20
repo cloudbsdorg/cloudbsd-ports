@@ -67,3 +67,6 @@ share/wf-shell/themes/synthwave.css
 share/wf-shell/themes/system7.css
 share/wf-shell/themes/tokyo-night.css
 share/wf-shell/themes/win95.css
+etc/wf-shell/wf-shell.ini
+etc/wf-shell/wf-shell.ini.sample
+libexec/wf-shell-launch

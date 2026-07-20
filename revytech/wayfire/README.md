@@ -94,8 +94,11 @@ doas pkg install -fy work/pkg/*.pkg
 1. `sysrc seatd_enable=YES && service seatd start`  
 2. User in `video` group  
 3. Session env: `XDG_RUNTIME_DIR`, `LIBSEAT_BACKEND=seatd`, `XDG_SESSION_TYPE=wayland`  
-4. Config: `~/.config/wayfire.ini`, `~/.config/wf-shell.ini`, `~/.config/wf-shell/config.json`  
-5. Binaries: `wayfire`, `wf-panel`, `wf-background`, `wf-dock`, `wf-settings`  
+4. **Config hierarchy** (system default, then user prefs):
+   - Wayfire: `/usr/local/etc/wayfire/wayfire.ini` → override with `~/.config/wayfire.ini`
+   - wf-shell: `/usr/local/etc/wf-shell/wf-shell.ini` → override with `~/.config/wf-shell.ini`
+   - Launchers: `/usr/local/libexec/wayfire-session-launch`, `wf-shell-launch`
+5. Binaries are **system packages only** under `/usr/local/bin` (not `~/.local`)  
 6. **Display manager (Ly):** `pkg install` of `revytech-ly` auto-configures
    `/etc/gettytab`, `/etc/ttys` (ttyv1), seatd, and `config.ini`. Originals
    are saved once as `/etc/*.orig.revytech-ly`; each edit also writes a

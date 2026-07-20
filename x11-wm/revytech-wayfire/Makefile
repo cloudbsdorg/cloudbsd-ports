@@ -2,6 +2,7 @@
 
 PORTNAME=	revytech-wayfire
 DISTVERSION=	${REVYTECH_DISTVERSION}
+PORTREVISION=	1
 CATEGORIES=	x11-wm wayland
 
 MAINTAINER=	${REVYTECH_MAINTAINER}
@@ -80,9 +81,33 @@ post-patch:
 		/bin/sh ${FILESDIR}/insert-compat.sh ${WRKSRC}/meson.build; \
 	fi
 
+# System config: /usr/local/etc/wayfire/ (user prefs: ~/.config/wayfire.ini)
+ETCDIR=		${PREFIX}/etc/wayfire
+
 post-install:
+# Upstream sample → examples/
 	${MKDIR} ${STAGEDIR}${EXAMPLESDIR}
 	${INSTALL_DATA} ${WRKSRC}/wayfire.ini \
 		${STAGEDIR}${EXAMPLESDIR}/wayfire.ini
+# REVYTECH system default (live + sample for upgrades)
+	${MKDIR} ${STAGEDIR}${ETCDIR}
+	${INSTALL_DATA} ${FILESDIR}/wayfire.ini \
+		${STAGEDIR}${ETCDIR}/wayfire.ini
+	${INSTALL_DATA} ${FILESDIR}/wayfire.ini \
+		${STAGEDIR}${ETCDIR}/wayfire.ini.sample
+# Helpers
+	${MKDIR} ${STAGEDIR}${PREFIX}/libexec
+	${INSTALL_SCRIPT} ${FILESDIR}/wayfire-xwayland-ready \
+		${STAGEDIR}${PREFIX}/libexec/wayfire-xwayland-ready
+	${INSTALL_SCRIPT} ${FILESDIR}/wayfire-config-path.sh \
+		${STAGEDIR}${PREFIX}/libexec/wayfire-config-path.sh
+	${INSTALL_SCRIPT} ${FILESDIR}/wayfire-session-launch \
+		${STAGEDIR}${PREFIX}/libexec/wayfire-session-launch
+# Session desktop uses launcher (user prefs → system default)
+	@if [ -f ${STAGEDIR}${PREFIX}/share/wayland-sessions/wayfire.desktop ]; then \
+		${REINPLACE_CMD} -e \
+		's|^Exec=.*|Exec=${PREFIX}/libexec/wayfire-session-launch|' \
+		${STAGEDIR}${PREFIX}/share/wayland-sessions/wayfire.desktop; \
+	fi
 
 .include <bsd.port.mk>

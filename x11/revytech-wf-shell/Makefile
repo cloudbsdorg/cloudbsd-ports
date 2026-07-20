@@ -2,6 +2,7 @@
 
 PORTNAME=	revytech-wf-shell
 DISTVERSION=	${REVYTECH_DISTVERSION}
+PORTREVISION=	1
 CATEGORIES=	x11 wayland
 
 MAINTAINER=	${REVYTECH_MAINTAINER}
@@ -42,12 +43,21 @@ MESON_ARGS=	-Dgvc:alsa=false -Dwayland-logout=false \
 
 # Data lands in share/wf-shell (not share/wayfire)
 DATADIR=	${PREFIX}/share/wf-shell
+# System defaults: /usr/local/etc/wf-shell/ (user: ~/.config/wf-shell.ini)
+ETCDIR=		${PREFIX}/etc/wf-shell
 
 OPTIONS_DEFINE=		PULSEAUDIO
 OPTIONS_DEFAULT=	PULSEAUDIO
 
 PULSEAUDIO_LIB_DEPENDS=		libpulse.so:audio/pulseaudio
 PULSEAUDIO_MESON_ENABLED=	volume-widget
+
+post-install:
+	${MKDIR} ${STAGEDIR}${ETCDIR}
+	${INSTALL_DATA} ${FILESDIR}/wf-shell.ini ${STAGEDIR}${ETCDIR}/wf-shell.ini
+	${INSTALL_DATA} ${FILESDIR}/wf-shell.ini ${STAGEDIR}${ETCDIR}/wf-shell.ini.sample
+	${MKDIR} ${STAGEDIR}${PREFIX}/libexec
+	${INSTALL_SCRIPT} ${FILESDIR}/wf-shell-launch ${STAGEDIR}${PREFIX}/libexec/wf-shell-launch
 
 post-extract:
 	@${RM} -rf ${WRKSRC}/subprojects/wf-json

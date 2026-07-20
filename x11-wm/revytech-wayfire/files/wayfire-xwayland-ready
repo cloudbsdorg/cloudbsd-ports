@@ -1,0 +1,30 @@
+#!/bin/sh
+# System helper: run from wayfire [core] xwayland_startup_script
+# Installed as /usr/local/libexec/wayfire-xwayland-ready
+set -eu
+
+if [ -z "${DISPLAY:-}" ]; then
+	if [ -d /tmp/.X11-unix ]; then
+		for n in 0 1 2 3 4 5 6 7 8 9; do
+			if [ -S "/tmp/.X11-unix/X${n}" ]; then
+				export DISPLAY=":${n}"
+				break
+			fi
+		done
+	fi
+fi
+
+STATE_DIR="${XDG_STATE_HOME:-${HOME}/.local/state}/wayfire"
+mkdir -p "$STATE_DIR" 2>/dev/null || true
+if [ -n "${DISPLAY:-}" ]; then
+	printf '%s\n' "$DISPLAY" >"$STATE_DIR/x11-display" 2>/dev/null || true
+fi
+
+if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+	dbus-update-activation-environment \
+		DISPLAY WAYLAND_DISPLAY XAUTHORITY \
+		XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP \
+		2>/dev/null || true
+fi
+
+exit 0

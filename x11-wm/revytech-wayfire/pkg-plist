@@ -1,4 +1,6 @@
 bin/wayfire
+etc/wayfire/wayfire.ini
+etc/wayfire/wayfire.ini.sample
 include/wayfire/action/action.hpp
 include/wayfire/action/action_interface.hpp
 include/wayfire/bindings-repository.hpp
@@ -156,6 +158,9 @@ lib/wayfire/libxkb-bindings.so
 lib/wayfire/libzoom.so
 libdata/pkgconfig/wayfire.pc
 libdata/pkgconfig/wf-utils.pc
+libexec/wayfire-config-path.sh
+libexec/wayfire-session-launch
+libexec/wayfire-xwayland-ready
 share/examples/revytech-wayfire/wayfire.ini
 share/locale/ro/LC_MESSAGES/wf-plugin-alpha.mo
 share/locale/ro/LC_MESSAGES/wf-plugin-animate.mo

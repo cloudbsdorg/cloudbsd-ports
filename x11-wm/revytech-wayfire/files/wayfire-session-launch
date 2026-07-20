@@ -1,0 +1,13 @@
+#!/bin/sh
+# Launch Wayfire with config hierarchy: user prefs → system default.
+set -eu
+PREFIX="${PREFIX:-/usr/local}"
+export PATH="/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:${PATH:-}"
+
+# Never prefer ~/.local for compositor stack
+PATH=$(printf '%s' "$PATH" | awk -v RS=: -v ORS=: '!/\/\.local\// && length' | sed 's/:$//')
+export PATH
+
+CONFIG=$("${PREFIX}/libexec/wayfire-config-path.sh")
+export WAYFIRE_CONFIG_FILE="$CONFIG"
+exec "${PREFIX}/bin/wayfire" -c "$CONFIG" "$@"

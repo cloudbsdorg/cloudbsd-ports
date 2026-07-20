@@ -1,0 +1,33 @@
+#!/bin/sh
+# Launch a wf-shell component with config hierarchy: user → system.
+# Usage: wf-shell-launch {panel|background|dock} [extra args]
+set -eu
+PREFIX="${PREFIX:-/usr/local}"
+export PATH="/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:${PATH:-}"
+
+# Drop ~/.local from PATH so home builds cannot shadow packages
+PATH=$(printf '%s' "$PATH" | awk -v RS=: -v ORS=: '!/\/\.local\// && length' | sed 's/:$//')
+export PATH
+
+comp="${1:-}"
+[ -n "$comp" ] || { echo "usage: $0 panel|background|dock" >&2; exit 2; }
+shift
+
+case "$comp" in
+	panel) bin="${PREFIX}/bin/wf-panel" ;;
+	background) bin="${PREFIX}/bin/wf-background" ;;
+	dock) bin="${PREFIX}/bin/wf-dock" ;;
+	*) echo "unknown component: $comp" >&2; exit 2 ;;
+esac
+
+USER_CFG="${HOME}/.config/wf-shell.ini"
+SYS_CFG="${PREFIX}/etc/wf-shell/wf-shell.ini"
+if [ -f "$USER_CFG" ]; then
+	CFG="$USER_CFG"
+elif [ -f "$SYS_CFG" ]; then
+	CFG="$SYS_CFG"
+else
+	exec "$bin" "$@"
+fi
+
+exec "$bin" -c "$CFG" "$@"
