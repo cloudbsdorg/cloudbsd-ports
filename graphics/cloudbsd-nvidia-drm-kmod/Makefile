@@ -16,11 +16,11 @@ USES=		metaport
 IGNORE=		not supported on anything but FreeBSD (missing linuxkpi functionality)
 .else
 .  if ${OSVERSION} >= 1500509 && ${ARCH} == amd64
-RUN_DEPENDS+=	${KMODDIR}/nvidia-drm.ko:graphics/cloudbsd-nvidia-drm-612-kmod${PKGNAMESUFFIX}
+RUN_DEPENDS+=	cloudbsd-nvidia-drm-612-kmod>0:graphics/cloudbsd-nvidia-drm-612-kmod${PKGNAMESUFFIX}
 .  elif ${OSVERSION} >= 1500031 && ${ARCH} == amd64
-RUN_DEPENDS+=	${KMODDIR}/nvidia-drm.ko:graphics/cloudbsd-nvidia-drm-66-kmod${PKGNAMESUFFIX}
+RUN_DEPENDS+=	cloudbsd-nvidia-drm-66-kmod>0:graphics/cloudbsd-nvidia-drm-66-kmod${PKGNAMESUFFIX}
 .  else
-RUN_DEPENDS+=	${KMODDIR}/nvidia-drm.ko:graphics/cloudbsd-nvidia-drm-61-kmod${PKGNAMESUFFIX}
+RUN_DEPENDS+=	cloudbsd-nvidia-drm-61-kmod>0:graphics/cloudbsd-nvidia-drm-61-kmod${PKGNAMESUFFIX}
 .  endif
 .endif
 

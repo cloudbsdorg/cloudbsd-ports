@@ -7,7 +7,7 @@ CLOUDBSD_DRM_KMODS=	amd
 ONLY_FOR_ARCHS=	amd64 aarch64 powerpc64 powerpc64le
 ONLY_FOR_ARCHS_REASON=	amdgpu is not built on all architectures in drm-kmod
 
-RUN_DEPENDS=	${KMODDIR}/drm.ko:graphics/cloudbsd-drm-66-core-kmod
+RUN_DEPENDS=	cloudbsd-drm-66-core-kmod>0:graphics/cloudbsd-drm-66-core-kmod
 
 CONFLICTS_INSTALL=	drm-515-kmod \
 			drm-61-kmod \

@@ -2,7 +2,7 @@ PORTNAME=	cloudbsd-nvidia-drm-612-kmod
 PORTREVISION=	0
 CATEGORIES=	graphics
 
-RUN_DEPENDS+=	${KMODDIR}/drm.ko:graphics/cloudbsd-drm-612-core-kmod
+RUN_DEPENDS+=	cloudbsd-drm-612-core-kmod>0:graphics/cloudbsd-drm-612-core-kmod
 
 CONFLICTS_INSTALL=	nvidia-drm-515-kmod* \
 			nvidia-drm-61-kmod* \

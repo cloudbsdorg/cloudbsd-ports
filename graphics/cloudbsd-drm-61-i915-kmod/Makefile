@@ -7,7 +7,7 @@ CLOUDBSD_DRM_KMODS=	i915
 ONLY_FOR_ARCHS=	amd64 i386
 ONLY_FOR_ARCHS_REASON=	i915kms is only built on supported arches in drm-kmod
 
-RUN_DEPENDS=	${KMODDIR}/drm.ko:graphics/cloudbsd-drm-61-core-kmod
+RUN_DEPENDS=	cloudbsd-drm-61-core-kmod>0:graphics/cloudbsd-drm-61-core-kmod
 
 CONFLICTS_INSTALL=	drm-515-kmod \
 			drm-61-kmod \

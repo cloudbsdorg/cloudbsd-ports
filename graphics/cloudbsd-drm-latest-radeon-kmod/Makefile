@@ -4,7 +4,7 @@ COMMENT=	CloudBSD DRM latest radeonkms kernel module (legacy AMD)
 
 CLOUDBSD_DRM_KMODS=	radeon
 
-RUN_DEPENDS=	${KMODDIR}/drm.ko:graphics/cloudbsd-drm-latest-core-kmod
+RUN_DEPENDS=	cloudbsd-drm-latest-core-kmod>0:graphics/cloudbsd-drm-latest-core-kmod
 
 CONFLICTS_INSTALL=	drm-515-kmod \
 			drm-61-kmod \

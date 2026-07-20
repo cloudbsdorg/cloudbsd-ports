@@ -11,11 +11,11 @@ WWW=		https://github.com/freebsd/drm-kmod/
 
 USES=		metaport
 
-RUN_DEPENDS=	${KMODDIR}/drm.ko:graphics/cloudbsd-drm-latest-core-kmod \
-		${KMODDIR}/amdgpu.ko:graphics/cloudbsd-drm-latest-amdgpu-kmod \
-		${KMODDIR}/i915kms.ko:graphics/cloudbsd-drm-latest-i915-kmod \
-		${KMODDIR}/radeonkms.ko:graphics/cloudbsd-drm-latest-radeon-kmod \
-		${KMODDIR}/nvidia-drm.ko:graphics/cloudbsd-nvidia-drm-latest-kmod \
+RUN_DEPENDS=	cloudbsd-drm-latest-core-kmod>0:graphics/cloudbsd-drm-latest-core-kmod \
+		cloudbsd-drm-latest-amdgpu-kmod>0:graphics/cloudbsd-drm-latest-amdgpu-kmod \
+		cloudbsd-drm-latest-i915-kmod>0:graphics/cloudbsd-drm-latest-i915-kmod \
+		cloudbsd-drm-latest-radeon-kmod>0:graphics/cloudbsd-drm-latest-radeon-kmod \
+		cloudbsd-nvidia-drm-latest-kmod>0:graphics/cloudbsd-nvidia-drm-latest-kmod \
 		gpu-firmware-kmod>=20220511:graphics/gpu-firmware-kmod \
 		cloudbsd-gpu-detect:sysutils/cloudbsd-gpu-autoload
 
