@@ -1,5 +1,6 @@
 #!/bin/sh
-# Launch Wayfire with config hierarchy: user prefs → system default.
+# Launch Wayfire for a display manager (Ly) or direct session start.
+# Fail-closed: refuse nested Wayland; ensure FreeBSD seat + runtime dir.
 set -eu
 PREFIX="${PREFIX:-/usr/local}"
 export PATH="/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:${PATH:-}"
@@ -8,6 +9,80 @@ export PATH="/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:${PATH:-}"
 PATH=$(printf '%s' "$PATH" | awk -v RS=: -v ORS=: '!/\/\.local\// && length' | sed 's/:$//')
 export PATH
 
+log() {
+  # Always try to leave a breadcrumb for DM session debugging
+  _msg="wayfire-session-launch: $*"
+  printf '%s\n' "$_msg" >&2
+  if [ -n "${HOME:-}" ] && [ -w "${HOME}/.local/state" ] 2>/dev/null; then
+    printf '%s %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$_msg" >>"${HOME}/.local/state/wayfire-session-launch.log" 2>/dev/null || true
+  fi
+}
+
+# ── Runtime dir (FreeBSD pam_xdg: /var/run/xdg/$USER) ──────────────────────
+if [ -z "${XDG_RUNTIME_DIR:-}" ] || [ ! -d "${XDG_RUNTIME_DIR}" ]; then
+  _user="${USER:-$(id -un 2>/dev/null || echo)}"
+  for cand in \
+    "${XDG_RUNTIME_DIR:-}" \
+    "/var/run/xdg/${_user}" \
+    "/run/user/$(id -u 2>/dev/null || echo 0)" \
+    "/var/run/user/$(id -u 2>/dev/null || echo 0)"
+  do
+    [ -n "$cand" ] || continue
+    if [ -d "$cand" ]; then
+      export XDG_RUNTIME_DIR="$cand"
+      break
+    fi
+  done
+fi
+if [ -z "${XDG_RUNTIME_DIR:-}" ] || [ ! -d "${XDG_RUNTIME_DIR}" ]; then
+  log "FATAL: XDG_RUNTIME_DIR missing or not a directory (got: ${XDG_RUNTIME_DIR:-unset})"
+  exit 1
+fi
+
+# ── Never nest under an existing Wayland client env ────────────────────────
+# Ly/SSH/agent restarts often leave WAYLAND_DISPLAY set → headless/nested fail.
+if [ -n "${WAYLAND_DISPLAY:-}" ]; then
+  _sock="${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}"
+  # If socket exists and is ours, this is a re-exec mistake — still clear for DRM session.
+  # Display managers always want a fresh DRM compositor, not a nested one.
+  log "clearing WAYLAND_DISPLAY=${WAYLAND_DISPLAY} for DRM session start"
+  unset WAYLAND_DISPLAY
+fi
+unset DISPLAY 2>/dev/null || true
+
+# ── Seat / compositor env defaults (override-friendly) ─────────────────────
+export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-wayland}"
+export XDG_SESSION_DESKTOP="${XDG_SESSION_DESKTOP:-wayfire}"
+export XDG_CURRENT_DESKTOP="${XDG_CURRENT_DESKTOP:-wayfire}"
+export LIBSEAT_BACKEND="${LIBSEAT_BACKEND:-seatd}"
+# NVIDIA FreeBSD: software cursors avoid common cursor plane glitches
+export WLR_NO_HARDWARE_CURSORS="${WLR_NO_HARDWARE_CURSORS:-1}"
+# Prefer DRM + libinput unless caller set WLR_BACKENDS (tests may use headless)
+if [ -z "${WLR_BACKENDS:-}" ]; then
+  export WLR_BACKENDS=drm,libinput
+fi
+if [ -z "${WLR_RENDER_DRM_DEVICE:-}" ] && [ -e /dev/dri/renderD128 ]; then
+  export WLR_RENDER_DRM_DEVICE=/dev/dri/renderD128
+fi
+if [ -z "${__GLX_VENDOR_LIBRARY_NAME:-}" ] && [ -e /dev/nvidia0 ]; then
+  export __GLX_VENDOR_LIBRARY_NAME=nvidia
+fi
+
+# ── Session bus (many GTK clients need it; fail-soft if dbus-launch missing) ─
+if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+  if command -v dbus-launch >/dev/null 2>&1; then
+    # shellcheck disable=SC2046
+    eval $(dbus-launch --sh-syntax) || true
+  fi
+fi
+
 CONFIG=$("${PREFIX}/libexec/wayfire-config-path.sh")
 export WAYFIRE_CONFIG_FILE="$CONFIG"
+
+if [ ! -x "${PREFIX}/bin/wayfire" ]; then
+  log "FATAL: ${PREFIX}/bin/wayfire not executable"
+  exit 1
+fi
+
+log "exec wayfire -c $CONFIG (XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR LIBSEAT_BACKEND=$LIBSEAT_BACKEND)"
 exec "${PREFIX}/bin/wayfire" -c "$CONFIG" "$@"

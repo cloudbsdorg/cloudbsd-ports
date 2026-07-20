@@ -1,8 +1,7 @@
 [Desktop Entry]
 Name=Wayfire (REVYTECH)
 Comment=REVYTECH Wayfire Wayland compositor
-Exec=wayfire
+Exec=/usr/local/libexec/wayfire-session-launch
+TryExec=wayfire
 Type=Application
 DesktopNames=Wayfire
-X-LightDM-DesktopName=Wayfire
-X-GDM-SessionRegisters=true

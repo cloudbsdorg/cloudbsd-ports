@@ -32,9 +32,12 @@ GH_TAGNAME=	${REVYTECH_SHA_LY}
 
 # pkg-install / pkg-deinstall in ${.CURDIR} auto-configure (and restore) /etc
 # FreeBSD installexe equivalent via zig flags + post-install asset copy
+# getty binds Ly to ttyv1 → embed default/fallback tty=1 (never silently jump to 2)
 ZIG_ARGS=	-Dprefix_directory="${PREFIX}" \
 		-Dconfig_directory="${PREFIX}/etc" \
-		-Dinit_system=freebsd
+		-Dinit_system=freebsd \
+		-Ddefault_tty=1 \
+		-Dfallback_tty=1
 
 # Zig default install only stages the binary; post-install does the rest
 post-install:
