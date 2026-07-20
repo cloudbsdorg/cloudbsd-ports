@@ -9,7 +9,7 @@ GH_ACCOUNT=revytechinc
 
 # Component              branch   full SHA
 revytech-wf-config       master   99e50f85e339657097af3a6071ef6e765a70e0f6
-revytech-wayfire         master   33bdbf3c55d3648a0f3120108a0fc356a0aabb8e
+revytech-wayfire         master   e925f212b0ab9efd7ccf046f99540b88ea555183
 revytech-wayfire-plugins-extra  master  4290ddf13bfadb344d45cb25c47f7825bbdc8a30
 revytech-wcm             master   84063a07ccfc5be2a96b98d934271761a1730c2b
 revytech-wf-shell        master   4761f1bd5f618dce939776123810232533245345
