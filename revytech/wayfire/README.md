@@ -96,16 +96,12 @@ doas pkg install -fy work/pkg/*.pkg
 3. Session env: `XDG_RUNTIME_DIR`, `LIBSEAT_BACKEND=seatd`, `XDG_SESSION_TYPE=wayland`  
 4. Config: `~/.config/wayfire.ini`, `~/.config/wf-shell.ini`, `~/.config/wf-shell/config.json`  
 5. Binaries: `wayfire`, `wf-panel`, `wf-background`, `wf-dock`, `wf-settings`  
-6. **Display manager (Ly):** after `revytech-ly` is installed:
-
-```sh
-doas /usr/local/sbin/revytech-ly-enable   # gettytab + ttyv1 + seatd + config.ini
-# reboot
-```
-
-Ly is synced from fairyglade/ly master into revytechinc/ly; the port installs the
-binary, FreeBSD wrapper, PAM, full `/usr/local/etc/ly` tree (langs, setup.sh,
-startup.sh, examples), Wayfire custom session, and the enable script.
+6. **Display manager (Ly):** `pkg install` of `revytech-ly` auto-configures
+   `/etc/gettytab`, `/etc/ttys` (ttyv1), seatd, and `config.ini`. Originals
+   are saved once as `/etc/*.orig.revytech-ly`; each edit also writes a
+   timestamped `*.bak.revytech-ly.<stamp>`. Re-run with
+   `doas /usr/local/sbin/revytech-ly-enable` if needed; deinstall restores
+   from the `.orig` snapshots. Then reboot.
 
 ## Layout
 

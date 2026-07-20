@@ -1,0 +1,36 @@
+[
+{ type: install
+  message: <<EOM
+REVYTECH Ly is installed and auto-configured on package install:
+
+  - /etc/gettytab  → Ly entry (lo=/usr/local/bin/ly_wrapper)
+  - /etc/ttys      → ttyv1 uses getty Ly
+  - seatd_enable=YES
+  - /usr/local/etc/ly/config.ini (from sample if missing)
+
+Original /etc files are preserved once as:
+  /etc/gettytab.orig.revytech-ly
+  /etc/ttys.orig.revytech-ly
+Each later edit also writes a timestamped /etc/*.bak.revytech-ly.<stamp>.
+
+Re-run anytime:  doas /usr/local/sbin/revytech-ly-enable
+Restore/manual:  compare against the .orig.revytech-ly copies
+
+Reboot to use Ly on ttyv1.
+Wayfire session: /usr/local/etc/ly/custom-sessions/wayfire.desktop
+EOM
+}
+{ type: upgrade
+  message: <<EOM
+Package upgrade re-applies FreeBSD getty/ttys integration (with backups).
+Review /usr/local/etc/ly/config.ini against config.ini.sample if needed.
+EOM
+}
+{ type: remove
+  message: <<EOM
+On deinstall, revytech-ly restores /etc/gettytab and /etc/ttys from
+*.orig.revytech-ly when those snapshots exist. Timestamped .bak files
+are left for forensics.
+EOM
+}
+]

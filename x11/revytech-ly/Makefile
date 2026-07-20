@@ -3,6 +3,7 @@
 PORTNAME=	revytech-ly
 # ly product line (Zig 0.16); not the Wayfire 0.11 product version
 DISTVERSION=	1.5.0.20260719
+PORTREVISION=	1
 CATEGORIES=	x11 wayland
 
 MAINTAINER=	${REVYTECH_MAINTAINER}
@@ -30,6 +31,7 @@ GH_ACCOUNT=	${REVYTECH_GH_ACCOUNT}
 GH_PROJECT=	ly
 GH_TAGNAME=	${REVYTECH_SHA_LY}
 
+# pkg-install / pkg-deinstall in ${.CURDIR} auto-configure (and restore) /etc
 # FreeBSD installexe equivalent via zig flags + post-install asset copy
 ZIG_ARGS=	-Dprefix_directory="${PREFIX}" \
 		-Dconfig_directory="${PREFIX}/etc" \

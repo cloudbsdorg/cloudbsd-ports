@@ -1,0 +1,35 @@
+#!/bin/sh
+# On deinstall: restore pristine /etc/gettytab and /etc/ttys if we saved them.
+# $1 = package name, $2 = DEINSTALL | POST-DEINSTALL | ...
+
+PREFIX="${PKG_PREFIX:-/usr/local}"
+GETTYTAB=/etc/gettytab
+TTYS=/etc/ttys
+STATEDIR=/var/db/revytech-ly
+
+restore_from_orig() {
+	_file=$1
+	_orig="${_file}.orig.revytech-ly"
+	if [ -f "$_orig" ]; then
+		_stamp=$(date +%Y%m%d%H%M%S)
+		if [ -f "$_file" ]; then
+			cp -p "$_file" "${_file}.bak.revytech-ly.deinstall.${_stamp}"
+		fi
+		cp -p "$_orig" "$_file"
+		echo "revytech-ly: restored $_file from $_orig"
+	fi
+}
+
+case "$2" in
+DEINSTALL|POST-DEINSTALL)
+	# Only restore if we previously configured (state file) or orig backups exist
+	if [ -f "${STATEDIR}/state" ] || [ -f "${GETTYTAB}.orig.revytech-ly" ] || [ -f "${TTYS}.orig.revytech-ly" ]; then
+		echo "revytech-ly: restoring original getty/ttys from .orig.revytech-ly backups..."
+		restore_from_orig "$GETTYTAB"
+		restore_from_orig "$TTYS"
+		rm -f "${STATEDIR}/state" 2>/dev/null || true
+	fi
+	;;
+esac
+
+exit 0

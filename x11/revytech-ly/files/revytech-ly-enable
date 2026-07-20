@@ -1,11 +1,24 @@
 #!/bin/sh
-# Configure FreeBSD getty/ttys + seatd for REVYTECH Ly. Run as root.
+# Configure FreeBSD getty/ttys + seatd for REVYTECH Ly.
+# Invoked automatically by pkg POST-INSTALL; safe to re-run as root.
+#
+# Backups:
+#   /etc/gettytab.orig.revytech-ly   — first pristine snapshot (never overwritten)
+#   /etc/ttys.orig.revytech-ly       — first pristine snapshot (never overwritten)
+#   /etc/*.bak.revytech-ly.<stamp>   — every subsequent edit
+#   /var/db/revytech-ly/state        — what we last applied
 set -eu
-PREFIX="/usr/local"
-ETCDIR="${PREFIX}/etc/ly"
+
+PREFIX="${PREFIX:-/usr/local}"
+ETCDIR="${ETCDIR:-${PREFIX}/etc/ly}"
 GETTYTAB=/etc/gettytab
 TTYS=/etc/ttys
 WRAPPER="${PREFIX}/bin/ly_wrapper"
+STATEDIR=/var/db/revytech-ly
+STATEFILE="${STATEDIR}/state"
+STAMP=$(date +%Y%m%d%H%M%S)
+
+log() { printf 'revytech-ly: %s\n' "$*"; }
 
 if [ "$(id -u)" -ne 0 ]; then
 	echo "revytech-ly-enable: must run as root (doas $0)" >&2
@@ -17,55 +30,119 @@ if [ ! -x "$WRAPPER" ]; then
 	exit 1
 fi
 
+mkdir -p "$STATEDIR"
+
+# Snapshot original once (pre-Ly content). Never clobber.
+backup_original() {
+	_file=$1
+	_orig="${_file}.orig.revytech-ly"
+	if [ -f "$_file" ] && [ ! -f "$_orig" ]; then
+		cp -p "$_file" "$_orig"
+		log "saved original $_file -> $_orig"
+	fi
+}
+
+# Timestamped backup before every mutation.
+backup_before_edit() {
+	_file=$1
+	if [ -f "$_file" ]; then
+		_bak="${_file}.bak.revytech-ly.${STAMP}"
+		cp -p "$_file" "$_bak"
+		log "backup $_file -> $_bak"
+	fi
+}
+
 # --- gettytab ---
-if grep -q '^Ly:' "$GETTYTAB" 2>/dev/null; then
-	if ! grep -q ":lo=${WRAPPER}:" "$GETTYTAB"; then
-		cp -p "$GETTYTAB" "${GETTYTAB}.bak.revytech-ly"
-		sed -i '' "s|:lo=[^:]*:|:lo=${WRAPPER}:|g" "$GETTYTAB"
-		echo "updated Ly entry in $GETTYTAB (backup ${GETTYTAB}.bak.revytech-ly)"
+backup_original "$GETTYTAB"
+_need_getty=0
+if ! grep -q '^Ly:' "$GETTYTAB" 2>/dev/null; then
+	_need_getty=1
+elif ! grep -q ":lo=${WRAPPER}:" "$GETTYTAB" 2>/dev/null; then
+	_need_getty=1
+fi
+if [ "$_need_getty" -eq 1 ]; then
+	backup_before_edit "$GETTYTAB"
+	if grep -q '^Ly:' "$GETTYTAB" 2>/dev/null; then
+		# Rewrite lo= inside existing Ly entry (and any other lo= — scoped via Ly block is hard; path swap is fine)
+		sed -i '' "s|:lo=[^:]*ly_wrapper:|:lo=${WRAPPER}:|g; s|:lo=${PREFIX}/bin/ly:|:lo=${WRAPPER}:|g" "$GETTYTAB"
+		# If still wrong, replace whole Ly stanza by removing and re-appending
+		if ! grep -q ":lo=${WRAPPER}:" "$GETTYTAB" 2>/dev/null; then
+			# Drop existing Ly: multi-line entry (Ly:\ then continued lines ending without \)
+			awk '
+				BEGIN { skip=0 }
+				/^Ly:/ { skip=1; next }
+				skip && /\\$/ { next }
+				skip { skip=0; if ($0 ~ /^[[:space:]]*:/) next }
+				{ print }
+			' "$GETTYTAB" > "${GETTYTAB}.tmp.revytech"
+			mv "${GETTYTAB}.tmp.revytech" "$GETTYTAB"
+			printf '\n# REVYTECH Ly (managed by revytech-ly)\nLy:\\\n\t:lo=%s:\\\n\t:al=root:\n' "$WRAPPER" >>"$GETTYTAB"
+		fi
+		log "updated Ly entry in $GETTYTAB"
 	else
-		echo "gettytab already has Ly entry with $WRAPPER"
+		printf '\n# REVYTECH Ly (managed by revytech-ly)\nLy:\\\n\t:lo=%s:\\\n\t:al=root:\n' "$WRAPPER" >>"$GETTYTAB"
+		log "appended Ly entry to $GETTYTAB"
 	fi
 else
-	cp -p "$GETTYTAB" "${GETTYTAB}.bak.revytech-ly"
-	printf '\n# REVYTECH Ly\nLy:\\\n\t:lo=%s:\\\n\t:al=root:\n' "$WRAPPER" >>"$GETTYTAB"
-	echo "appended Ly entry to $GETTYTAB (backup ${GETTYTAB}.bak.revytech-ly)"
+	log "gettytab already has Ly -> $WRAPPER"
 fi
 
 # --- ttys (ttyv1) ---
-if grep -q '^ttyv1' "$TTYS"; then
-	cp -p "$TTYS" "${TTYS}.bak.revytech-ly"
+backup_original "$TTYS"
+_desired='ttyv1	"/usr/libexec/getty Ly"		xterm	on  secure'
+_need_ttys=0
+if ! grep -q '^ttyv1' "$TTYS" 2>/dev/null; then
+	log "warning: no ttyv1 line in $TTYS" >&2
+elif ! grep -E '^ttyv1[[:space:]]+"/usr/libexec/getty Ly"' "$TTYS" >/dev/null 2>&1; then
+	_need_ttys=1
+fi
+if [ "$_need_ttys" -eq 1 ]; then
+	backup_before_edit "$TTYS"
 	sed -i '' -E 's|^ttyv1[[:space:]].*|ttyv1	"/usr/libexec/getty Ly"		xterm	on  secure|' "$TTYS"
-	echo "set ttyv1 to getty Ly in $TTYS (backup ${TTYS}.bak.revytech-ly)"
+	log "set ttyv1 to getty Ly in $TTYS"
 else
-	echo "warning: no ttyv1 line in $TTYS — add manually" >&2
+	log "ttys ttyv1 already uses getty Ly"
 fi
 
 # --- config.ini ---
-if [ ! -f "${ETCDIR}/config.ini" ]; then
-	if [ -f "${ETCDIR}/config.ini.sample" ]; then
-		cp "${ETCDIR}/config.ini.sample" "${ETCDIR}/config.ini"
-		echo "installed ${ETCDIR}/config.ini from sample"
-	fi
+if [ ! -f "${ETCDIR}/config.ini" ] && [ -f "${ETCDIR}/config.ini.sample" ]; then
+	cp "${ETCDIR}/config.ini.sample" "${ETCDIR}/config.ini"
+	log "installed ${ETCDIR}/config.ini from sample"
 fi
-
 if [ -f "${ETCDIR}/config.ini" ]; then
-	if grep -q '^tty[[:space:]]*=' "${ETCDIR}/config.ini"; then
+	if grep -q '^tty[[:space:]]*=' "${ETCDIR}/config.ini" 2>/dev/null; then
 		sed -i '' -E 's|^tty[[:space:]]*=.*|tty = 1|' "${ETCDIR}/config.ini"
 	fi
 fi
 
-# --- seatd for Wayland ---
+# --- seatd + disable competing DMs ---
 if command -v sysrc >/dev/null 2>&1; then
+	# snapshot rc.conf keys once
+	if [ ! -f "${STATEDIR}/rc.conf.snippet.orig" ]; then
+		{
+			sysrc -n seatd_enable 2>/dev/null || echo 'unset'
+			sysrc -n lightdm_enable 2>/dev/null || echo 'unset'
+			sysrc -n sddm_enable 2>/dev/null || echo 'unset'
+			sysrc -n gdm_enable 2>/dev/null || echo 'unset'
+		} > "${STATEDIR}/rc.conf.snippet.orig" 2>/dev/null || true
+	fi
 	sysrc seatd_enable="YES" >/dev/null
-	service seatd start >/dev/null 2>&1 || true
-	echo "seatd_enable=YES"
+	service seatd onestart >/dev/null 2>&1 || service seatd start >/dev/null 2>&1 || true
 	sysrc lightdm_enable="NO" >/dev/null 2>&1 || true
 	sysrc sddm_enable="NO" >/dev/null 2>&1 || true
 	sysrc gdm_enable="NO" >/dev/null 2>&1 || true
+	log "seatd_enable=YES (competing DMs disabled if present)"
 fi
 
-echo
-echo "Ly enabled on ttyv1. Reboot recommended."
-echo "Sessions: ${ETCDIR}/custom-sessions/ + ${PREFIX}/share/wayland-sessions/"
-echo "Config:   ${ETCDIR}/config.ini"
+# Record state
+{
+	echo "configured=${STAMP}"
+	echo "wrapper=${WRAPPER}"
+	echo "gettytab_orig=${GETTYTAB}.orig.revytech-ly"
+	echo "ttys_orig=${TTYS}.orig.revytech-ly"
+} >"$STATEFILE"
+
+log "done. Originals: ${GETTYTAB}.orig.revytech-ly ${TTYS}.orig.revytech-ly"
+log "Reboot to land on Ly (ttyv1), or restart getty on that VT."
+log "Sessions: ${ETCDIR}/custom-sessions/ + ${PREFIX}/share/wayland-sessions/"
+log "Config:   ${ETCDIR}/config.ini"

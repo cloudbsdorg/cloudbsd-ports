@@ -1,0 +1,22 @@
+#!/bin/sh
+# Automatic FreeBSD integration for revytech-ly — no manual getty/ttys steps.
+# $1 = package name, $2 = PRE-INSTALL | POST-INSTALL | ...
+
+PREFIX="${PKG_PREFIX:-/usr/local}"
+ENABLE="${PREFIX}/sbin/revytech-ly-enable"
+
+case "$2" in
+POST-INSTALL)
+	if [ -x "$ENABLE" ]; then
+		echo "revytech-ly: configuring gettytab/ttys/seatd (backups under /etc/*.orig.revytech-ly)..."
+		"$ENABLE" || {
+			echo "revytech-ly: WARNING: auto-configure failed; run: $ENABLE" >&2
+			exit 0
+		}
+	else
+		echo "revytech-ly: WARNING: $ENABLE missing after install" >&2
+	fi
+	;;
+esac
+
+exit 0
