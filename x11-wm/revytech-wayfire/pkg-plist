@@ -259,3 +259,4 @@ share/wayfire/protocols/unstable/wayfire-shell-unstable-v2.xml
 share/wayland-sessions/wayfire.desktop
 share/wayland-sessions/wayfire.desktop.bak
 share/xdg-desktop-portal/wayfire-portals.conf
+sbin/revytech-desktop-privileges-enable

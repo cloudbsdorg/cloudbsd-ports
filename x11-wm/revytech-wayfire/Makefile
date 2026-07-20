@@ -102,6 +102,9 @@ post-install:
 		${STAGEDIR}${PREFIX}/libexec/wayfire-config-path.sh
 	${INSTALL_SCRIPT} ${FILESDIR}/wayfire-session-launch \
 		${STAGEDIR}${PREFIX}/libexec/wayfire-session-launch
+# Desktop privilege helper (operator + video + narrow doas hints)
+	${INSTALL_SCRIPT} ${FILESDIR}/revytech-desktop-privileges-enable \
+		${STAGEDIR}${PREFIX}/sbin/revytech-desktop-privileges-enable
 # Session desktop uses launcher (user prefs → system default)
 	@if [ -f ${STAGEDIR}${PREFIX}/share/wayland-sessions/wayfire.desktop ]; then \
 		${REINPLACE_CMD} -e \

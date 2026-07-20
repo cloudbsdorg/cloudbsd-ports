@@ -1,0 +1,111 @@
+#!/bin/sh
+# Configure FreeBSD so a desktop user can change seat/session settings without
+# interactive sudo/doas for day-to-day work.
+#
+# - video   → seatd / DRM (Wayfire)
+# - operator → setuid /sbin/shutdown (power off / reboot without doas)
+# - optional narrow doas rules for ifconfig / wpa / zzz (network + suspend)
+#
+# Usage: doas revytech-desktop-privileges-enable [username]
+# Safe to re-run.
+set -eu
+
+TARGET="${1:-}"
+if [ -z "$TARGET" ]; then
+  if [ -n "${SUDO_USER:-}" ]; then
+    TARGET=$SUDO_USER
+  elif [ -n "${DOAS_USER:-}" ]; then
+    TARGET=$DOAS_USER
+  else
+    TARGET=$(id -un 2>/dev/null || echo "")
+  fi
+fi
+
+if [ -z "$TARGET" ] || [ "$TARGET" = "root" ]; then
+  echo "usage: $0 <desktop-username>" >&2
+  echo "  (run as root via doas; pass the login user who runs Wayfire)" >&2
+  exit 2
+fi
+
+if ! id "$TARGET" >/dev/null 2>&1; then
+  echo "revytech-desktop-privileges: no such user: $TARGET" >&2
+  exit 1
+fi
+
+if [ "$(id -u)" -ne 0 ]; then
+  echo "revytech-desktop-privileges: must run as root (doas $0 $TARGET)" >&2
+  exit 1
+fi
+
+log() { printf 'revytech-desktop-privileges: %s\n' "$*"; }
+
+# --- groups ---
+for g in video operator; do
+  if ! getent group "$g" >/dev/null 2>&1; then
+    log "group $g missing — skip (unexpected on FreeBSD)"
+    continue
+  fi
+  if id -nG "$TARGET" | tr ' ' '\n' | grep -qx "$g"; then
+    log "user $TARGET already in $g"
+  else
+    pw groupmod "$g" -m "$TARGET"
+    log "added $TARGET to group $g"
+  fi
+done
+
+# --- seatd ---
+if command -v sysrc >/dev/null 2>&1; then
+  sysrc seatd_enable="YES" >/dev/null
+  service seatd onestart >/dev/null 2>&1 || service seatd start >/dev/null 2>&1 || true
+  log "seatd_enable=YES"
+fi
+
+# --- narrow doas (optional but recommended) ---
+DOAS_CONF=/usr/local/etc/doas.conf
+DOAS_DROPIN_DIR=/usr/local/etc/doas.d
+DOAS_DROPIN="${DOAS_DROPIN_DIR}/revytech-desktop.conf"
+mkdir -p "$DOAS_DROPIN_DIR"
+
+# Detect wide-open sample that is dangerous
+if [ -f "$DOAS_CONF" ] && grep -qE '^permit[[:space:]]+nopass[[:space:]]+:wheel[[:space:]]*$' "$DOAS_CONF"; then
+  log "WARNING: $DOAS_CONF has unrestricted 'permit nopass :wheel'"
+  log "  That is passwordless root for every command. Prefer narrow rules."
+  log "  Leaving it alone (admin must edit). Installing drop-in for documentation."
+fi
+
+cat >"$DOAS_DROPIN" <<'EOF'
+# REVYTECH desktop — narrow elevation (include from doas.conf if your doas supports it).
+# FreeBSD doas traditionally uses a single doas.conf; if drop-ins are not read,
+# merge these lines into /usr/local/etc/doas.conf and remove sample "nopass :wheel".
+#
+# Network / Wi‑Fi (panel + settings)
+permit nopass :wheel cmd ifconfig
+permit nopass :wheel cmd wpa_cli
+permit nopass :wheel cmd wpa_supplicant
+permit nopass :wheel cmd sysrc
+# Suspend if operator/setuid path is insufficient
+permit nopass :wheel cmd zzz
+permit nopass :wheel cmd acpiconf
+# Power (backup if user not in operator)
+permit nopass :wheel cmd shutdown
+permit nopass :wheel cmd /sbin/shutdown
+EOF
+log "wrote $DOAS_DROPIN (merge into doas.conf if your doas does not load doas.d/)"
+
+# If doas.conf is still the stock sample-only free-for-all, append a marker block
+# once for operators who want the narrow set in the main file.
+MARKER="# REVYTECH-desktop-privileges-begin"
+if [ -f "$DOAS_CONF" ] && ! grep -q "$MARKER" "$DOAS_CONF"; then
+  {
+    echo ""
+    echo "$MARKER"
+    echo "# Optional: comment out sample 'permit nopass :wheel' above, keep these:"
+    cat "$DOAS_DROPIN"
+    echo "# REVYTECH-desktop-privileges-end"
+  } >>"$DOAS_CONF"
+  log "appended REVYTECH block to $DOAS_CONF (review and disable sample nopass :wheel)"
+fi
+
+log "done for user=$TARGET"
+log "user must re-login (or newgrp) for group changes to apply to GUI session"
+log "verify: id $TARGET; groups $TARGET; ls -l /sbin/shutdown /var/run/seatd.sock"
