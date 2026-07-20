@@ -25,7 +25,8 @@ LIB_DEPENDS=	libevdev.so:devel/libevdev \
 		libwf-config.so:devel/revytech-wf-config \
 		libwlroots-0.20.so:x11-toolkits/wlroots020 \
 		libxkbcommon.so:x11/libxkbcommon \
-		libyyjson.so:devel/yyjson
+		libyyjson.so:devel/yyjson \
+		libgbm.so:graphics/mesa-libs
 RUN_DEPENDS=	seatd>0:sysutils/seatd
 
 USES=		cmake:indirect compiler:c++17-lang gl gnome jpeg meson \
@@ -34,7 +35,7 @@ USE_GITHUB=	yes
 GH_ACCOUNT=	${REVYTECH_GH_ACCOUNT}
 GH_PROJECT=	wayfire
 GH_TAGNAME=	${REVYTECH_SHA_WAYFIRE}
-USE_GL=		egl glesv2
+USE_GL=		egl glesv2 gbm
 USE_GNOME=	cairo pango
 USE_XORG=	pixman
 
