@@ -108,3 +108,16 @@ wf-json, wf-osk, wlroots (optional; compositor defaults to ports `wlroots020`).
 
 Upstream components are MIT (Wayfire stack). Port scaffolding is for CloudBSD /
 REVYTECH packaging use.
+
+## Development loop (required)
+
+**Every code change must end with a package rebuild and reinstall via pkg:**
+
+```sh
+./revytech/wayfire/scripts/build-and-pkg-install.sh x11/revytech-wf-shell
+# or the full stack:
+./revytech/wayfire/install.sh
+```
+
+This runs `make stage` + `doas make reinstall` so the installed system always
+matches the ports tree and packages are registered with `pkg`.

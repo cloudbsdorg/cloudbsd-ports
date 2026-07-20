@@ -14,7 +14,8 @@ CONFLICTS_INSTALL=	wayfire
 BUILD_DEPENDS=	${LOCALBASE}/include/xf86drmMode.h:graphics/libdrm \
 		evdev-proto>0:devel/evdev-proto \
 		glm>=0.9.8:math/glm \
-		wayland-protocols>=1.37:graphics/wayland-protocols
+		wayland-protocols>=1.37:graphics/wayland-protocols \
+		msgfmt:devel/gettext-tools
 LIB_DEPENDS=	libevdev.so:devel/libevdev \
 		libinotify.so:devel/libinotify \
 		libinput.so:x11/libinput \
