@@ -1,0 +1,10 @@
+Grok Build (grok) is SpaceXAI's terminal-based AI coding agent: a fullscreen
+TUI that edits files, runs shell commands, and manages long-running tasks.
+
+This FreeBSD port is a work-in-progress. It builds the open-source harness from
+the frebsd-port-plan branch of the grok-build tree. Sandbox isolation on FreeBSD
+uses a jail backend (Phase 2 helper still landing); Landlock/Seatbelt nono is
+Linux/macOS only. Install textproc/ripgrep for the system rg binary — the
+release build does not auto-download BurntSushi FreeBSD assets.
+
+WWW: https://x.ai/cli

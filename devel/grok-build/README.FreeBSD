@@ -1,0 +1,25 @@
+# devel/grok-build (WIP)
+
+Pinned source intent: grok-build `dc69e03` (freebsd-port-plan).
+
+## Local build (no distfile yet)
+
+```sh
+cd /path/to/cloudbsd-ports  # this worktree
+make -C devel/grok-build GROK_SRC=$HOME/git/grok-build package
+```
+
+Or from a checked-out grok tree on FreeBSD:
+
+```sh
+export PROTOC=$(command -v protoc)
+cargo build -p xai-grok-pager-bin --release
+install -m 755 target/release/xai-grok-pager /usr/local/bin/grok
+```
+
+## Next (Phase 3 finish)
+
+1. Publish a source tarball or USE_GITHUB commit pin
+2. Generate cargo-crates list / cargo-crates.mk for offline build
+3. poudriere testport
+4. Real jail helper package (security/grok-jail-helper) optional

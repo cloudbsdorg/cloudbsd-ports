@@ -1,0 +1,13 @@
+[
+{ type: install
+  message: <<EOM
+Grok Build (grok) has been installed.
+
+  - Authenticate on first launch (browser flow) when network allows.
+  - Sandbox: FreeBSD jail helper is incomplete; apply degrades without crash.
+  - Requires textproc/ripgrep (rg) on PATH.
+  - Set GROK_SRC when developing the port before distfiles exist:
+      make -C /usr/ports/devel/grok-build GROK_SRC=/path/to/grok-build
+EOM
+}
+]
