@@ -26,7 +26,8 @@ LIB_DEPENDS=	libdbusmenu-glib.so:devel/libdbusmenu \
 		libdrm.so:graphics/libdrm \
 		libwf-config.so:devel/revytech-wf-config
 RUN_DEPENDS=	wayland-logout:x11/wayland-logout \
-		revytech-wayfire>0:x11-wm/revytech-wayfire
+	curl:ftp/curl \
+	revytech-wayfire>0:x11-wm/revytech-wayfire
 
 USES=		compiler:c++17-lang gnome meson pkgconfig
 CXXFLAGS+=	-I${LOCALBASE}/include/libdrm
@@ -57,6 +58,7 @@ post-install:
 	${INSTALL_DATA} ${FILESDIR}/wf-shell.ini ${STAGEDIR}${ETCDIR}/wf-shell.ini.sample
 	${MKDIR} ${STAGEDIR}${PREFIX}/libexec
 	${INSTALL_SCRIPT} ${FILESDIR}/wf-shell-launch ${STAGEDIR}${PREFIX}/libexec/wf-shell-launch
+	@${ECHO_MSG} "revytech-wf-shell: wallpapers in ${DATADIR}/backgrounds; online feeds use curl/fetch"
 
 post-extract:
 	@${RM} -rf ${WRKSRC}/subprojects/wf-json

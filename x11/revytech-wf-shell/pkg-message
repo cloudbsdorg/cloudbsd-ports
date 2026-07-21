@@ -1,0 +1,24 @@
+[
+{ type: install
+  message: <<EOM
+REVYTECH wf-shell (panel / background / settings)
+
+Config hierarchy:
+  ~/.config/wf-shell.ini  and  ~/.config/wf-shell/config.json
+  → else /usr/local/etc/wf-shell/wf-shell.ini
+
+JSON config is validated on load/save; last-good backup at
+  ~/.config/wf-shell/config.json.last-good
+Invalid files are moved under ~/.config/wf-shell/quarantine/ for inspection.
+
+Wallpapers:
+  Bundled: /usr/local/share/wf-shell/backgrounds/
+  Online feeds (Settings → Desktop) use curl(1) or FreeBSD fetch(1).
+  curl is a package run-dependency for reliable HTTPS.
+
+Launchers:
+  /usr/local/libexec/wf-shell-launch {panel|background|dock}
+  /usr/local/bin/wf-settings
+EOM
+}
+]

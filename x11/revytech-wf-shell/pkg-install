@@ -1,0 +1,39 @@
+#!/bin/sh
+# POST-INSTALL: validate wallpaper assets + fetch tools for online feeds.
+# $1 = package name, $2 = PRE-INSTALL | POST-INSTALL | ...
+PREFIX="${PKG_PREFIX:-/usr/local}"
+DATADIR="${PREFIX}/share/wf-shell"
+BG="${DATADIR}/backgrounds"
+
+case "$2" in
+POST-INSTALL)
+	echo "revytech-wf-shell: validating install..."
+	if [ ! -d "$BG" ]; then
+		echo "revytech-wf-shell: WARNING: missing $BG" >&2
+	else
+		n=$(find "$BG" \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \) 2>/dev/null | wc -l | tr -d ' ')
+		echo "revytech-wf-shell: wallpapers in $BG: $n image(s)"
+		if [ "$n" -lt 1 ]; then
+			echo "revytech-wf-shell: WARNING: no wallpaper images packaged" >&2
+		fi
+	fi
+	if command -v curl >/dev/null 2>&1; then
+		echo "revytech-wf-shell: curl OK (online wallpaper feeds)"
+	elif command -v fetch >/dev/null 2>&1; then
+		echo "revytech-wf-shell: fetch OK (online feeds fallback)"
+	else
+		echo "revytech-wf-shell: WARNING: neither curl nor fetch in PATH" >&2
+	fi
+	if [ -x "${PREFIX}/libexec/wf-shell-launch" ]; then
+		echo "revytech-wf-shell: launcher OK"
+	else
+		echo "revytech-wf-shell: WARNING: missing wf-shell-launch" >&2
+	fi
+	if [ -f "${PREFIX}/etc/wf-shell/wf-shell.ini" ]; then
+		pos=$(awk '/^\[panel\]/{p=1;next}/^\[/{p=0} p&&/^position/{sub(/.*= */,"");print;exit}' \
+			"${PREFIX}/etc/wf-shell/wf-shell.ini" 2>/dev/null || true)
+		echo "revytech-wf-shell: system panel/position=${pos:-unset}"
+	fi
+	;;
+esac
+exit 0
