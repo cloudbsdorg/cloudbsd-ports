@@ -986,6 +986,7 @@
     SUBDIR += grcov
     SUBDIR += grex
     SUBDIR += grok
+    SUBDIR += grok-build
     SUBDIR += grpc
     SUBDIR += grpc-gateway
     SUBDIR += gsettings-desktop-schemas
