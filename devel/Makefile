@@ -985,6 +985,7 @@
     SUBDIR += grantlee5
     SUBDIR += grcov
     SUBDIR += grex
+    SUBDIR += grok
     SUBDIR += grpc
     SUBDIR += grpc-gateway
     SUBDIR += gsettings-desktop-schemas
