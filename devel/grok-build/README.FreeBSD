@@ -1,25 +1,33 @@
 # devel/grok-build (WIP)
 
-Pinned source intent: grok-build `dc69e03` (freebsd-port-plan).
+Pinned source intent: local grok-build checkout (network cargo until CARGO_CRATES).
 
-## Local build (no distfile yet)
-
-```sh
-cd /path/to/cloudbsd-ports  # this worktree
-make -C devel/grok-build GROK_SRC=$HOME/git/grok-build package
-```
-
-Or from a checked-out grok tree on FreeBSD:
+## Local package + install (FreeBSD pkg)
 
 ```sh
-export PROTOC=$(command -v protoc)
-cargo build -p xai-grok-pager-bin --release
-install -m 755 target/release/xai-grok-pager /usr/local/bin/grok
+cd /path/to/cloudbsd-ports-grok
+make -C devel/grok-build GROK_SRC=$HOME/git/grok-build clean package
+# as root:
+make -C devel/grok-build GROK_SRC=$HOME/git/grok-build reinstall
+# or:
+pkg install -U devel/grok-build/work/pkg/grok-build-*.pkg
 ```
 
-## Next (Phase 3 finish)
+Installs:
+- `/usr/local/bin/grok-build` (primary; regression / default)
+- `/usr/local/bin/grok-build-static` (second **full** binary, separate inode —
+  same payload as `grok-build`, **not** a symlink). Use this for long-lived
+  agent sessions so `pkill`/`killall` of `grok-build` does not kill your
+  session. Avoid `pkill -f grok-build` (substring match would still hit static).
+- `/usr/local/bin/grok` (symlink → grok-build)
+
+Build uses the checkout's `Cargo.lock` with network crates.io (not yet
+offline-vendored). Sets `CARGO_TARGET_DIR` under the port `work/` tree so the
+source tree's `target/` is not required.
+
+## Phase 3 (proper ports offline)
 
 1. Publish a source tarball or USE_GITHUB commit pin
-2. Generate cargo-crates list / cargo-crates.mk for offline build
+2. `make cargo-crates-merge` / Makefile.crates + distinfo
 3. poudriere testport
-4. Real jail helper package (security/grok-jail-helper) optional
+4. Optional jail helper package
