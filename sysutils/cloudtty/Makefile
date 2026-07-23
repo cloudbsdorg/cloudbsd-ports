@@ -3,7 +3,7 @@ DISTVERSION=	0.1.0
 CATEGORIES=	sysutils
 
 MAINTAINER=	ports@cloudbsd.org
-COMMENT=	ESXi-style FreeBSD TTY login and console menu (CloudBSD)
+COMMENT=	CloudBSD Direct Console TTY login and menu
 WWW=		https://github.com/cloudbsd/cloudtty
 
 LICENSE=	BSD3CLAUSE
