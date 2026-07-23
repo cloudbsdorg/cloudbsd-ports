@@ -7,7 +7,7 @@ PORTNAME=	cloudtty
 DISTVERSION=	0.1.0
 CATEGORIES=	sysutils
 
-MAINTAINER=	ports@cloudbsd.org
+MAINTAINER=	mark@cloudbsd.org
 COMMENT=	CloudBSD Direct Console TTY login and menu
 WWW=		https://github.com/cloudbsd/cloudtty
 
