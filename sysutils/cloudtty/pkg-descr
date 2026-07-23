@@ -1,11 +1,11 @@
-cloudtty is a FreeBSD console login and post-login menu replacement inspired
-by the VMware ESXi Direct Console User Interface (DCUI).
+cloudtty is a FreeBSD console login and post-login menu for CloudBSD Direct
+Console.
 
-It provides a full-screen, keyboard-first ratatui UI with:
+It provides a full-screen, keyboard-first UI with:
 
   * CloudBSD Login modal (user dropdown, password, language selector)
-  * Yellow/amber high-contrast framing suitable for VNC and serial consoles
-  * OpenPAM authentication (administrator display name maps to root)
+  * Yellow/amber high-contrast framing suitable for framebuffer and serial
+  * PAM authentication (administrator display name maps to root)
   * Host IPv4/IPv6 addresses in the header (excluding jail/VM interfaces)
   * Post-login menu for shell, system info, network, power actions
 
