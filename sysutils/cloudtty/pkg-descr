@@ -1,5 +1,5 @@
 cloudtty is a FreeBSD console login and post-login menu for CloudBSD Direct
-Console.
+Console. Copyright (c) 2026 REVYTECH, Inc. (CloudBSD).
 
 It provides a full-screen, keyboard-first UI with:
 

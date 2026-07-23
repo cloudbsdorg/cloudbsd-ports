@@ -1,3 +1,8 @@
+# Copyright (c) 2026 REVYTECH, Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Part of CloudBSD (REVYTECH, Inc., founded 2026).
+
 PORTNAME=	cloudtty
 DISTVERSION=	0.1.0
 CATEGORIES=	sysutils
@@ -46,7 +51,9 @@ PLIST_FILES=	bin/cloudtty \
 		share/examples/cloudtty/loader.conf.cloudtty \
 		share/doc/cloudtty/console-ux.md \
 		share/doc/cloudtty/freebsd-lab.md \
-		share/doc/cloudtty/README-install.md
+		share/doc/cloudtty/README-install.md \
+		share/doc/cloudtty/COPYRIGHT \
+		share/doc/cloudtty/NOTICE
 
 SUB_FILES=	pkg-message
 SUB_LIST=	PREFIX=${PREFIX}
@@ -78,6 +85,8 @@ post-install:
 	${INSTALL_DATA} ${WRKSRC}/docs/console-ux.md \
 		${WRKSRC}/docs/freebsd-lab.md \
 		${WRKSRC}/res/README-install.md \
+		${WRKSRC}/COPYRIGHT \
+		${WRKSRC}/NOTICE \
 		${STAGEDIR}${DOCSDIR}/
 
 .include <bsd.port.mk>
