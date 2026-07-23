@@ -1,0 +1,30 @@
+[
+{ type: install
+  message: <<EOM
+cloudtty has been installed.
+
+Binary:     %%PREFIX%%/bin/cloudtty
+Console:    %%PREFIX%%/libexec/cloudtty-console
+Config:     %%PREFIX%%/etc/cloudtty/config.json.sample
+PAM:        %%PREFIX%%/etc/pam.d/cloudtty
+Examples:   %%PREFIX%%/share/examples/cloudtty/
+Docs:       %%PREFIX%%/share/doc/cloudtty/
+
+Quick enable on a VT (e.g. ttyv0):
+
+  1. cp %%PREFIX%%/etc/cloudtty/config.json.sample \
+        %%PREFIX%%/etc/cloudtty/config.json
+  2. Append gettytab snippet from share/examples/cloudtty/gettytab.cloudtty
+     to /etc/gettytab (if using getty lo= form), or set ttys to:
+       ttyv0  "%%PREFIX%%/libexec/cloudtty-console"  xterm  on  secure
+  3. kill -HUP 1
+
+Font run-deps (spleen, dejavu, gnu-unifont) support en-US/fr-FR and broader
+Unicode. Select a VT font after install, for example:
+
+  vidcontrol -f %%PREFIX%%/share/fonts/spleen/spleen-8x16.fnt
+
+Quiet boot knobs: see share/examples/cloudtty/loader.conf.cloudtty
+EOM
+}
+]
