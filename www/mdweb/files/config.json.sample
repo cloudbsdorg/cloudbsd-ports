@@ -1,0 +1,39 @@
+{
+  "postsDir": "/var/db/mdweb/posts",
+  "themeDir": "/var/db/mdweb/themes",
+  "currentTheme": "dark",
+  "siteName": "MDWeb",
+  "siteLogo": "logo.webp",
+  "pagination": 10,
+  "sortBy": "date",
+  "sortOrder": "desc",
+  "searchPlacement": "top",
+  "footer": {
+    "show": true,
+    "copyrightText": "© {year} {siteName}. All rights reserved.",
+    "creditText": ""
+  },
+  "appearance": {
+    "themeMode": "dark",
+    "crtEffects": true,
+    "textGlow": true
+  },
+  "service": {
+    "port": 5173
+  },
+  "aiConfig": {
+    "enabled": false,
+    "provider": "ollama",
+    "baseUrl": "http://127.0.0.1:11434",
+    "apiKey": "",
+    "modelId": "llama3"
+  },
+  "security": {
+    "authMode": "jwt",
+    "sessionTtlSeconds": 86400,
+    "sessionCookieName": "mdweb.sid",
+    "disableAI": false,
+    "disableImages": false,
+    "disablePublicSearch": false
+  }
+}
