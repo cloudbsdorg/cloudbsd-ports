@@ -360,6 +360,7 @@
     SUBDIR += eksctl
     SUBDIR += elephant
     SUBDIR += elfx86exts
+    SUBDIR += elio
     SUBDIR += endian
     SUBDIR += enteruser
     SUBDIR += entr
@@ -488,6 +489,8 @@
     SUBDIR += gomplate
     SUBDIR += gonzo
     SUBDIR += google-compute-engine-oslogin
+    SUBDIR += google-guest-agent
+    SUBDIR += goreman
     SUBDIR += gotop
     SUBDIR += govmomi
     SUBDIR += gpart
@@ -1114,6 +1117,7 @@
     SUBDIR += py-psutil
     SUBDIR += py-ptyprocess
     SUBDIR += py-puremagic
+    SUBDIR += py-py-consul
     SUBDIR += py-py-cpuinfo
     SUBDIR += py-pyinfra
     SUBDIR += py-python-bareos

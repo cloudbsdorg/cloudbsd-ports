@@ -1,5 +1,5 @@
 PORTNAME=	krita
-DISTVERSION=	6.0.2.1
+DISTVERSION=	6.0.3
 CATEGORIES=	graphics kde
 MASTER_SITES=	KDE/stable/${PORTNAME}/${DISTVERSION}
 DIST_SUBDIR=	KDE/${PORTNAME}
@@ -36,7 +36,7 @@ LIB_DEPENDS=	libOpenColorIO.so:graphics/opencolorio \
 		libpng.so:graphics/png \
 		libpoppler.so:graphics/poppler \
 		libpoppler-qt6.so:graphics/poppler-qt6 \
-		libquazip1-qt6.so:archivers/quazip@qt6 \
+		libquazip1-qt6.so:archivers/quazip \
 		libtiff.so:graphics/tiff \
 		libturbojpeg.so:graphics/libjpeg-turbo \
 		libunibreak.so:textproc/libunibreak \

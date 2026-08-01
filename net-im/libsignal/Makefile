@@ -1,7 +1,6 @@
 PORTNAME=	libsignal
 DISTVERSIONPREFIX=	v
-DISTVERSION=	0.87.5
-PORTREVISION=	1
+DISTVERSION=	0.96.4
 CATEGORIES=	net-im java
 
 MAINTAINER=	jaap.aarts1@gmail.com
@@ -17,6 +16,8 @@ BUILD_DEPENDS=	llvm-config${LLVM_DEFAULT}:devel/llvm${LLVM_DEFAULT} \
 USES=		cargo
 USE_GITHUB=	yes
 GH_ACCOUNT=	signalapp
+BROKEN_i386= 	bindgen for boring-ssl fail
+#CFLAGS_i386=	-DOPENSSL_NO_ASM
 USE_LDCONFIG=	yes
 
 # to get the GH_TUPLE
@@ -33,7 +34,6 @@ MAKE_ENV=		CARGO_PROFILE_RELEASE_LTO=thin \
 			OPENSSL_INCLUDE_DIR=${OPENSSLINC} \
 			OPENSSL_LIB_DIR=${OPENSSLLIB} \
 			RUSTC_BOOTSTRAP=aes,polyval
-PLIST_FILES=		lib/libsignal_ffi.a lib/libsignal_jni.so
 
 .include <bsd.port.options.mk>
 

@@ -27,7 +27,6 @@
     SUBDIR += c3p0
     SUBDIR += cargo-pgrx
     SUBDIR += cassandra-cpp-driver
-    SUBDIR += cassandra3
     SUBDIR += cassandra4
     SUBDIR += cassandra5
     SUBDIR += casstcl
@@ -123,6 +122,7 @@
     SUBDIR += ldb28
     SUBDIR += ldb29
     SUBDIR += leo_center
+    SUBDIR += letos
     SUBDIR += leveldb
     SUBDIR += libcouchbase
     SUBDIR += libdbi
@@ -196,7 +196,6 @@
     SUBDIR += mysql++
     SUBDIR += mysql-connector-c++
     SUBDIR += mysql-connector-j
-    SUBDIR += mysql-connector-java51
     SUBDIR += mysql-connector-odbc
     SUBDIR += mysql2pgsql
     SUBDIR += mysql80-client
@@ -598,6 +597,7 @@
     SUBDIR += pgtop
     SUBDIR += pguri
     SUBDIR += pgvector
+    SUBDIR += php-memvector
     SUBDIR += php-tarantool
     SUBDIR += php-xapian
     SUBDIR += php82-dba
@@ -930,6 +930,7 @@
     SUBDIR += redis82
     SUBDIR += redis84
     SUBDIR += redis86
+    SUBDIR += redis88
     SUBDIR += redis_exporter
     SUBDIR += redisbloom
     SUBDIR += redisjson
@@ -1146,7 +1147,6 @@
     SUBDIR += sqlitecpp
     SUBDIR += sqlitemanager
     SUBDIR += sqliteodbc
-    SUBDIR += sqlitestudio
     SUBDIR += sqlrelay
     SUBDIR += sqlx-cli
     SUBDIR += sqsh

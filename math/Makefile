@@ -165,6 +165,7 @@
     SUBDIR += abella
     SUBDIR += abs
     SUBDIR += acalc
+    SUBDIR += adasat
     SUBDIR += add
     SUBDIR += adept
     SUBDIR += adol-c
@@ -1052,7 +1053,6 @@
     SUBDIR += py-lmfit
     SUBDIR += py-logical-unification
     SUBDIR += py-lrcalc
-    SUBDIR += py-luminol
     SUBDIR += py-mapbox-earcut
     SUBDIR += py-math-verify
     SUBDIR += py-mathics

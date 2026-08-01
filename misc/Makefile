@@ -507,7 +507,6 @@
     SUBDIR += py-facenet-pytorch
     SUBDIR += py-fal-client
     SUBDIR += py-fast-histogram
-    SUBDIR += py-fastavro
     SUBDIR += py-faster-coco-eval
     SUBDIR += py-fastmcp
     SUBDIR += py-fastmcp-slim
