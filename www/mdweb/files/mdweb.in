@@ -12,42 +12,79 @@ rcvar="mdweb_enable"
 load_rc_config $name
 
 : ${mdweb_enable:="NO"}
-: ${mdweb_user:="www"}
-: ${mdweb_dir="/usr/local/www/mdweb"}
-: ${mdweb_port=""}
+# NOTE: do not set ${name}_user — FreeBSD rc.subr would su -m as that user,
+# and daemon -u then fails (empty pidfile). We drop privs only via daemon -u.
+: ${mdweb_runas:="www"}
+: ${mdweb_group:="www"}
+: ${mdweb_dir:="%%WWWDIR%%"}
+: ${mdweb_port:="5173"}
+: ${mdweb_env_file:="/usr/local/etc/mdweb.env"}
+: ${mdweb_config_dir:="/usr/local/etc/mdweb"}
 
-pidfile="/var/run/${name}.pid"
-procname="/usr/local/bin/node"
+pidfile="/var/run/mdweb/${name}.pid"
+procname="%%LOCALBASE%%/bin/node"
 command="/usr/sbin/daemon"
 
-if [ -n "${mdweb_port}" ]; then
-    port_arg="-p ${mdweb_port}"
+# Load JWT_SECRET and friends from env file when present
+if [ -f "${mdweb_env_file}" ]; then
+	. "${mdweb_env_file}"
 fi
 
-command_args="-f -p ${pidfile} -r -u ${mdweb_user} /usr/bin/env NODE_ENV=production ${mdweb_dir}/node_modules/.bin/tsx ${mdweb_dir}/server/index.ts ${port_arg}"
+export NODE_ENV=production
+export CONFIG_DIR="${mdweb_config_dir}"
+export PORT="${mdweb_port}"
+# JWT_SECRET must be set in mdweb.env for production
+
+# Root runs daemon; -u drops to www; -p writes child (node) pid for status
+command_args="-f -p ${pidfile} -u ${mdweb_runas} \
+	/usr/bin/env NODE_ENV=production CONFIG_DIR=${mdweb_config_dir} PORT=${mdweb_port} JWT_SECRET=${JWT_SECRET} \
+	${mdweb_dir}/node_modules/.bin/tsx ${mdweb_dir}/server/index.ts -p ${mdweb_port}"
 
 start_precmd="mdweb_prestart"
 stop_postcmd="mdweb_postclean"
 
-mdweb_prestart() {
-    if [ ! -d "/var/run" ]; then
-        mkdir -p /var/run
-    fi
+mdweb_prestart()
+{
+	if [ -z "${JWT_SECRET}" ] || [ "${JWT_SECRET}" = "freebsd_guy_secret_key" ]; then
+		echo "${name}: JWT_SECRET is missing or insecure. Set it in ${mdweb_env_file}." >&2
+		return 1
+	fi
 
-    if [ -f "${pidfile}" ]; then
-        _pid=$(cat "${pidfile}")
-        if ! echo "${_pid}" | grep -q '^[0-9]\+$'; then
-            echo "Removing invalid pidfile: ${pidfile} (content: ${_pid})"
-            rm -f "${pidfile}"
-        elif ! kill -0 "${_pid}" 2>/dev/null; then
-            echo "Removing stale pidfile: ${pidfile}"
-            rm -f "${pidfile}"
-        fi
-    fi
+	install -d -o root -g wheel -m 0755 /var/run/mdweb
+	# child process (www) must write the pidfile
+	chown ${mdweb_runas}:${mdweb_group} /var/run/mdweb
+	chmod 0755 /var/run/mdweb
+
+	for d in /var/db/mdweb/posts /var/db/mdweb/posts/images /var/db/mdweb/themes; do
+		if [ ! -d "${d}" ]; then
+			install -d -o ${mdweb_runas} -g ${mdweb_group} -m 0755 "${d}"
+		fi
+	done
+	# Service user must write config (theme / site settings) and users.json
+	if [ -d "${mdweb_config_dir}" ]; then
+		chown ${mdweb_runas}:${mdweb_group} "${mdweb_config_dir}" 2>/dev/null || true
+		for f in config.json users.json; do
+			if [ -f "${mdweb_config_dir}/${f}" ]; then
+				chown ${mdweb_runas}:${mdweb_group} "${mdweb_config_dir}/${f}" 2>/dev/null || true
+				chmod 0640 "${mdweb_config_dir}/${f}" 2>/dev/null || true
+			fi
+		done
+	fi
+	chown -R ${mdweb_runas}:${mdweb_group} /var/db/mdweb 2>/dev/null || true
+
+	if [ -f "${pidfile}" ]; then
+		_pid=$(cat "${pidfile}")
+		if ! echo "${_pid}" | grep -q '^[0-9][0-9]*$'; then
+			rm -f "${pidfile}"
+		elif ! kill -0 "${_pid}" 2>/dev/null; then
+			rm -f "${pidfile}"
+		fi
+	fi
 }
 
-mdweb_postclean() {
-    rm -f "${pidfile}"
+mdweb_postclean()
+{
+	rm -f "${pidfile}"
 }
 
 run_rc_command "$1"
