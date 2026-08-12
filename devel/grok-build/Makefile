@@ -1,7 +1,7 @@
 PORTNAME=	grok-build
 DISTVERSION=	0.2.106
 # Snapshot until an official FreeBSD-ready tag exists.
-PORTREVISION=	2
+PORTREVISION=4
 CATEGORIES=	devel
 MASTER_SITES=	# empty until first distfile; local checkout workflow for WIP
 DISTFILES=	# empty
