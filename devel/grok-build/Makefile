@@ -1,14 +1,14 @@
 PORTNAME=	grok-build
 DISTVERSION=	0.2.106
 # Snapshot until an official FreeBSD-ready tag exists.
-PORTREVISION=6
+PORTREVISION=	6
 CATEGORIES=	devel
 MASTER_SITES=	# empty until first distfile; local checkout workflow for WIP
 DISTFILES=	# empty
 
 MAINTAINER=	mark@cloudbsd.org
-COMMENT=Open-source Grok Build CLI (CloudBSD/RevyTech FreeBSD WIP)
-WWW=https://github.com/revytechinc/grok-build
+COMMENT=	Open-source Grok Build CLI (CloudBSD/RevyTech FreeBSD WIP)
+WWW=	https://github.com/revytechinc/grok-build
 
 LICENSE=	APACHE20
 LICENSE_FILE=	${WRKSRC}/LICENSE
