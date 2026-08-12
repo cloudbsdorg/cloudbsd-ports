@@ -1,13 +1,16 @@
 [
 { type: install
   message: <<EOM
-Grok Build (grok) has been installed.
+grok-build has been installed (CloudBSD / RevyTech WIP).
 
-  - Authenticate on first launch (browser flow) when network allows.
-  - Sandbox: FreeBSD jail helper is incomplete; apply degrades without crash.
+  /usr/local/bin/grok-build         primary CLI
+  /usr/local/bin/grok-build-static  second full copy (not a symlink)
+  /usr/local/bin/grok               symlink to grok-build
+
+  - Authenticate on first launch when network allows.
+  - Jail helper is optional; agent runs without it.
   - Requires textproc/ripgrep (rg) on PATH.
-  - Set GROK_SRC when developing the port before distfiles exist:
-      make -C /usr/ports/devel/grok-build GROK_SRC=/path/to/grok-build
+  - Source: https://github.com/revytechinc/grok-build
 EOM
 }
 ]
