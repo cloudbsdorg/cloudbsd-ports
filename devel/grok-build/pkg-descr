@@ -6,7 +6,6 @@ manages long-running tasks. It is not an official xAI or FreeBSD package.
 
 Sandbox isolation on FreeBSD uses a jail backend (helper still landing);
 Landlock/Seatbelt (nono) is Linux/macOS only. Install textproc/ripgrep
-for the system rg binary — the release build does not auto-download
-ripgrep assets.
+for the system rg binary.
 
 WWW: https://github.com/revytechinc/grok-build

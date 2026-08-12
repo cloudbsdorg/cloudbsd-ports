@@ -1,16 +1,16 @@
 [
 { type: install
   message: <<EOM
-grok-build has been installed (CloudBSD / RevyTech WIP).
+grok-build 1.0.1 has been installed (CloudBSD / RevyTech WIP).
 
-  /usr/local/bin/grok-build         primary CLI
-  /usr/local/bin/grok-build-static  second full copy (not a symlink)
-  /usr/local/bin/grok               symlink to grok-build
+  /usr/local/bin/grok-build              primary CLI
+  /usr/local/bin/grok-build-static       second full copy (not a symlink)
+  /usr/local/bin/grok                    symlink to grok-build
+  /usr/local/libexec/grok-jail-helper    jail helper (not setuid; dry-run)
 
-  - Authenticate on first launch when network allows.
-  - Jail helper is optional; agent runs without it.
-  - Requires textproc/ripgrep (rg) on PATH.
-  - Source: https://github.com/revytechinc/grok-build
+  Jail apply is fail-closed without GROK_JAIL_ROOT and root.
+  Requires textproc/ripgrep (rg) on PATH.
+  Source: https://github.com/revytechinc/grok-build
 EOM
 }
 ]
