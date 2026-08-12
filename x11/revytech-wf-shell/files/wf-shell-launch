@@ -1,6 +1,10 @@
 #!/bin/sh
 # Launch a wf-shell component with config hierarchy: user → system.
 # Usage: wf-shell-launch {panel|background|dock} [extra args]
+#
+# Single-instance: wayfire autostart + manual restarts must never leave
+# dual wf-panel / dual wf-background (regression R1). Uses lockf(1) so
+# a second launch exits 0 while the first holds the lock.
 set -eu
 PREFIX="${PREFIX:-/usr/local}"
 export PATH="/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:${PATH:-}"
@@ -27,7 +31,36 @@ if [ -f "$USER_CFG" ]; then
 elif [ -f "$SYS_CFG" ]; then
 	CFG="$SYS_CFG"
 else
-	exec "$bin" "$@"
+	CFG=""
 fi
 
-exec "$bin" -c "$CFG" "$@"
+# Early bail if a live instance already exists (cheap path)
+bin_name=$(basename "$bin")
+if pgrep -x "$bin_name" >/dev/null 2>&1; then
+	echo "wf-shell-launch: $comp already running" >&2
+	exit 0
+fi
+
+# Runtime dir for lock files (per-user, survives only while session lives)
+rt="${XDG_RUNTIME_DIR:-/tmp}"
+mkdir -p "$rt" 2>/dev/null || rt=/tmp
+lock="${rt}/wf-shell-${comp}.lock"
+
+# lockf -t 0: fail immediately if another launch holds the lock (exit 75)
+# Hold lock for the lifetime of the component process.
+if [ -n "$CFG" ]; then
+	set -- "$bin" -c "$CFG" "$@"
+else
+	set -- "$bin" "$@"
+fi
+
+if lockf -t 0 "$lock" "$@"; then
+	exit 0
+fi
+rc=$?
+# 75 = lock not obtained (another instance starting/running)
+if [ "$rc" -eq 75 ]; then
+	echo "wf-shell-launch: $comp lock busy (already starting/running)" >&2
+	exit 0
+fi
+exit "$rc"

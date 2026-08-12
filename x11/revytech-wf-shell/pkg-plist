@@ -1,5 +1,11 @@
 %%DATADIR%%/backgrounds/calm-blue.png
 %%DATADIR%%/backgrounds/circuits.png
+%%DATADIR%%/backgrounds/dharmx-bird-statue.README
+%%DATADIR%%/backgrounds/dharmx-bird-statue.jpg
+%%DATADIR%%/backgrounds/dharmx-man-robot.README
+%%DATADIR%%/backgrounds/dharmx-man-robot.jpg
+%%DATADIR%%/backgrounds/dharmx-snow-machines.README
+%%DATADIR%%/backgrounds/dharmx-snow-machines.jpg
 %%DATADIR%%/backgrounds/secret-chest.png
 %%DATADIR%%/backgrounds/simple-2.png
 %%DATADIR%%/backgrounds/simple.png
@@ -17,6 +23,7 @@
 %%DATADIR%%/css/panel-window-list-zoom-hover.css
 %%DATADIR%%/css/user-font.css
 %%DATADIR%%/icons/menu/amiga-wb.svg
+%%DATADIR%%/icons/menu/aqua-globe.svg
 %%DATADIR%%/icons/menu/catppuccin-latte.svg
 %%DATADIR%%/icons/menu/crt-node.svg
 %%DATADIR%%/icons/menu/dracula-bat.svg
@@ -24,6 +31,7 @@
 %%DATADIR%%/icons/menu/haiku-leaf.svg
 %%DATADIR%%/icons/menu/ibm-logo.svg
 %%DATADIR%%/icons/menu/neon-orb.svg
+%%DATADIR%%/icons/menu/nextstep-cube.svg
 %%DATADIR%%/icons/menu/nord-circle.svg
 %%DATADIR%%/icons/menu/rose-bloom.svg
 %%DATADIR%%/icons/menu/sgi-cube.svg
@@ -33,6 +41,7 @@
 %%DATADIR%%/icons/menu/system7-apple.svg
 %%DATADIR%%/icons/menu/tokyo-pulse.svg
 %%DATADIR%%/icons/menu/win95-start.svg
+%%DATADIR%%/icons/menu/xp-flag.svg
 %%DATADIR%%/icons/wayfire.png
 %%DATADIR%%/metadata/background.xml
 %%DATADIR%%/metadata/dock.xml
@@ -47,12 +56,15 @@
 %%DATADIR%%/themes/ibm-aix.css
 %%DATADIR%%/themes/miami-cyberpunk.css
 %%DATADIR%%/themes/modern-glass.css
+%%DATADIR%%/themes/nextstep.css
 %%DATADIR%%/themes/nord.css
+%%DATADIR%%/themes/osx-aqua.css
 %%DATADIR%%/themes/rose-pine.css
 %%DATADIR%%/themes/sgi-irix.css
 %%DATADIR%%/themes/synthwave.css
 %%DATADIR%%/themes/system7.css
 %%DATADIR%%/themes/tokyo-night.css
+%%DATADIR%%/themes/win-xp.css
 %%DATADIR%%/themes/win95.css
 %%ETCDIR%%/wf-shell.ini
 %%ETCDIR%%/wf-shell.ini.sample
