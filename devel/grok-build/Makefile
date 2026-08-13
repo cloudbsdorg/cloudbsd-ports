@@ -98,4 +98,7 @@ do-install:
 	${INSTALL_DATA} ${WRKSRC}/crates/codegen/xai-grok-pager/docs/user-guide/18-sandbox.md \
 	${STAGEDIR}${PREFIX}/share/doc/grok-build/sandbox.md
 
+DEPRECATED=	Use devel/freegrok
+EXPIRATION_DATE=	2026-12-31
+
 .include <bsd.port.mk>

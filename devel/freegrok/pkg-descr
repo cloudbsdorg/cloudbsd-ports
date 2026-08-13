@@ -1,0 +1,13 @@
+FreeGrok is the CloudBSD / RevyTech fork of the open-source Grok Build
+CLI (terminal AI coding agent). It is a fullscreen TUI that edits files,
+runs shell commands, and manages long-running tasks.
+
+This is not an official xAI or FreeBSD package.
+
+Sandbox isolation on FreeBSD uses a jail backend (helper still landing);
+Landlock/Seatbelt (nono) is Linux/macOS only. Install textproc/ripgrep
+for the system rg binary.
+
+On first run FreeGrok copies ~/.grok (grok-build configs) to ~/.freegrok.
+
+WWW: https://github.com/revytechinc/freegrok

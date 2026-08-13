@@ -1,0 +1,18 @@
+[
+{ type: install
+  message: <<EOM
+freegrok 1.0.1 has been installed (CloudBSD / RevyTech WIP).
+
+  /usr/local/bin/freegrok                 primary CLI
+  /usr/local/bin/freegrok-static          second full copy (not a symlink)
+  /usr/local/bin/fg                       short alias
+  /usr/local/bin/grok, grok-build         compat names (one release)
+  /usr/local/libexec/freegrok-jail-helper jail helper (not setuid; dry-run)
+
+  Config: ~/.freegrok (copied from ~/.grok on first run).
+  Jail apply is fail-closed without FREEGROK_JAIL_ROOT/GROK_JAIL_ROOT and root.
+  Requires textproc/ripgrep (rg) on PATH.
+  Source: https://github.com/revytechinc/freegrok
+EOM
+}
+]

@@ -1,0 +1,21 @@
+# devel/freegrok (WIP)
+
+Pinned source intent: local freegrok checkout (network cargo until CARGO_CRATES).
+
+## Local package + install (FreeBSD pkg)
+
+```sh
+cd /path/to/cloudbsd-ports-grok
+make -C devel/freegrok FREEGROK_SRC=$HOME/git/grok-build FORCE_CARGO_BUILD=yes package
+# as root:
+pkg delete -y grok-build   # if the old package is installed
+pkg install -U devel/freegrok/work/pkg/freegrok-*.pkg
+```
+
+Installs:
+- `/usr/local/bin/freegrok` (primary)
+- `/usr/local/bin/freegrok-static` (second full binary, separate inode)
+- `/usr/local/bin/fg` (short alias)
+- `/usr/local/bin/grok` and `/usr/local/bin/grok-build` (compat)
+
+`GROK_SRC` is accepted as an alias for `FREEGROK_SRC`.
