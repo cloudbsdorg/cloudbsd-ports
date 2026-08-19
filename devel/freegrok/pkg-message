@@ -1,7 +1,7 @@
 [
 { type: install
   message: <<EOM
-freegrok 1.0.1 has been installed (CloudBSD / RevyTech WIP).
+FreeGrok has been installed (CloudBSD / RevyTech WIP).
 
   /usr/local/bin/freegrok                 primary CLI
   /usr/local/bin/freegrok-static          second full copy (not a symlink)

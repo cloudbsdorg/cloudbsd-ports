@@ -104,7 +104,7 @@ do-install:
 	${STAGEDIR}${PREFIX}/bin/freegrok completions fish \
 		> ${STAGEDIR}${PREFIX}/share/fish/vendor_completions.d/freegrok.fish
 	${INSTALL_DATA} ${WRKSRC}/README.md ${STAGEDIR}${PREFIX}/share/doc/freegrok/
-	${INSTALL_DATA} ${WRKSRC}/crates/codegen/xai-grok-pager/docs/user-guide/25-doctor.md \
+	${INSTALL_DATA} ${WRKSRC}/crates/codegen/xai-grok-pager/docs/user-guide/26-doctor.md \
 		${STAGEDIR}${PREFIX}/share/doc/freegrok/doctor.md
 	${INSTALL_DATA} ${WRKSRC}/crates/codegen/xai-grok-pager/docs/user-guide/18-sandbox.md \
 		${STAGEDIR}${PREFIX}/share/doc/freegrok/sandbox.md
