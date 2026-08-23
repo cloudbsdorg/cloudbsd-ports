@@ -13,7 +13,8 @@ LICENSE=	BSD3CLAUSE
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
 USES=		go
-GO_TARGET=	./cmd/revytech-pkgd
+GO_PKGNAME=	github.com/revytechinc/pkg-repo
+GO_TARGET=	./cmd/revytech-pkgd:${PREFIX}/sbin/revytech-pkgd
 GO_BUILDFLAGS=	-ldflags="-s"
 MAKE_ENV+=	CGO_ENABLED=0
 CGO_ENABLED=	0
@@ -35,11 +36,14 @@ GH_TAGNAME=	v${DISTVERSION}
 
 PLIST_FILES=	sbin/revytech-pkgd \
 		"@sample etc/pkg-repo/series.json.sample" \
+		"@sample etc/pkg-repo/pkgd.json.sample" \
 		"@dir etc/pkg-repo"
 
 post-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/etc/pkg-repo
 	${INSTALL_DATA} ${WRKSRC}/etc/series.json \
 		${STAGEDIR}${PREFIX}/etc/pkg-repo/series.json.sample
+	${INSTALL_DATA} ${WRKSRC}/etc/pkgd.json \
+		${STAGEDIR}${PREFIX}/etc/pkg-repo/pkgd.json.sample
 
 .include <bsd.port.mk>

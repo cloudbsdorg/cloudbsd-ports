@@ -13,7 +13,8 @@ LICENSE=	BSD3CLAUSE
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
 USES=		go
-GO_TARGET=	./cmd/revytech-license
+GO_PKGNAME=	github.com/revytechinc/pkg-repo
+GO_TARGET=	./cmd/revytech-license:${PREFIX}/sbin/revytech-license
 MAKE_ENV+=	CGO_ENABLED=0
 CGO_ENABLED=	0
 
