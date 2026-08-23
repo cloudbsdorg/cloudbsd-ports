@@ -133,6 +133,7 @@
     SUBDIR += dico
     SUBDIR += dictd
     SUBDIR += dogtag-ldap-sdk
+    SUBDIR += dot1ag-utils
     SUBDIR += dpdk
     SUBDIR += dpdk-20.11
     SUBDIR += dpinger
@@ -170,6 +171,7 @@
     SUBDIR += freebsd-uucp
     SUBDIR += freediameter
     SUBDIR += freeipa-client
+    SUBDIR += freeipa-server
     SUBDIR += freeradius-client
     SUBDIR += freeradius3
     SUBDIR += freerdp
@@ -246,7 +248,6 @@
     SUBDIR += hanstunnel
     SUBDIR += haproxy
     SUBDIR += haproxy-devel
-    SUBDIR += haproxy24
     SUBDIR += haproxy26
     SUBDIR += haproxy28
     SUBDIR += haproxy30
@@ -1244,6 +1245,7 @@
     SUBDIR += rdesktop
     SUBDIR += rdist6
     SUBDIR += rdist7
+    SUBDIR += rdma-core
     SUBDIR += rdp2tcp
     SUBDIR += read_bbrlog
     SUBDIR += realtek-re-kmod
@@ -1291,6 +1293,7 @@
     SUBDIR += rubygem-amq-protocol
     SUBDIR += rubygem-amqp
     SUBDIR += rubygem-amqp-utils
+    SUBDIR += rubygem-apnotic
     SUBDIR += rubygem-apollo_upload_server
     SUBDIR += rubygem-app_store_connect
     SUBDIR += rubygem-asset_sync
@@ -1355,6 +1358,7 @@
     SUBDIR += rubygem-gitlab-kas-grpc
     SUBDIR += rubygem-gitlab_omniauth-ldap
     SUBDIR += rubygem-gitlab_omniauth-ldap-gitlab
+    SUBDIR += rubygem-gitlab-orbit-proto
     SUBDIR += rubygem-google-cloud-bigquery
     SUBDIR += rubygem-google-cloud-bigtable
     SUBDIR += rubygem-google-cloud-bigtable-admin-v2
@@ -1395,6 +1399,7 @@
     SUBDIR += rubygem-grpc-tools
     SUBDIR += rubygem-grpc_reflection
     SUBDIR += rubygem-hangouts-chat
+    SUBDIR += rubygem-http-2
     SUBDIR += rubygem-http-parser
     SUBDIR += rubygem-http_parser.rb
     SUBDIR += rubygem-httpauth
@@ -1407,6 +1412,8 @@
     SUBDIR += rubygem-maxmind-db
     SUBDIR += rubygem-mqtt
     SUBDIR += rubygem-nats-pure
+    SUBDIR += rubygem-nats-pure-gitlab
+    SUBDIR += rubygem-net-http2
     SUBDIR += rubygem-net-ldap
     SUBDIR += rubygem-net-ldap017
     SUBDIR += rubygem-net-netrc
@@ -1546,6 +1553,7 @@
     SUBDIR += sipsak
     SUBDIR += sl2tps
     SUBDIR += slackcat
+    SUBDIR += slapi-nis
     SUBDIR += slurm
     SUBDIR += smb4k
     SUBDIR += smbldap-tools

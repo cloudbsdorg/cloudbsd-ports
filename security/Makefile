@@ -399,6 +399,7 @@
     SUBDIR += mhash
     SUBDIR += mindterm-binary
     SUBDIR += minisign
+    SUBDIR += mkcert
     SUBDIR += mkp224o
     SUBDIR += modsecurity3
     SUBDIR += modsecurity3-nginx
@@ -781,6 +782,7 @@
     SUBDIR += pam_rssh
     SUBDIR += pam_script
     SUBDIR += pam_search_list
+    SUBDIR += pam_ssh_agent
     SUBDIR += pam_ssh_agent_auth
     SUBDIR += pam_u2f
     SUBDIR += pam_worker
@@ -834,6 +836,7 @@
     SUBDIR += pecl-ssh2
     SUBDIR += pecl-xxtea
     SUBDIR += peda
+    SUBDIR += periodic-filter-vuxml
     SUBDIR += pev
     SUBDIR += pgpdump
     SUBDIR += pgpgpg
@@ -1165,6 +1168,7 @@
     SUBDIR += rubygem-attr_encrypted
     SUBDIR += rubygem-attr_encrypted3
     SUBDIR += rubygem-auth-sanitizer
+    SUBDIR += rubygem-auth-sanitizer-gitlab
     SUBDIR += rubygem-bcrypt
     SUBDIR += rubygem-bcrypt-ruby
     SUBDIR += rubygem-bcrypt_pbkdf

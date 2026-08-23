@@ -3,6 +3,10 @@
 %%MANPAGES%%share/man/man1/glab-alias-set.1.gz
 %%MANPAGES%%share/man/man1/glab-alias.1.gz
 %%MANPAGES%%share/man/man1/glab-api.1.gz
+%%MANPAGES%%share/man/man1/glab-artifact-registry-get-token.1.gz
+%%MANPAGES%%share/man/man1/glab-artifact-registry-login.1.gz
+%%MANPAGES%%share/man/man1/glab-artifact-registry-status.1.gz
+%%MANPAGES%%share/man/man1/glab-artifact-registry.1.gz
 %%MANPAGES%%share/man/man1/glab-attestation-verify.1.gz
 %%MANPAGES%%share/man/man1/glab-attestation.1.gz
 %%MANPAGES%%share/man/man1/glab-auth-configure-docker.1.gz
@@ -60,6 +64,8 @@
 %%MANPAGES%%share/man/man1/glab-container-registry-tag-view.1.gz
 %%MANPAGES%%share/man/man1/glab-container-registry-tag.1.gz
 %%MANPAGES%%share/man/man1/glab-container-registry.1.gz
+%%MANPAGES%%share/man/man1/glab-dependency-firewall-ci-summary.1.gz
+%%MANPAGES%%share/man/man1/glab-dependency-firewall.1.gz
 %%MANPAGES%%share/man/man1/glab-deploy-key-add.1.gz
 %%MANPAGES%%share/man/man1/glab-deploy-key-delete.1.gz
 %%MANPAGES%%share/man/man1/glab-deploy-key-get.1.gz

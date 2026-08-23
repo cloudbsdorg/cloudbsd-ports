@@ -1,6 +1,7 @@
 PORTNAME=	mailpit
 DISTVERSIONPREFIX=	v
-DISTVERSION=	1.30.6
+DISTVERSION=	1.30.7
+PORTREVISION=	2
 CATEGORIES=	mail devel
 MASTER_SITES=	https://www.madpilot.net/mailpit/:npmcache \
 		LOCAL/madpilot/mailpit:npmcache

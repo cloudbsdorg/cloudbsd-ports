@@ -484,6 +484,7 @@
     SUBDIR += cocogitto
     SUBDIR += codebase-memory-mcp
     SUBDIR += codeblocks
+    SUBDIR += codemark
     SUBDIR += codequery
     SUBDIR += codesearch-py
     SUBDIR += collada-dom
@@ -908,6 +909,7 @@
     SUBDIR += gitu
     SUBDIR += gitui
     SUBDIR += glab
+    SUBDIR += glab-tui
     SUBDIR += glade
     SUBDIR += glaze
     SUBDIR += glib20
@@ -989,6 +991,7 @@
     SUBDIR += gsettings-desktop-schemas
     SUBDIR += gsl-lite
     SUBDIR += gsoap
+    SUBDIR += gson
     SUBDIR += gstreamer1-devtools
     SUBDIR += gstreamer1-plugins-soup
     SUBDIR += gtgt
@@ -1108,6 +1111,7 @@
     SUBDIR += jackson-databind
     SUBDIR += jackson-jaxrs-providers
     SUBDIR += jackson-module-jaxb-annotations
+    SUBDIR += jakarta-activation
     SUBDIR += jakarta-activation-api
     SUBDIR += jakarta-annotation-api
     SUBDIR += jakarta-xml-bind-api
@@ -1115,9 +1119,13 @@
     SUBDIR += janet-lsp
     SUBDIR += jansson
     SUBDIR += java-findbugs
+    SUBDIR += javafx-jars
+    SUBDIR += javax-activation
     SUBDIR += javax-activation-api
     SUBDIR += javax-ws-rs-api
+    SUBDIR += javax.annotation-api
     SUBDIR += jaxb-api
+    SUBDIR += jaxb-impl
     SUBDIR += jboss-logging
     SUBDIR += jclassinfo
     SUBDIR += jcmdline
@@ -1622,6 +1630,7 @@
     SUBDIR += linux-rl9-systemd-libs
     SUBDIR += linux-sublime-merge
     SUBDIR += linux_libusb
+    SUBDIR += linuxapi
     SUBDIR += listserialc
     SUBDIR += liteide
     SUBDIR += llama.el
@@ -1644,6 +1653,7 @@
     SUBDIR += llvm20
     SUBDIR += llvm21
     SUBDIR += llvm22
+    SUBDIR += llvm23
     SUBDIR += lm4tools
     SUBDIR += lmdbg
     SUBDIR += lndir
@@ -2425,13 +2435,11 @@
     SUBDIR += p5-Data-Stag
     SUBDIR += p5-Data-Stream-Bulk
     SUBDIR += p5-Data-Structure-Util
-    SUBDIR += p5-Data-Swap
     SUBDIR += p5-Data-Table
     SUBDIR += p5-Data-Taxonomy-Tags
     SUBDIR += p5-Data-TemporaryBag
     SUBDIR += p5-Data-Throttler
     SUBDIR += p5-Data-Throttler-Memcached
-    SUBDIR += p5-Data-Thunk
     SUBDIR += p5-Data-TreeDumper
     SUBDIR += p5-Data-TreeDumper-Renderer-GTK
     SUBDIR += p5-Data-Types
@@ -2533,7 +2541,6 @@
     SUBDIR += p5-Devel-ArgNames
     SUBDIR += p5-Devel-Autoflush
     SUBDIR += p5-Devel-Backtrace
-    SUBDIR += p5-Devel-BeginLift
     SUBDIR += p5-Devel-CallChecker
     SUBDIR += p5-Devel-Caller
     SUBDIR += p5-Devel-Caller-IgnoreNamespaces
@@ -4431,7 +4438,6 @@
     SUBDIR += premake4
     SUBDIR += premake5
     SUBDIR += priv_wrapper
-    SUBDIR += prjpeppercorn112
     SUBDIR += prjpeppercorn113
     SUBDIR += projectcenter
     SUBDIR += prometheus-cpp
@@ -4484,6 +4490,7 @@
     SUBDIR += py-aioapns
     SUBDIR += py-aioboto3
     SUBDIR += py-aiobotocore
+    SUBDIR += py-aiocache
     SUBDIR += py-aiofile
     SUBDIR += py-aiofiles
     SUBDIR += py-aiohttp-apispec
@@ -4540,6 +4547,7 @@
     SUBDIR += py-arpeggio
     SUBDIR += py-array-api-compat
     SUBDIR += py-array-api-strict
+    SUBDIR += py-arro3-core
     SUBDIR += py-arrow
     SUBDIR += py-asciimatics
     SUBDIR += py-asgi-lifespan
@@ -5014,6 +5022,7 @@
     SUBDIR += py-electrum-aionostr
     SUBDIR += py-electrum-ecc
     SUBDIR += py-eliot
+    SUBDIR += py-encutils
     SUBDIR += py-enlighten
     SUBDIR += py-entrypoint2
     SUBDIR += py-entrypoints
@@ -5069,6 +5078,7 @@
     SUBDIR += py-filemagic
     SUBDIR += py-filetype
     SUBDIR += py-find-libpython
+    SUBDIR += py-findblas
     SUBDIR += py-findlibs
     SUBDIR += py-findpython
     SUBDIR += py-fire
@@ -5224,6 +5234,7 @@
     SUBDIR += py-icalendar-searcher
     SUBDIR += py-ice
     SUBDIR += py-ice37
+    SUBDIR += py-icecream
     SUBDIR += py-id
     SUBDIR += py-identify
     SUBDIR += py-ijson
@@ -5536,6 +5547,7 @@
     SUBDIR += py-notify2
     SUBDIR += py-num2words
     SUBDIR += py-numba
+    SUBDIR += py-numkong
     SUBDIR += py-nvidia-ml-py
     SUBDIR += py-objgraph
     SUBDIR += py-objprint
@@ -6092,6 +6104,7 @@
     SUBDIR += py-ratelimiter
     SUBDIR += py-raven
     SUBDIR += py-rchitect
+    SUBDIR += py-rdata
     SUBDIR += py-re-assert
     SUBDIR += py-readerwriterlock
     SUBDIR += py-readme-renderer
@@ -6373,6 +6386,7 @@
     SUBDIR += py-types-Flask-Cors
     SUBDIR += py-types-Pygments
     SUBDIR += py-types-aws-xray-sdk
+    SUBDIR += py-types-awscrt
     SUBDIR += py-types-boto
     SUBDIR += py-types-decorator
     SUBDIR += py-types-docutils
@@ -6438,6 +6452,7 @@
     SUBDIR += py-validators
     SUBDIR += py-validictory
     SUBDIR += py-vcrpy
+    SUBDIR += py-vcs-versioning
     SUBDIR += py-vcver
     SUBDIR += py-vcversioner
     SUBDIR += py-vendy
@@ -6553,7 +6568,6 @@
     SUBDIR += py-yarg
     SUBDIR += py-yaspin
     SUBDIR += py-yattag
-    SUBDIR += py-yg.lockfile
     SUBDIR += py-ytmusicapi
     SUBDIR += py-yunomi
     SUBDIR += py-zarr
@@ -6789,6 +6803,7 @@
     SUBDIR += rubygem-analogger
     SUBDIR += rubygem-annoy
     SUBDIR += rubygem-anonymous_loader
+    SUBDIR += rubygem-anonymous_loader-gitlab
     SUBDIR += rubygem-ansi
     SUBDIR += rubygem-apipie-bindings
     SUBDIR += rubygem-apipie-params
@@ -7773,12 +7788,12 @@
     SUBDIR += rubygem-graf
     SUBDIR += rubygem-grape
     SUBDIR += rubygem-grape-entity
+    SUBDIR += rubygem-grape-gitlab
     SUBDIR += rubygem-grape-path-helpers
     SUBDIR += rubygem-grape-route-helpers
     SUBDIR += rubygem-grape-swagger
     SUBDIR += rubygem-grape-swagger-entity
     SUBDIR += rubygem-grape-swagger-gitlab
-    SUBDIR += rubygem-grape20
     SUBDIR += rubygem-grape_logging
     SUBDIR += rubygem-grape_logging-gitlab
     SUBDIR += rubygem-graphiql-rails
@@ -8535,6 +8550,7 @@
     SUBDIR += rubygem-validates_timeliness
     SUBDIR += rubygem-validates_timeliness7
     SUBDIR += rubygem-version_gem
+    SUBDIR += rubygem-version_gem-gitlab
     SUBDIR += rubygem-versionomy
     SUBDIR += rubygem-view_component-rails-gitlab
     SUBDIR += rubygem-virtus
@@ -8605,6 +8621,7 @@
     SUBDIR += sccache
     SUBDIR += sccs
     SUBDIR += schilybase
+    SUBDIR += scnlib
     SUBDIR += scons
     SUBDIR += sdbus-cpp
     SUBDIR += sdl12
@@ -8829,6 +8846,7 @@
     SUBDIR += trio
     SUBDIR += trompeloeil
     SUBDIR += truc
+    SUBDIR += tuicr
     SUBDIR += tup
     SUBDIR += tvision
     SUBDIR += typeshare

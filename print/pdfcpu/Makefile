@@ -1,7 +1,6 @@
 PORTNAME=	pdfcpu
 DISTVERSIONPREFIX=	v
-DISTVERSION=	0.13.0
-PORTREVISION=	1
+DISTVERSION=	0.15.0
 CATEGORIES=	print
 
 MAINTAINER=	diizzy@FreeBSD.org
@@ -11,7 +10,7 @@ WWW=		https://github.com/pdfcpu/pdfcpu
 LICENSE=	APACHE20
 LICENSE_FILE=	${WRKSRC}/LICENSE.txt
 
-USES=		go:1.25+,modules
+USES=		go:modules
 
 GO_MODULE=	github.com/${PORTNAME}/${PORTNAME}
 

@@ -1,5 +1,5 @@
 PORTNAME=	android-tools
-PORTVERSION=	35.0.2
+PORTVERSION=	37.0.0
 CATEGORIES=	devel
 MASTER_SITES=	https://github.com/nmeum/android-tools/releases/download/${PORTVERSION}/
 
@@ -11,7 +11,8 @@ LICENSE=	APACHE20
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
 BUILD_DEPENDS=	googletest>0:devel/googletest
-LIB_DEPENDS=	libbrotlicommon.so:archivers/brotli \
+LIB_DEPENDS=	libabsl_base.so:devel/abseil \
+		libbrotlicommon.so:archivers/brotli \
 		libfmt.so:devel/libfmt \
 		liblz4.so:archivers/liblz4 \
 		libpcre2-8.so:devel/pcre2 \
@@ -27,5 +28,9 @@ SHEBANG_FILES=	vendor/avb/avbtool.py \
 		vendor/mkbootimg/unpack_bootimg.py
 
 CMAKE_ARGS=	-DANDROID_TOOLS_PATCH_VENDOR:BOOL=OFF
+
+# BoringSSL ships no PowerPC assembly, so use the portable C implementations.
+CFLAGS_powerpc64le=	-DOPENSSL_NO_ASM
+CXXFLAGS_powerpc64le=	-DOPENSSL_NO_ASM
 
 .include <bsd.port.mk>

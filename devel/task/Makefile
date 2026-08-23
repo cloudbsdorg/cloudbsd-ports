@@ -1,6 +1,6 @@
 PORTNAME=	task
 DISTVERSIONPREFIX=	v
-DISTVERSION=	3.52.0
+DISTVERSION=	3.53.1
 PORTREVISION=	1
 CATEGORIES=	devel
 
@@ -11,7 +11,7 @@ WWW=		https://taskfile.dev/
 LICENSE=	MIT
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
-USES=		go:1.25+,modules
+USES=		go:modules
 
 GO_MODULE=	github.com/go-task/task/v3
 GO_TARGET=	./cmd/task

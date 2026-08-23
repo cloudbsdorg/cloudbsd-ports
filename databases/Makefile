@@ -73,6 +73,10 @@
     SUBDIR += firebird40-server
     SUBDIR += fmptools
     SUBDIR += fortytwo-bdb
+    SUBDIR += foundationdb71-client
+    SUBDIR += foundationdb71-server
+    SUBDIR += foundationdb73-client
+    SUBDIR += foundationdb73-server
     SUBDIR += frece
     SUBDIR += freetds
     SUBDIR += freetds-devel
@@ -197,6 +201,7 @@
     SUBDIR += mysql-connector-c++
     SUBDIR += mysql-connector-j
     SUBDIR += mysql-connector-odbc
+    SUBDIR += mysql-shell
     SUBDIR += mysql2pgsql
     SUBDIR += mysql80-client
     SUBDIR += mysql80-server
@@ -226,6 +231,8 @@
     SUBDIR += ods2sql
     SUBDIR += opendbviewer
     SUBDIR += opendbx
+    SUBDIR += openldap27-client
+    SUBDIR += openldap27-server
     SUBDIR += openvoxdb-terminus8
     SUBDIR += openvoxdb8
     SUBDIR += ora2pg
@@ -733,6 +740,14 @@
     SUBDIR += postgresql18-plpython
     SUBDIR += postgresql18-pltcl
     SUBDIR += postgresql18-server
+    SUBDIR += postgresql19-client
+    SUBDIR += postgresql19-contrib
+    SUBDIR += postgresql19-docs
+    SUBDIR += postgresql19-pgtcl
+    SUBDIR += postgresql19-plperl
+    SUBDIR += postgresql19-plpython
+    SUBDIR += postgresql19-pltcl
+    SUBDIR += postgresql19-server
     SUBDIR += powa-archivist
     SUBDIR += powa-web
     SUBDIR += powerarchitect
@@ -784,6 +799,7 @@
     SUBDIR += py-dbt-semantic-interfaces
     SUBDIR += py-dbt-snowflake
     SUBDIR += py-dbutils
+    SUBDIR += py-deltalake
     SUBDIR += py-duckdb
     SUBDIR += py-duckdb_engine
     SUBDIR += py-fakeredis
@@ -844,6 +860,7 @@
     SUBDIR += py-pyarrow
     SUBDIR += py-pyarrow-stubs
     SUBDIR += py-pyiceberg
+    SUBDIR += py-pylance
     SUBDIR += py-pylibmc
     SUBDIR += py-pymemcache
     SUBDIR += py-pymongo

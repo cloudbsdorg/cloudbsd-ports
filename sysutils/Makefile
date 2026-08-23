@@ -124,6 +124,7 @@
     SUBDIR += bhyve-firmware
     SUBDIR += bhyve-rc
     SUBDIR += bhyvemgr
+    SUBDIR += bhyvemgrd
     SUBDIR += bin
     SUBDIR += biosfont
     SUBDIR += bkpupsd
@@ -383,6 +384,7 @@
     SUBDIR += f-upgrade
     SUBDIR += f2
     SUBDIR += f3
+    SUBDIR += facl
     SUBDIR += fakertc
     SUBDIR += faketty
     SUBDIR += fand
@@ -516,6 +518,7 @@
     SUBDIR += healthd
     SUBDIR += heirloom
     SUBDIR += helm
+    SUBDIR += helm-docs
     SUBDIR += helmfile
     SUBDIR += herbe
     SUBDIR += hexpeek
@@ -554,6 +557,8 @@
     SUBDIR += intel-nvmupdate-100g
     SUBDIR += intel-nvmupdate-10g
     SUBDIR += intel-nvmupdate-40g
+    SUBDIR += intel-nvmupdate-e610
+    SUBDIR += intel-nvmupdate-e830
     SUBDIR += intel-pcm
     SUBDIR += intel-undervolt
     SUBDIR += inxi
@@ -640,6 +645,7 @@
     SUBDIR += ldap-account-manager
     SUBDIR += ldapvi
     SUBDIR += leaf
+    SUBDIR += leaves
     SUBDIR += ledit
     SUBDIR += less
     SUBDIR += lfm
@@ -716,6 +722,7 @@
     SUBDIR += mac_rtprio
     SUBDIR += mackerel-agent
     SUBDIR += magicrescue
+    SUBDIR += magika
     SUBDIR += manck
     SUBDIR += mapchan
     SUBDIR += mapdir
@@ -826,6 +833,7 @@
     SUBDIR += obliterate
     SUBDIR += oc
     SUBDIR += ocijail
+    SUBDIR += oddjob
     SUBDIR += odo
     SUBDIR += ohmu
     SUBDIR += omnibackup
@@ -1104,6 +1112,7 @@
     SUBDIR += py-kubernetes
     SUBDIR += py-leviathan
     SUBDIR += py-liquidctl
+    SUBDIR += py-magika
     SUBDIR += py-mitogen
     SUBDIR += py-mqttwarn
     SUBDIR += py-nagiosplugin

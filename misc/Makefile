@@ -302,6 +302,7 @@
     SUBDIR += mate-user-guide
     SUBDIR += mbuffer
     SUBDIR += mc
+    SUBDIR += mc6
     SUBDIR += mcp-inspector
     SUBDIR += mcp-probe
     SUBDIR += mdp
@@ -534,6 +535,7 @@
     SUBDIR += py-ibm-cos-sdk-s3transfer
     SUBDIR += py-ibm-watsonx-ai
     SUBDIR += py-icoextract
+    SUBDIR += py-insightface
     SUBDIR += py-instructor
     SUBDIR += py-ipyfastscape
     SUBDIR += py-jiwer

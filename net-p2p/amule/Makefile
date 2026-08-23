@@ -1,5 +1,6 @@
 PORTNAME=	amule
 DISTVERSION=	3.0.1
+PORTREVISION=	1
 CATEGORIES=	net-p2p
 MASTER_SITES=	https://github.com/amule-org/amule/releases/download/${DISTVERSION}/
 DISTNAME=	aMule-${DISTVERSION}-src
@@ -11,8 +12,8 @@ WWW=		https://github.com/amule-project/amule
 LICENSE=	GPLv2+
 LICENSE_FILE=	${WRKSRC}/docs/COPYING
 
-BUILD_DEPENDS=	cryptopp-modern>0:security/cryptopp-modern
-LIB_DEPENDS=	libcurl.so:ftp/curl
+LIB_DEPENDS=	libcryptopp.so:security/cryptopp-modern \
+		libcurl.so:ftp/curl
 
 USES=		cmake:testing gettext-runtime gnome localbase:ldflags pkgconfig \
 		readline
@@ -58,7 +59,7 @@ NLS_CMAKE_BOOL=	ENABLE_NLS
 UPNP_LIB_DEPENDS=	libupnp.so:devel/upnp
 UPNP_CMAKE_BOOL=	ENABLE_UPNP
 
-WEBSERVER_LIB_DEPENDS=	libpng.so:graphics/png
+WEBSERVER_LIB_DEPENDS=	libpng16.so:graphics/png
 WEBSERVER_USES=		readline
 WEBSERVER_CMAKE_BOOL=	BUILD_WEBSERVER
 
@@ -74,11 +75,5 @@ post-patch:
 	@${REINPLACE_CMD} -e 's|"aMule GIT"|"aMule ${DISTVERSION}"|g' \
 		-e 's|VERSION "GIT"|VERSION "${DISTVERSION}"|g' \
 		${WRKSRC}/CMakeLists.txt
-
-.if ${ARCH} == i386
-LIB_DEPENDS+=	libatomic.so:lang/gcc${GCC_DEFAULT}
-CMAKE_ARGS+=	-DCMAKE_PREFIX_PATH=${LOCALBASE}/lib/gcc${GCC_DEFAULT}
-LDFLAGS+=	-L${LOCALBASE}/lib/gcc${GCC_DEFAULT}
-.endif
 
 .include <bsd.port.mk>
