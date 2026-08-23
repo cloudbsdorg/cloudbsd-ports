@@ -14,6 +14,9 @@ LICENSE_FILE=	${WRKSRC}/LICENSE
 
 USES=		go
 GO_TARGET=	./cmd/revytech-pkgd
+GO_BUILDFLAGS=	-ldflags="-s"
+MAKE_ENV+=	CGO_ENABLED=0
+CGO_ENABLED=	0
 USE_RC_SUBR=	revytech_pkgd
 
 # Lab: REVYTECH_PKG_DISTDIR=/path containing revytech-pkgd-${DISTVERSION}.tar.gz
