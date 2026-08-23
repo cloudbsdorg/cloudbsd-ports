@@ -1,0 +1,5 @@
+Metaport for a pkg origin node: revytech-pkgd plus nginx. Install on each
+cluster member. Series and product lines live in series.json; nginx vhosts
+are generated. Does not include poudriere or pkgbase builders.
+
+WWW: https://github.com/revytechinc/pkg-repo

@@ -1,0 +1,42 @@
+#!/bin/sh
+
+# PROVIDE: revytech_pkgd
+# REQUIRE: NETWORKING
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="revytech_pkgd"
+rcvar="revytech_pkgd_enable"
+pidfile="/var/run/${name}.pid"
+procname="%%PREFIX%%/sbin/revytech-pkgd"
+
+load_rc_config ${name}
+
+: ${revytech_pkgd_enable:="NO"}
+: ${revytech_pkgd_listen:="127.0.0.1:8081"}
+: ${revytech_pkgd_series:="%%PREFIX%%/etc/pkg-repo/series.json"}
+: ${revytech_pkgd_state:="/var/db/revytech-pkgd/state.json"}
+: ${revytech_pkgd_nginx_out:="%%PREFIX%%/etc/nginx/series-vhosts.conf"}
+: ${revytech_pkgd_flags:=""}
+
+command="/usr/sbin/daemon"
+command_args="-P ${pidfile} -r -f ${procname} \
+	-listen ${revytech_pkgd_listen} \
+	-series ${revytech_pkgd_series} \
+	-state ${revytech_pkgd_state} \
+	${revytech_pkgd_flags}"
+
+start_precmd="revytech_pkgd_prestart"
+
+revytech_pkgd_prestart()
+{
+	install -d -m 0755 /var/db/revytech-pkgd
+	if [ -x "${procname}" ] && [ -f "${revytech_pkgd_series}" ]; then
+		"${procname}" -series "${revytech_pkgd_series}" \
+		    -listen "${revytech_pkgd_listen}" \
+		    -write-nginx "${revytech_pkgd_nginx_out}" || true
+	fi
+}
+
+run_rc_command "$1"

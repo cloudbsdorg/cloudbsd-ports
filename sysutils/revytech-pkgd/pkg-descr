@@ -1,0 +1,6 @@
+revytech-pkgd is the origin daemon for REVYTECH, Inc. package repositories.
+It serves every series (CloudBSD, REVYTECH, and later OEM brands): HTTP Basic
+auth_request, license activate, and nginx vhost generation from a series
+catalog. Nodes are stateless given a shared database and blob store.
+
+WWW: https://github.com/revytechinc/pkg-repo

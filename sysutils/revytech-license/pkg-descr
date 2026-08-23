@@ -1,0 +1,6 @@
+revytech-license activates a product key against the pkg origin and writes a
+0600 pkg overlay with per-repo HTTP_AUTH. It works for every series (CloudBSD
+and REVYTECH). Base OS images still install /etc/pkg/CloudBSD.conf from
+cloudbsd-src; this port ships samples under PREFIX/etc/pkg.
+
+WWW: https://github.com/revytechinc/pkg-repo

@@ -1186,6 +1186,9 @@
     SUBDIR += rest-server
     SUBDIR += restic
     SUBDIR += retail
+    SUBDIR += revytech-license
+    SUBDIR += revytech-pkg-origin
+    SUBDIR += revytech-pkgd
     SUBDIR += rex
     SUBDIR += rhc
     SUBDIR += rinse
