@@ -35,6 +35,9 @@ revytech_pkgd_prestart()
 	if [ -x "${procname}" ]; then
 		"${procname}" -config "${revytech_pkgd_config}" \
 		    -write-nginx "${revytech_pkgd_nginx_out}" || true
+		if [ -x %%PREFIX%%/etc/rc.d/nginx ]; then
+			nginx -t >/dev/null 2>&1 && service nginx reload >/dev/null 2>&1 || true
+		fi
 	fi
 }
 
