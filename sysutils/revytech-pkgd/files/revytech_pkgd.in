@@ -22,8 +22,8 @@ load_rc_config ${name}
 : ${revytech_pkgd_flags:=""}
 
 command="/usr/sbin/daemon"
-# Do not use daemon -r: a stale child would respawn over a new binary/flags.
-command_args="-P ${pidfile} -f ${procname} \
+# -p = child pid so `service status` matches procname. Do not use -r.
+command_args="-p ${pidfile} -f ${procname} \
 	-config ${revytech_pkgd_config} \
 	${revytech_pkgd_flags}"
 
