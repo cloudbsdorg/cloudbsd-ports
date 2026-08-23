@@ -17,7 +17,13 @@ LICENSE=	BSD3CLAUSE
 # Postgres and a blob replica (docs/210-cluster.md). Product lines are data.
 RUN_DEPENDS=	revytech-pkgd:sysutils/revytech-pkgd \
 		nginx:www/nginx \
-		curl:ftp/curl
+		curl:ftp/curl \
+		openssl:security/openssl
+
+OPTIONS_DEFINE=	CERTBOT
+OPTIONS_DEFAULT=	CERTBOT
+CERTBOT_DESC=	Let's Encrypt client (optional; self-signed and provided certs still work)
+CERTBOT_RUN_DEPENDS=	certbot:security/py-certbot
 
 NO_ARCH=	yes
 NO_BUILD=	yes

@@ -37,13 +37,28 @@ GH_TAGNAME=	v${DISTVERSION}
 PLIST_FILES=	sbin/revytech-pkgd \
 		"@sample etc/pkg-repo/series.json.sample" \
 		"@sample etc/pkg-repo/pkgd.json.sample" \
-		"@dir etc/pkg-repo"
+		"@dir etc/pkg-repo" \
+		libexec/revytech-pkg-repo/tls-origin.sh \
+		libexec/revytech-pkg-repo/certbot-deploy-hook.sh \
+		pkg-repo/web/dist/index.html \
+		pkg-repo/web/dist/app.js \
+		pkg-repo/web/dist/styles.css
 
 post-install:
-	${MKDIR} ${STAGEDIR}${PREFIX}/etc/pkg-repo
+	${MKDIR} ${STAGEDIR}${PREFIX}/etc/pkg-repo \
+		${STAGEDIR}${PREFIX}/libexec/revytech-pkg-repo \
+		${STAGEDIR}${PREFIX}/pkg-repo/web/dist
 	${INSTALL_DATA} ${WRKSRC}/etc/series.json \
 		${STAGEDIR}${PREFIX}/etc/pkg-repo/series.json.sample
 	${INSTALL_DATA} ${WRKSRC}/etc/pkgd.json \
 		${STAGEDIR}${PREFIX}/etc/pkg-repo/pkgd.json.sample
+	${INSTALL_SCRIPT} ${WRKSRC}/scripts/tls-origin.sh \
+		${STAGEDIR}${PREFIX}/libexec/revytech-pkg-repo/tls-origin.sh
+	${INSTALL_SCRIPT} ${WRKSRC}/scripts/certbot-deploy-hook.sh \
+		${STAGEDIR}${PREFIX}/libexec/revytech-pkg-repo/certbot-deploy-hook.sh
+	${INSTALL_DATA} ${WRKSRC}/web/dist/index.html \
+		${WRKSRC}/web/dist/app.js \
+		${WRKSRC}/web/dist/styles.css \
+		${STAGEDIR}${PREFIX}/pkg-repo/web/dist/
 
 .include <bsd.port.mk>
