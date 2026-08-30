@@ -10,7 +10,7 @@ in that directory can generate the env file.
 Default track.cloudbsd.org layout:
 
   Puma          127.0.0.1:3000
-  PostgreSQL    16 or 17 (port option, default 17)
+  PostgreSQL    17 client (server is sibling/external)
   memcached     127.0.0.1:11211
   nginx         TLS terminator, X-Forwarded-Proto https
   Host          track.cloudbsd.org, OPENPROJECT_HTTPS=true

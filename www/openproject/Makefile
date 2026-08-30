@@ -25,6 +25,7 @@ LICENSE_FILE_GPLv3=	${WRKSRC}/LICENSE
 USE_GITHUB=	yes
 GH_ACCOUNT=	opf
 GH_PROJECT=	openproject
+# GH_TAGNAME is v17.7.2 via DISTVERSIONPREFIX=v + DISTVERSION.
 GH_TUPLE=	opf:dentaku:78eece45bf3f4ed021c05dd2f5411d1c3f9b168a:dentaku \
 		opf:md-to-pdf:0cb4597becd2243b810e7ce53bbbbf28b5f05844:mdtopdf \
 		opf:omniauth:7eb21563ba047ef86d71f099975587b5ec88f9c9:omniauth \
@@ -45,12 +46,15 @@ GH_TUPLE=	opf:dentaku:78eece45bf3f4ed021c05dd2f5411d1c3f9b168a:dentaku \
 # USES=cargo is not used: this is not a Rust port.
 #
 # Day-one: no BIM IFC Linux blobs, no hocuspocus, no Appsignal.
-# Build: vendor git gems, bundle into vendor/bundle, npm ci,
-# assets:precompile. Runtime: two rc.d scripts (Puma 127.0.0.1:3000
-# and good_job worker). nginx is already the jail reverse proxy
-# (sample only; not a RUN_DEPENDS).
-USES=		cpe gmake nodejs:24,build pkgconf ruby:4.0,build,run \
-		shebangfix ssl uidfix
+# Monolith: bundle --deployment --without development test mysql2 sqlite
+# into WWWDIR; npm ci; assets:precompile. Node is BUILD only.
+# Runtime: two rc.d scripts (Puma 127.0.0.1:3000 and good_job worker).
+# PostgreSQL 17 client (server is a sibling jail/service). nginx is
+# already the reverse proxy (sample only; not a RUN_DEPENDS).
+# Config is under etc/cloudbsd/openproject (CloudBSD JSON law;
+# sysutils/hawkeye). Not ${PREFIX}/etc/openproject.
+USES=		cpe gmake nodejs:24,build pgsql:17 pkgconf \
+		ruby:4.0,build,run shebangfix ssl uidfix
 CPE_VENDOR=	openproject
 CPE_PRODUCT=	openproject
 SHEBANG_FILES=	bin/rails bin/rake
@@ -80,23 +84,17 @@ SUB_LIST=	PREFIX=${PREFIX} \
 		GROUPS=${GROUPS}
 PLIST_SUB=	USERS=${USERS} GROUPS=${GROUPS} WWWDIR=${WWWDIR_REL}
 
-OPTIONS_DEFINE=		MEMCACHED
-OPTIONS_SINGLE=		PGVER
-OPTIONS_SINGLE_PGVER=	PG16 PG17
-OPTIONS_DEFAULT=	PG17 MEMCACHED
+OPTIONS_DEFINE=		MEMCACHED PLAINTEXT PROMETHEUS
+OPTIONS_DEFAULT=	MEMCACHED
 OPTIONS_SUB=		yes
 
-PG16_DESC=		PostgreSQL 16 client and server
-PG17_DESC=		PostgreSQL 17 client and server
 MEMCACHED_DESC=		memcached for Rails cache store
+PLAINTEXT_DESC=		allow OPENPROJECT_HTTPS=false (no TLS from nginx)
+PROMETHEUS_DESC=	yabeda Prometheus metrics (off day one)
 
-PG16_USES=		pgsql:16
-PG16_RUN_DEPENDS=	postgres:databases/postgresql16-server
-PG17_USES=		pgsql:17
-PG17_RUN_DEPENDS=	postgres:databases/postgresql17-server
 MEMCACHED_RUN_DEPENDS=	${LOCALBASE}/bin/memcached:databases/memcached
+# postgresql17 client comes from USES=pgsql:17. Server is sibling/external.
 # nginx is already installed on track (TLS + X-Forwarded-Proto https).
-# files/nginx.conf.sample is installed unconditionally; no nginx RUN_DEPENDS.
 
 WWWDIR=		${PREFIX}/www/openproject
 
@@ -106,7 +104,7 @@ BUNDLE_PATH_REL=	vendor/bundle
 MAKE_ENV+=	HOME=${WRKDIR} \
 		RAILS_ENV=production \
 		BUNDLE_PATH=${WRKSRC}/${BUNDLE_PATH_REL} \
-		BUNDLE_WITHOUT=development:test \
+		BUNDLE_WITHOUT=development:test:mysql2:sqlite \
 		BUNDLE_RETRY=3 \
 		CARGO_HOME=${WRKDIR}/.cargo \
 		NPM_CONFIG_CACHE=${WRKDIR}/.npm
@@ -126,9 +124,15 @@ do-build:
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
 		${LOCALBASE}/bin/bundle config set --local path '${BUNDLE_PATH_REL}'
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
-		${LOCALBASE}/bin/bundle config set --local without 'development test'
+		${LOCALBASE}/bin/bundle config set --local without 'development test mysql2 sqlite'
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
-		${LOCALBASE}/bin/bundle install --jobs ${MAKE_JOBS_NUMBER} --retry 3
+		${LOCALBASE}/bin/bundle lock
+	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
+		${LOCALBASE}/bin/bundle config set --local deployment true
+	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
+		${LOCALBASE}/bin/bundle install --deployment \
+		--without development:test:mysql2:sqlite \
+		--jobs ${MAKE_JOBS_NUMBER} --retry 3
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
 		${LOCALBASE}/bin/npm ci
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
@@ -145,12 +149,11 @@ do-install:
 		${STAGEDIR}${PREFIX}/share/man/man8 \
 		${STAGEDIR}${PREFIX}/share/man/man5 \
 		${STAGEDIR}${DOCSDIR} \
-		${STAGEDIR}${WWWDIR}/log \
 		${STAGEDIR}${WWWDIR}/tmp/pids \
-		${STAGEDIR}${WWWDIR}/tmp/cache \
-		${STAGEDIR}${WWWDIR}/files \
 		${STAGEDIR}/var/db/openproject \
-		${STAGEDIR}/var/log/openproject \
+		${STAGEDIR}/var/db/openproject/files \
+		${STAGEDIR}/var/db/openproject/tmp \
+		${STAGEDIR}/var/db/openproject/log \
 		${STAGEDIR}/var/run/openproject
 	(cd ${WRKSRC} && ${COPYTREE_SHARE} . ${STAGEDIR}${WWWDIR})
 	${FIND} ${STAGEDIR}${WWWDIR} \( -name '*.orig' -o -name '*.bak' \) -delete
@@ -174,10 +177,8 @@ post-install:
 	${FIND} -s ${STAGEDIR}${WWWDIR} -not -type d | ${SORT} | \
 		${SED} -e 's#^${STAGEDIR}${PREFIX}/##' >> ${TMPPLIST}
 	${ECHO_CMD} "@dir(%%USERS%%,%%GROUPS%%,755) ${WWWDIR_REL}" >> ${TMPPLIST}
-	${ECHO_CMD} "@dir(%%USERS%%,%%GROUPS%%,755) ${WWWDIR_REL}/log" >> ${TMPPLIST}
 	${ECHO_CMD} "@dir(%%USERS%%,%%GROUPS%%,755) ${WWWDIR_REL}/tmp" >> ${TMPPLIST}
 	${ECHO_CMD} "@dir(%%USERS%%,%%GROUPS%%,755) ${WWWDIR_REL}/tmp/pids" >> ${TMPPLIST}
-	${ECHO_CMD} "@dir(%%USERS%%,%%GROUPS%%,755) ${WWWDIR_REL}/files" >> ${TMPPLIST}
 
 do-test:
 	@${SH} -n ${FILESDIR}/openproject.in

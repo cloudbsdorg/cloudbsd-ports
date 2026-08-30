@@ -9,6 +9,7 @@ pattern plus CloudBSD JSON/rc.d/mdoc/doctor wrappers): Puma on
 already the jail TLS reverse proxy (X-Forwarded-Proto https).
 Docker, .deb, and linux_base are not used. BIM IFC converters
 (Linux blobs), hocuspocus, and Appsignal are not enabled.
+Prometheus metrics are off unless the PROMETHEUS option is set.
 
 OpenProject cannot consume JSON. It reads environment variables
 (DATABASE_URL, SECRET_KEY_BASE, OPENPROJECT_HOST__NAME,
@@ -16,9 +17,14 @@ OPENPROJECT_HTTPS, memcache). The file it actually uses is:
 
   %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
 
-An optional JSON file under the same directory can generate
-that env file (`openproject env`) if you want CloudBSD JSON
-as the editor format. It is not read by OpenProject itself.
+CloudBSD service JSON lives under %%PREFIX%%/etc/cloudbsd/<svc>
+(see sysutils/hawkeye). That is why this port does not use
+%%PREFIX%%/etc/openproject/. An optional JSON file in the
+cloudbsd directory can generate the env file (`openproject env`).
+It is not read by OpenProject itself.
+
+State: /var/db/openproject/{files,tmp,log}
+User:  openproject (UID/GID 396)
 
 1. Copy the env sample and set secrets:
 
@@ -31,7 +37,8 @@ as the editor format. It is not read by OpenProject itself.
    SECRET_KEY_BASE must be unique per install and persistent
    across upgrades. Do not regenerate it on every start.
 
-2. PostgreSQL 16 or 17 (matching the port option):
+2. PostgreSQL 17 client is a RUN_DEPENDS. The server is a sibling
+   or external service (not bundled):
 
      createuser -P openproject
      createdb -O openproject openproject

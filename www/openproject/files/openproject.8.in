@@ -108,6 +108,12 @@ rc.d service
 .Pq good_job worker .
 .It Pa %%WWWDIR%%
 Staged OpenProject application.
+.It Pa /var/db/openproject/files
+Attachment storage.
+.It Pa /var/db/openproject/tmp
+Scratch directory.
+.It Pa /var/db/openproject/log
+Application logs.
 .It Pa %%PREFIX%%/etc/nginx/openproject.conf.sample
 nginx reverse-proxy snippet for track.cloudbsd.org.
 .It Pa /var/run/openproject/openproject.pid

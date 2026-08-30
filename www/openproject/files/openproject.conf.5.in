@@ -35,6 +35,10 @@ An optional JSON file
 in the same directory can generate the env file
 .Pq Cm openproject env .
 That JSON is CloudBSD editor sugar only.
+That path is CloudBSD service-JSON law
+.Pq see sysutils/hawkeye .
+This port does not use
+.Pa %%PREFIX%%/etc/openproject .
 .Sh VARIABLES
 .Bl -tag -width OPENPROJECT_CACHE__MEMCACHE__SERVER
 .It Ev RAILS_ENV
@@ -52,7 +56,7 @@ Generate once with
 .Ql openssl rand -hex 64 .
 Do not regenerate on every start.
 .It Ev DATABASE_URL
-PostgreSQL 16 or 17 URL
+PostgreSQL 17 URL
 .Pq postgresql://user:pass@127.0.0.1:5432/openproject .
 .It Ev OPENPROJECT_HOST__NAME
 Public hostname.
@@ -81,6 +85,12 @@ Live environment file.
 Installed sample.
 .It Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json.sample
 Optional JSON wrapper sample.
+.It Pa /var/db/openproject/files
+Attachment storage.
+.It Pa /var/db/openproject/tmp
+Scratch directory.
+.It Pa /var/db/openproject/log
+Application logs.
 .El
 .Sh SEE ALSO
 .Xr openproject 8

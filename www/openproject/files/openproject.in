@@ -62,8 +62,10 @@ openproject_prestart()
 	openproject_checkconfig || return 1
 	install -d -o "${openproject_user}" -g "${openproject_group}" \
 		-m 0755 /var/run/openproject \
-		/var/log/openproject \
 		/var/db/openproject \
+		/var/db/openproject/files \
+		/var/db/openproject/tmp \
+		/var/db/openproject/log \
 		%%WWWDIR%%/tmp/pids
 }
 

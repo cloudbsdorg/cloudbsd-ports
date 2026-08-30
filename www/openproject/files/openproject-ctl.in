@@ -190,8 +190,10 @@ write_env_from_json()
 		fi
 		echo "RAILS_SERVE_STATIC_FILES=0"
 		echo "HOME=${_datadir}"
+		echo "RAILS_LOG_PATH=${_datadir}/log"
+		echo "TMPDIR=${_datadir}/tmp"
 		echo "BUNDLE_PATH=${_www}/vendor/bundle"
-		echo "BUNDLE_WITHOUT=development:test"
+		echo "BUNDLE_WITHOUT=development:test:mysql2:sqlite"
 	} > "${_tmp}"
 	jq -r '.extra_env // {} | to_entries[] | select(.value|type=="string") | "\(.key)=\(.value)"' \
 		"${OPENPROJECT_CONFIG}" >> "${_tmp}"
