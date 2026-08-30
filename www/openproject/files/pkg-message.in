@@ -1,0 +1,46 @@
+[
+{ type: install
+  message: <<EOM
+OpenProject %%VERSION%% is installed at %%WWWDIR%%.
+
+This is a native CloudBSD Rails port. Puma binds 127.0.0.1:3000.
+nginx terminates TLS and must send X-Forwarded-Proto https.
+OPENPROJECT_HOST__NAME defaults to track.cloudbsd.org.
+
+1. Copy JSON config:
+
+     cp %%PREFIX%%/etc/cloudbsd/openproject/config.json.sample \
+        %%PREFIX%%/etc/cloudbsd/openproject/config.json
+
+2. Secrets (mode 0600; do not commit):
+
+     openssl rand -hex 64 \
+       > %%PREFIX%%/etc/cloudbsd/openproject/secret_key_base
+     chmod 0600 %%PREFIX%%/etc/cloudbsd/openproject/secret_key_base
+     # write the PostgreSQL password to postgres.password, mode 0600
+
+3. PostgreSQL 16 or 17 (matching the port option):
+
+     createuser -P openproject
+     createdb -O openproject openproject
+
+4. Enable memcached and nginx. Merge
+   %%PREFIX%%/etc/nginx/openproject.conf.sample
+   into the jail vhost (certbot already on track).
+
+5. First-time schema:
+
+     openproject env
+     openproject migrate
+
+6. Check and start:
+
+     openproject doctor
+     sysrc openproject_enable=YES
+     service openproject start
+
+Man pages: openproject(8), openproject.conf(5)
+JSON:      %%PREFIX%%/etc/cloudbsd/openproject/config.json
+EOM
+}
+]

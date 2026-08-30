@@ -1,0 +1,33 @@
+{
+  "version": "17.7.2",
+  "bind": {
+    "address": "127.0.0.1",
+    "port": 3000
+  },
+  "host_name": "track.cloudbsd.org",
+  "https": true,
+  "default_language": "en",
+  "rails_env": "production",
+  "wwwdir": "/usr/local/www/openproject",
+  "secret_key_base_file": "/usr/local/etc/cloudbsd/openproject/secret_key_base",
+  "postgres": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "database": "openproject",
+    "user": "openproject",
+    "password_file": "/usr/local/etc/cloudbsd/openproject/postgres.password"
+  },
+  "memcached": {
+    "enabled": true,
+    "server": "127.0.0.1:11211"
+  },
+  "nginx": {
+    "enabled": true,
+    "x_forwarded_proto": "https"
+  },
+  "data_dir": "/var/db/openproject",
+  "log_dir": "/var/log/openproject",
+  "pidfile": "/var/run/openproject/openproject.pid",
+  "user": "openproject",
+  "extra_env": {}
+}

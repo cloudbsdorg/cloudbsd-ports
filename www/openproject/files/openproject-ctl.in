@@ -1,0 +1,373 @@
+#!/bin/sh
+#
+# Copyright (c) 2026 REVYTECH, Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# CloudBSD helper for official OpenProject. Does not relicense
+# OpenProject (GPLv3). Translates JSON config into OpenProject ENV.
+
+set -eu
+
+PREFIX="%%PREFIX%%"
+WWWDIR_DEFAULT="%%WWWDIR%%"
+VERSION="%%VERSION%%"
+OP_USER_DEFAULT="%%USERS%%"
+
+: "${OPENPROJECT_CONFIG:=${PREFIX}/etc/cloudbsd/openproject/config.json}"
+: "${OPENPROJECT_ENVFILE:=/var/db/openproject/env}"
+
+umask 077
+
+usage()
+{
+	echo "usage: openproject checkconfig | doctor | env | migrate | secret | supervise | version" >&2
+	exit 2
+}
+
+die()
+{
+	echo "openproject: $*" >&2
+	exit 1
+}
+
+need_jq()
+{
+	if ! command -v jq >/dev/null 2>&1; then
+		die "jq is required (textproc/jq)"
+	fi
+}
+
+cfg()
+{
+	jq -er "$1" "${OPENPROJECT_CONFIG}" 2>/dev/null || echo "$2"
+}
+
+filemode()
+{
+	if stat -f %OLp "$1" >/dev/null 2>&1; then
+		stat -f %OLp "$1"
+	else
+		stat -c %a "$1"
+	fi
+}
+
+read_secret_line()
+{
+	_sf="$1"
+	[ -f "${_sf}" ] || die "missing secret file: ${_sf}"
+	_mode=$(filemode "${_sf}")
+	case "${_mode}" in
+	600|400|0600|0400) ;;
+	*)
+		die "secret file ${_sf} must be mode 0600 (is ${_mode})"
+		;;
+	esac
+	# first line only, no trailing newline in value
+	sed -n '1p' "${_sf}" | tr -d '\r\n'
+}
+
+json_ok()
+{
+	jq -e . "${OPENPROJECT_CONFIG}" >/dev/null 2>&1
+}
+
+uri_encode()
+{
+	jq -nr --arg p "$1" '$p|@uri'
+}
+
+tcp_open()
+{
+	_host="$1"
+	_port="$2"
+	if command -v nc >/dev/null 2>&1; then
+		nc -z -w 2 "${_host}" "${_port}" >/dev/null 2>&1
+		return $?
+	fi
+	return 1
+}
+
+checkconfig()
+{
+	need_jq
+	[ -f "${OPENPROJECT_CONFIG}" ] || die "config missing: ${OPENPROJECT_CONFIG}"
+	json_ok || die "invalid JSON: ${OPENPROJECT_CONFIG}"
+	_addr=$(cfg '.bind.address' '')
+	_port=$(cfg '.bind.port' '')
+	_host=$(cfg '.host_name' '')
+	_www=$(cfg '.wwwdir' "${WWWDIR_DEFAULT}")
+	[ -n "${_addr}" ] || die "bind.address is required"
+	[ -n "${_port}" ] || die "bind.port is required"
+	[ -n "${_host}" ] || die "host_name is required"
+	case "${_addr}" in
+	127.0.0.1|localhost|::1) ;;
+	*)
+		echo "openproject: warning: bind.address ${_addr} is not loopback; track expects 127.0.0.1" >&2
+		;;
+	esac
+	[ "${_port}" = "3000" ] || \
+		echo "openproject: warning: bind.port ${_port} is not 3000" >&2
+	_sk=$(cfg '.secret_key_base_file' '')
+	[ -n "${_sk}" ] || die "secret_key_base_file is required"
+	_pw=$(cfg '.postgres.password_file' '')
+	[ -n "${_pw}" ] || die "postgres.password_file is required"
+	return 0
+}
+
+write_env()
+{
+	checkconfig
+	_www=$(cfg '.wwwdir' "${WWWDIR_DEFAULT}")
+	_addr=$(cfg '.bind.address' '127.0.0.1')
+	_port=$(cfg '.bind.port' '3000')
+	_host=$(cfg '.host_name' 'track.cloudbsd.org')
+	_https=$(cfg '.https' 'true')
+	_lang=$(cfg '.default_language' 'en')
+	_rails=$(cfg '.rails_env' 'production')
+	_pghost=$(cfg '.postgres.host' '127.0.0.1')
+	_pgport=$(cfg '.postgres.port' '5432')
+	_pgdb=$(cfg '.postgres.database' 'openproject')
+	_pguser=$(cfg '.postgres.user' 'openproject')
+	_skfile=$(cfg '.secret_key_base_file' '')
+	_pwfile=$(cfg '.postgres.password_file' '')
+	_mc_en=$(cfg '.memcached.enabled' 'true')
+	_mc=$(cfg '.memcached.server' '127.0.0.1:11211')
+	_datadir=$(cfg '.data_dir' '/var/db/openproject')
+	_secret=$(read_secret_line "${_skfile}")
+	_pw=$(read_secret_line "${_pwfile}")
+	[ -n "${_secret}" ] || die "secret_key_base is empty"
+	[ -n "${_pw}" ] || die "postgres password is empty"
+	_pwe=$(uri_encode "${_pw}")
+	_dburl="postgresql://${_pguser}:${_pwe}@${_pghost}:${_pgport}/${_pgdb}"
+
+	_dir=$(dirname "${OPENPROJECT_ENVFILE}")
+	mkdir -p "${_dir}"
+	_tmp="${OPENPROJECT_ENVFILE}.tmp.$$"
+	{
+		echo "RAILS_ENV=${_rails}"
+		echo "HOST=${_addr}"
+		echo "PORT=${_port}"
+		echo "SECRET_KEY_BASE=${_secret}"
+		echo "DATABASE_URL=${_dburl}"
+		echo "OPENPROJECT_HOST__NAME=${_host}"
+		echo "OPENPROJECT_HTTPS=${_https}"
+		echo "OPENPROJECT_DEFAULT__LANGUAGE=${_lang}"
+		echo "OPENPROJECT_INSTALLATION__TYPE=manual"
+		echo "OPENPROJECT_ATTACHMENTS__STORAGE__PATH=${_datadir}/files"
+		if [ "${_mc_en}" = "true" ]; then
+			echo "OPENPROJECT_RAILS__CACHE__STORE=memcache"
+			echo "OPENPROJECT_CACHE__MEMCACHE__SERVER=${_mc}"
+		else
+			echo "OPENPROJECT_RAILS__CACHE__STORE=file_store"
+		fi
+		echo "RAILS_SERVE_STATIC_FILES=0"
+		echo "HOME=${_datadir}"
+		echo "BUNDLE_PATH=${_www}/vendor/bundle"
+		echo "BUNDLE_WITHOUT=development:test"
+	} > "${_tmp}"
+	# extra_env: keys only if they are strings
+	jq -r '.extra_env // {} | to_entries[] | select(.value|type=="string") | "\(.key)=\(.value)"' \
+		"${OPENPROJECT_CONFIG}" >> "${_tmp}"
+	chmod 0600 "${_tmp}"
+	mv "${_tmp}" "${OPENPROJECT_ENVFILE}"
+	echo "openproject: wrote ${OPENPROJECT_ENVFILE}"
+}
+
+doctor()
+{
+	_fail=0
+	_ok() { echo "    OK   $*"; }
+	_bad() { echo "    FAIL $*"; _fail=1; }
+	_wrn() { echo "    WARN $*"; }
+
+	echo "==> config"
+	if [ ! -f "${OPENPROJECT_CONFIG}" ]; then
+		_bad "missing ${OPENPROJECT_CONFIG}"
+		echo "openproject: doctor failed"
+		return 1
+	elif ! json_ok; then
+		_bad "invalid JSON ${OPENPROJECT_CONFIG}"
+	else
+		_ok "${OPENPROJECT_CONFIG}"
+		if checkconfig >/dev/null 2>&1; then
+			_ok "required keys"
+		else
+			_bad "checkconfig failed"
+		fi
+	fi
+
+	_skfile=$(cfg '.secret_key_base_file' '')
+	_pwfile=$(cfg '.postgres.password_file' '')
+	echo "==> secrets"
+	if [ -n "${_skfile}" ] && [ -f "${_skfile}" ]; then
+		_mode=$(filemode "${_skfile}")
+		case "${_mode}" in
+		600|400|0600|0400) _ok "secret_key_base_file mode ${_mode}" ;;
+		*) _bad "secret_key_base_file mode ${_mode} (want 0600)" ;;
+		esac
+	else
+		_bad "secret_key_base_file missing"
+	fi
+	if [ -n "${_pwfile}" ] && [ -f "${_pwfile}" ]; then
+		_mode=$(filemode "${_pwfile}")
+		case "${_mode}" in
+		600|400|0600|0400) _ok "postgres.password_file mode ${_mode}" ;;
+		*) _bad "postgres.password_file mode ${_mode} (want 0600)" ;;
+		esac
+	else
+		_bad "postgres.password_file missing"
+	fi
+
+	_pid=$(cfg '.pidfile' '/var/run/openproject/openproject.pid')
+	_piddir=$(dirname "${_pid}")
+	echo "==> pidfile"
+	if [ -d "${_piddir}" ]; then
+		_ok "directory ${_piddir}"
+	else
+		_wrn "directory ${_piddir} absent (rc.d creates it on start)"
+	fi
+	if [ -f "${_pid}" ]; then
+		_p=$(sed -n '1p' "${_pid}" | tr -d ' ')
+		if [ -n "${_p}" ] && kill -0 "${_p}" 2>/dev/null; then
+			_ok "running pid ${_p}"
+		else
+			_wrn "stale pidfile ${_pid}"
+		fi
+	else
+		_wrn "pidfile absent (service not running)"
+	fi
+
+	_pghost=$(cfg '.postgres.host' '127.0.0.1')
+	_pgport=$(cfg '.postgres.port' '5432')
+	echo "==> postgres"
+	if tcp_open "${_pghost}" "${_pgport}"; then
+		_ok "${_pghost}:${_pgport} reachable"
+	else
+		_bad "${_pghost}:${_pgport} not reachable"
+	fi
+	if command -v pg_isready >/dev/null 2>&1; then
+		if pg_isready -h "${_pghost}" -p "${_pgport}" -q; then
+			_ok "pg_isready"
+		else
+			_bad "pg_isready failed"
+		fi
+	fi
+
+	_mc_en=$(cfg '.memcached.enabled' 'true')
+	echo "==> memcached"
+	if [ "${_mc_en}" = "true" ]; then
+		_mc=$(cfg '.memcached.server' '127.0.0.1:11211')
+		_mch=${_mc%%:*}
+		_mcp=${_mc##*:}
+		if tcp_open "${_mch}" "${_mcp}"; then
+			_ok "${_mc} reachable"
+		else
+			_bad "${_mc} not reachable"
+		fi
+	else
+		_wrn "memcached disabled in config"
+	fi
+
+	_addr=$(cfg '.bind.address' '127.0.0.1')
+	_port=$(cfg '.bind.port' '3000')
+	echo "==> bind"
+	_ok "configured ${_addr}:${_port}"
+	if tcp_open "${_addr}" "${_port}"; then
+		_ok "listener present on ${_addr}:${_port}"
+	else
+		_wrn "nothing listening on ${_addr}:${_port}"
+	fi
+
+	_www=$(cfg '.wwwdir' "${WWWDIR_DEFAULT}")
+	echo "==> application"
+	if [ -f "${_www}/Gemfile" ] && [ -f "${_www}/config.ru" ]; then
+		_ok "${_www} (Gemfile, config.ru)"
+	else
+		_bad "${_www} missing Gemfile or config.ru"
+	fi
+	if [ -d "${_www}/vendor/bundle" ]; then
+		_ok "vendor/bundle present"
+	else
+		_wrn "vendor/bundle absent (port build installs gems)"
+	fi
+
+	if [ "${_fail}" -ne 0 ]; then
+		echo "openproject: doctor failed"
+		return 1
+	fi
+	echo "openproject: doctor ok"
+	return 0
+}
+
+do_migrate()
+{
+	write_env
+	_www=$(cfg '.wwwdir' "${WWWDIR_DEFAULT}")
+	# shellcheck disable=SC1090
+	set -a
+	# env file contains secrets; sourced only for migrate
+	. "${OPENPROJECT_ENVFILE}"
+	set +a
+	cd "${_www}"
+	${PREFIX}/bin/bundle exec rake db:migrate
+}
+
+do_supervise()
+{
+	write_env
+	_www=$(cfg '.wwwdir' "${WWWDIR_DEFAULT}")
+	_addr=$(cfg '.bind.address' '127.0.0.1')
+	_port=$(cfg '.bind.port' '3000')
+	# shellcheck disable=SC1090
+	set -a
+	. "${OPENPROJECT_ENVFILE}"
+	set +a
+	cd "${_www}"
+	exec ${PREFIX}/bin/bundle exec puma \
+		--dir "${_www}" \
+		-e "${RAILS_ENV:-production}" \
+		--bind "tcp://${_addr}:${_port}"
+}
+
+do_secret()
+{
+	if command -v openssl >/dev/null 2>&1; then
+		openssl rand -hex 64
+	else
+		die "openssl is required to generate secret_key_base"
+	fi
+}
+
+[ $# -ge 1 ] || usage
+
+case "$1" in
+checkconfig)
+	checkconfig
+	echo "openproject: checkconfig ok"
+	;;
+doctor)
+	need_jq
+	doctor
+	;;
+env)
+	need_jq
+	write_env
+	;;
+migrate)
+	need_jq
+	do_migrate
+	;;
+secret)
+	do_secret
+	;;
+supervise)
+	need_jq
+	do_supervise
+	;;
+version)
+	echo "openproject ${VERSION}"
+	;;
+*)
+	usage
+	;;
+esac

@@ -560,6 +560,7 @@
     SUBDIR += opencart
     SUBDIR += openemr
     SUBDIR += opengist
+    SUBDIR += openproject
     SUBDIR += openresty
     SUBDIR += orangehrm
     SUBDIR += osrm-backend

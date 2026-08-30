@@ -523,7 +523,8 @@ ttrssd:*:571:571::0:0:ttrssd user:/nonexistent:/usr/sbin/nologin
 # free: 573
 # free: 574
 nexus:*:575:575::0:0:Nexus Repository Manager OSS:/nonexistent:/usr/sbin/nologin
-# free: 576
+openproject:*:576:576::0:0:OpenProject:/var/db/openproject:/usr/sbin/nologin
+# free: 577
 # free: 577
 # free: 578
 # free: 579

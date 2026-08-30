@@ -1,0 +1,125 @@
+.\" Copyright (c) 2026 REVYTECH, Inc.
+.\" SPDX-License-Identifier: BSD-3-Clause
+.\"
+.Dd August 30, 2026
+.Dt OPENPROJECT 8
+.Os
+.Sh NAME
+.Nm openproject
+.Nd CloudBSD OpenProject service helper
+.Sh SYNOPSIS
+.Nm
+.Cm checkconfig
+.Nm
+.Cm doctor
+.Nm
+.Cm env
+.Nm
+.Cm migrate
+.Nm
+.Cm secret
+.Nm
+.Cm supervise
+.Nm
+.Cm version
+.Sh DESCRIPTION
+.Nm
+is the CloudBSD helper for official OpenProject %%VERSION%%.
+The Rails application lives in
+.Pa %%WWWDIR%%
+and is served by Puma on
+.Li 127.0.0.1:3000 .
+nginx terminates TLS and must send
+.Li X-Forwarded-Proto: https .
+.Pp
+Operator configuration is JSON.
+See
+.Xr openproject.conf 5 .
+OpenProject itself reads environment variables.
+.Nm
+translates the JSON file into those variables
+.Pq DATABASE_URL, OPENPROJECT_HOST__NAME, memcached, HTTPS
+and writes them to
+.Pa /var/db/openproject/env .
+That is why a helper exists: CloudBSD law is JSON; OpenProject's
+native config is ENV.
+.Pp
+The rc.d script
+.Pa %%PREFIX%%/etc/rc.d/openproject
+calls
+.Nm
+for
+.Cm checkconfig ,
+.Cm env ,
+and
+.Cm supervise
+so
+.Ql service openproject start
+works.
+.Sh COMMANDS
+.Bl -tag -width checkconfig
+.It Cm checkconfig
+Validate that the JSON file exists, parses, and contains the required
+keys
+.Pq bind, host_name, secret and postgres password files .
+.It Cm doctor
+Check configuration, secret file modes, pidfile directory, PostgreSQL
+reachability, memcached, bind address, and the staged application tree.
+.It Cm env
+Write
+.Pa /var/db/openproject/env
+from JSON.
+The file is mode 0600 and contains secrets; do not print it.
+.It Cm migrate
+Write the env file and run
+.Ql bundle exec rake db:migrate
+in the application directory.
+.It Cm secret
+Print a new
+.Li SECRET_KEY_BASE
+to stdout using
+.Ql openssl rand -hex 64 .
+Redirect it into the secret file and set mode 0600.
+.It Cm supervise
+Load JSON, write the env file, and exec Puma in the foreground.
+Used by
+.Xr rc 8 .
+.It Cm version
+Print the packaged OpenProject version.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width OPENPROJECT_CONFIG
+.It Ev OPENPROJECT_CONFIG
+Path to the JSON file.
+Default:
+.Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json .
+.It Ev OPENPROJECT_ENVFILE
+Path of the generated env file.
+Default:
+.Pa /var/db/openproject/env .
+.El
+.Sh FILES
+.Bl -tag -width indent -compact
+.It Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json
+Operator JSON configuration.
+.It Pa %%PREFIX%%/etc/rc.d/openproject
+rc.d service.
+.It Pa %%WWWDIR%%
+Staged OpenProject application.
+.It Pa %%PREFIX%%/etc/nginx/openproject.conf.sample
+nginx reverse-proxy snippet for track.cloudbsd.org.
+.It Pa /var/run/openproject/openproject.pid
+Service pidfile.
+.El
+.Sh EXIT STATUS
+.Ex -std
+.Sh SEE ALSO
+.Xr openproject.conf 5 ,
+.Xr rc 8 ,
+.Xr nginx 8
+.Sh AUTHORS
+This manual page was written for CloudBSD by
+.An Mark LaPointe Aq Mt mark@cloudbsd.org .
+CloudBSD packaging files are Copyright (c) 2026 REVYTECH, Inc.,
+BSD 3-Clause.
+OpenProject remains GNU GPL version 3.

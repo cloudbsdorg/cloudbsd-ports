@@ -1,0 +1,10 @@
+sbin/openproject
+@sample etc/cloudbsd/openproject/config.json.sample
+@dir etc/cloudbsd/openproject
+@sample etc/nginx/openproject.conf.sample
+share/man/man8/openproject.8.gz
+share/man/man5/openproject.conf.5.gz
+share/doc/openproject/COPYRIGHT
+@dir(%%USERS%%,%%GROUPS%%,750) /var/db/openproject
+@dir(%%USERS%%,%%GROUPS%%,755) /var/log/openproject
+@dir(%%USERS%%,%%GROUPS%%,755) /var/run/openproject

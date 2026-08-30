@@ -1,0 +1,68 @@
+#!/bin/sh
+#
+# Copyright (c) 2026 REVYTECH, Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# PROVIDE: openproject
+# REQUIRE: LOGIN postgresql memcached
+# KEYWORD: shutdown
+
+# OpenProject Puma on 127.0.0.1:3000. JSON config is translated by
+# %%PREFIX%%/sbin/openproject before start.
+
+. /etc/rc.subr
+
+name="openproject"
+desc="OpenProject Rails application (Puma)"
+rcvar="openproject_enable"
+
+load_rc_config ${name}
+
+: ${openproject_enable:="NO"}
+: ${openproject_user:="%%USERS%%"}
+: ${openproject_group:="%%GROUPS%%"}
+: ${openproject_config:="%%PREFIX%%/etc/cloudbsd/openproject/config.json"}
+: ${openproject_pidfile:="/var/run/openproject/openproject.pid"}
+
+pidfile="${openproject_pidfile}"
+procname="%%PREFIX%%/bin/ruby"
+command="/usr/sbin/daemon"
+
+extra_commands="doctor checkconfig"
+doctor_cmd="openproject_doctor"
+checkconfig_cmd="openproject_checkconfig"
+start_precmd="openproject_prestart"
+stop_postcmd="openproject_poststop"
+
+export OPENPROJECT_CONFIG="${openproject_config}"
+
+openproject_checkconfig()
+{
+	%%PREFIX%%/sbin/openproject checkconfig
+}
+
+openproject_doctor()
+{
+	%%PREFIX%%/sbin/openproject doctor
+}
+
+openproject_prestart()
+{
+	openproject_checkconfig || return 1
+	%%PREFIX%%/sbin/openproject env || return 1
+	install -d -o "${openproject_user}" -g "${openproject_group}" \
+		-m 0755 /var/run/openproject \
+		/var/log/openproject \
+		/var/db/openproject
+}
+
+openproject_poststop()
+{
+	rm -f "${pidfile}"
+}
+
+# -P records daemon's pid. supervise execs bundle/puma in the foreground.
+command_args="-c -f -P ${pidfile} -u ${openproject_user} -T ${name} \
+	%%PREFIX%%/sbin/openproject supervise"
+
+run_rc_command "$1"
