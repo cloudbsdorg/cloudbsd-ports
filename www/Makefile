@@ -128,6 +128,7 @@
     SUBDIR += codeberg-pages-server
     SUBDIR += codeigniter
     SUBDIR += colly
+    SUBDIR += comentario
     SUBDIR += coppermine
     SUBDIR += corepack
     SUBDIR += cpp-httplib
@@ -529,6 +530,8 @@
     SUBDIR += nginx-lite
     SUBDIR += nginx-module-lua
     SUBDIR += nginx-module-lua-stream
+    SUBDIR += nginx-module-ndk
+    SUBDIR += nginx-module-njs
     SUBDIR += nginx-naxsi
     SUBDIR += nginx-prometheus-exporter
     SUBDIR += nginx-ultimate-bad-bot-blocker

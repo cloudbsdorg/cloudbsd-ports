@@ -582,6 +582,7 @@
     SUBDIR += pgbackrest
     SUBDIR += pgbadger
     SUBDIR += pgbarman
+    SUBDIR += pgbot
     SUBDIR += pgbouncer
     SUBDIR += pgdbf
     SUBDIR += pgjwt
@@ -601,7 +602,9 @@
     SUBDIR += pgschema
     SUBDIR += pgsql-http
     SUBDIR += pgtcl
+    SUBDIR += pgterm
     SUBDIR += pgtop
+    SUBDIR += pgtui
     SUBDIR += pguri
     SUBDIR += pgvector
     SUBDIR += php-memvector
@@ -1179,6 +1182,7 @@
     SUBDIR += tdb1
     SUBDIR += tdb1410
     SUBDIR += tdb1413
+    SUBDIR += tdb1415
     SUBDIR += tdbc
     SUBDIR += tile38
     SUBDIR += tiledb

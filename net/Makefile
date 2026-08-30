@@ -347,7 +347,6 @@
     SUBDIR += kldap
     SUBDIR += kmailtransport
     SUBDIR += kmbox
-    SUBDIR += kmime
     SUBDIR += knc
     SUBDIR += knxd
     SUBDIR += kontactinterface
@@ -557,6 +556,7 @@
     SUBDIR += nng
     SUBDIR += norm
     SUBDIR += nqptp
+    SUBDIR += nsc-tui
     SUBDIR += nsq
     SUBDIR += nss-pam-ldapd
     SUBDIR += nss-pam-ldapd-sasl
@@ -1101,6 +1101,7 @@
     SUBDIR += py-lib389
     SUBDIR += py-libcloud
     SUBDIR += py-libdnet
+    SUBDIR += py-macaddress
     SUBDIR += py-magic-wormhole
     SUBDIR += py-matrix-synapse-ldap3
     SUBDIR += py-maxminddb
@@ -1356,9 +1357,9 @@
     SUBDIR += rubygem-gitlab-fog-azure-rm
     SUBDIR += rubygem-gitlab-gkg-proto
     SUBDIR += rubygem-gitlab-kas-grpc
+    SUBDIR += rubygem-gitlab-orbit-proto
     SUBDIR += rubygem-gitlab_omniauth-ldap
     SUBDIR += rubygem-gitlab_omniauth-ldap-gitlab
-    SUBDIR += rubygem-gitlab-orbit-proto
     SUBDIR += rubygem-google-cloud-bigquery
     SUBDIR += rubygem-google-cloud-bigtable
     SUBDIR += rubygem-google-cloud-bigtable-admin-v2
@@ -1429,6 +1430,7 @@
     SUBDIR += rubygem-oauth
     SUBDIR += rubygem-oauth-gitlab
     SUBDIR += rubygem-oauth-tty
+    SUBDIR += rubygem-oauth-tty-gitlab
     SUBDIR += rubygem-oauth0
     SUBDIR += rubygem-oauth2
     SUBDIR += rubygem-oauth2-gitlab
@@ -1524,6 +1526,7 @@
     SUBDIR += samba420
     SUBDIR += samba422
     SUBDIR += samba423
+    SUBDIR += samba424
     SUBDIR += samplicator
     SUBDIR += savvycan
     SUBDIR += sbm

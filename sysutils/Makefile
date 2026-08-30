@@ -405,7 +405,6 @@
     SUBDIR += fileprune
     SUBDIR += fileschanged
     SUBDIR += filetype
-    SUBDIR += filevercmp
     SUBDIR += filewatcherd
     SUBDIR += finfo
     SUBDIR += firstboot-cloudsetup
@@ -513,6 +512,8 @@
     SUBDIR += hare
     SUBDIR += hared
     SUBDIR += hatop
+    SUBDIR += hawkeye
+    SUBDIR += hawkeye-data
     SUBDIR += hcloud
     SUBDIR += hdrecover
     SUBDIR += healthd
@@ -1707,6 +1708,8 @@
     SUBDIR += zeroer
     SUBDIR += zetaback
     SUBDIR += zetaback-devel
+    SUBDIR += zfs-allow
+    SUBDIR += zfs-set
     SUBDIR += zidrav
     SUBDIR += zli
     SUBDIR += znapzend
@@ -1714,6 +1717,7 @@
     SUBDIR += zot
     SUBDIR += zoxide
     SUBDIR += zpool-iostat-viz
+    SUBDIR += zpool-set
     SUBDIR += zrep
     SUBDIR += zsd
     SUBDIR += zsm

@@ -944,6 +944,7 @@
     SUBDIR += gnustep-make
     SUBDIR += go-bindata
     SUBDIR += go-bindata-assetfs
+    SUBDIR += go-blueprint
     SUBDIR += go-critic
     SUBDIR += go-git
     SUBDIR += go-mode.el
@@ -1918,6 +1919,7 @@
     SUBDIR += openapi
     SUBDIR += openapi-generator
     SUBDIR += openapi-tui
+    SUBDIR += opencircuitx
     SUBDIR += opencl
     SUBDIR += opencl-clang
     SUBDIR += opencvs
@@ -5244,6 +5246,7 @@
     SUBDIR += py-importlib-metadata
     SUBDIR += py-importlib-metadata6
     SUBDIR += py-importlib-metadata7
+    SUBDIR += py-importlib-metadata8
     SUBDIR += py-importlib-resources
     SUBDIR += py-in-n-out
     SUBDIR += py-incremental
@@ -5575,8 +5578,10 @@
     SUBDIR += py-opencensus
     SUBDIR += py-opencensus-context
     SUBDIR += py-opendht
+    SUBDIR += py-openfeature-sdk
     SUBDIR += py-openstacksdk
     SUBDIR += py-opentelemetry-api
+    SUBDIR += py-opentelemetry-configuration
     SUBDIR += py-opentelemetry-distro
     SUBDIR += py-opentelemetry-exporter-credential-provider-gcp
     SUBDIR += py-opentelemetry-exporter-otlp
@@ -5596,6 +5601,7 @@
     SUBDIR += py-opentelemetry-instrumentation-urllib3
     SUBDIR += py-opentelemetry-instrumentation-wsgi
     SUBDIR += py-opentelemetry-proto
+    SUBDIR += py-opentelemetry-proto-json
     SUBDIR += py-opentelemetry-resource-detector-azure
     SUBDIR += py-opentelemetry-sdk
     SUBDIR += py-opentelemetry-semantic-conventions
@@ -5793,7 +5799,6 @@
     SUBDIR += py-psygnal
     SUBDIR += py-ptable
     SUBDIR += py-ptpython
-    SUBDIR += py-ptvsd
     SUBDIR += py-pudb
     SUBDIR += py-pure-eval
     SUBDIR += py-pure-sasl
@@ -6300,6 +6305,7 @@
     SUBDIR += py-taskgroup
     SUBDIR += py-tasklib
     SUBDIR += py-tatsu
+    SUBDIR += py-tatsu-lts
     SUBDIR += py-tblib
     SUBDIR += py-tdworkflow
     SUBDIR += py-telepath
@@ -6833,8 +6839,11 @@
     SUBDIR += rubygem-aws-sdk
     SUBDIR += rubygem-aws-sdk-accessanalyzer
     SUBDIR += rubygem-aws-sdk-account
+    SUBDIR += rubygem-aws-sdk-accountaccess
     SUBDIR += rubygem-aws-sdk-acm
     SUBDIR += rubygem-aws-sdk-acmpca
+    SUBDIR += rubygem-aws-sdk-agentregistry
+    SUBDIR += rubygem-aws-sdk-agentregistrycontrol
     SUBDIR += rubygem-aws-sdk-aiops
     SUBDIR += rubygem-aws-sdk-amplify
     SUBDIR += rubygem-aws-sdk-amplifybackend
@@ -7153,6 +7162,7 @@
     SUBDIR += rubygem-aws-sdk-pipes
     SUBDIR += rubygem-aws-sdk-polly
     SUBDIR += rubygem-aws-sdk-pricing
+    SUBDIR += rubygem-aws-sdk-pricingplanmanager
     SUBDIR += rubygem-aws-sdk-prometheusservice
     SUBDIR += rubygem-aws-sdk-proton
     SUBDIR += rubygem-aws-sdk-qapps
@@ -8762,6 +8772,7 @@
     SUBDIR += talloc
     SUBDIR += talloc242
     SUBDIR += talloc243
+    SUBDIR += talloc244
     SUBDIR += task
     SUBDIR += taskctl
     SUBDIR += taskflow
@@ -8888,6 +8899,7 @@
     SUBDIR += violet
     SUBDIR += vipack
     SUBDIR += vitables
+    SUBDIR += vite-plus
     SUBDIR += volk
     SUBDIR += vstr
     SUBDIR += vxlog
@@ -8900,6 +8912,7 @@
     SUBDIR += wasi-compiler-rt20
     SUBDIR += wasi-compiler-rt21
     SUBDIR += wasi-compiler-rt22
+    SUBDIR += wasi-compiler-rt23
     SUBDIR += wasi-libc
     SUBDIR += wasi-libcxx
     SUBDIR += wasi-libcxx17
