@@ -1,0 +1,70 @@
+#!/bin/sh
+#
+# Copyright (c) 2026 REVYTECH, Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# PROVIDE: openproject_worker
+# REQUIRE: LOGIN postgresql memcached
+# KEYWORD: shutdown
+#
+# OpenProject good_job worker (bundle exec good_job start).
+# Packaged 17.7.2 uses good_job as a long-running process;
+# cron jobs:workoff is stale. Pair with rc.d/openproject (Puma).
+#
+# openproject_worker_enable (bool):	default NO
+# openproject_worker_user (str):	default %%USERS%%
+# openproject_worker_group (str):	default %%GROUPS%%
+# openproject_worker_envfile (str):	same ENV file as Puma
+
+. /etc/rc.subr
+
+name="openproject_worker"
+desc="OpenProject good_job background worker"
+rcvar="openproject_worker_enable"
+
+load_rc_config ${name}
+
+: ${openproject_worker_enable:="NO"}
+: ${openproject_worker_user:="%%USERS%%"}
+: ${openproject_worker_group:="%%GROUPS%%"}
+: ${openproject_worker_envfile:="%%PREFIX%%/etc/cloudbsd/openproject/openproject.env"}
+: ${openproject_worker_pidfile:="/var/run/openproject/openproject-worker.pid"}
+
+pidfile="${openproject_worker_pidfile}"
+procname="%%PREFIX%%/bin/ruby"
+command="/usr/sbin/daemon"
+command_args="-c -f -P ${pidfile} -u ${openproject_worker_user} \
+	-T ${name} -t ${name} \
+	%%PREFIX%%/sbin/openproject supervise-worker"
+
+extra_commands="checkconfig"
+checkconfig_cmd="openproject_worker_checkconfig"
+start_precmd="openproject_worker_prestart"
+stop_postcmd="openproject_worker_poststop"
+
+export OPENPROJECT_ENVFILE="${openproject_worker_envfile}"
+export PATH="${PATH}:%%PREFIX%%/bin"
+
+openproject_worker_checkconfig()
+{
+	%%PREFIX%%/sbin/openproject checkconfig
+}
+
+openproject_worker_prestart()
+{
+	openproject_worker_checkconfig || return 1
+	install -d -o "${openproject_worker_user}" \
+		-g "${openproject_worker_group}" \
+		-m 0755 /var/run/openproject \
+		/var/db/openproject \
+		/var/db/openproject/files \
+		/var/db/openproject/tmp \
+		/var/db/openproject/log
+}
+
+openproject_worker_poststop()
+{
+	rm -f "${pidfile}"
+}
+
+run_rc_command "$1"
