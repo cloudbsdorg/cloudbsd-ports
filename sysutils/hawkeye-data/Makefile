@@ -1,5 +1,6 @@
 PORTNAME=	hawkeye-data
 DISTVERSION=	0.1.0
+PORTREVISION=	1
 CATEGORIES=	sysutils
 
 MAINTAINER=	mark@cloudbsd.org
@@ -12,9 +13,9 @@ LICENSE_FILE=	${WRKSRC}/LICENSE
 USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
 GH_PROJECT=	hawkeye-data
-GH_TAGNAME=	ff1688e1faef215b71042848c6e0d065660271d1
+GH_TAGNAME=	a9e96f52a9a08e526232582d1e4d4a819fad0088
 
-# Unreleased snapshot: GH_TAGNAME is commit ff1688e1faef215b71042848c6e0d065660271d1 (hawkeye-data main).
+# Unreleased snapshot: GH_TAGNAME is commit a9e96f52a9a08e526232582d1e4d4a819fad0088 (hawkeye-data main, harvest PR 2).
 
 # Sibling of sysutils/hawkeye (binaries). This port is data only.
 # hawkeye is the sibling binary; see pkg-message. Not a RUN_DEPENDS to
@@ -28,10 +29,13 @@ DATADIR=	${PREFIX}/share/hawkeye
 do-install:
 	${MKDIR} ${STAGEDIR}${DATADIR}/playbooks \
 		${STAGEDIR}${DATADIR}/schema \
-		${STAGEDIR}${DATADIR}/docs
+		${STAGEDIR}${DATADIR}/docs \
+		${STAGEDIR}${DATADIR}/notices
 	${INSTALL_DATA} ${WRKSRC}/share/knowledge.sqlite ${STAGEDIR}${DATADIR}
 	${INSTALL_DATA} ${WRKSRC}/schema/knowledge.sql ${STAGEDIR}${DATADIR}/schema
 	${INSTALL_DATA} ${WRKSRC}/README.md ${STAGEDIR}${DATADIR}
+	${INSTALL_DATA} ${WRKSRC}/SOURCES.md ${STAGEDIR}${DATADIR}
+	${INSTALL_DATA} ${WRKSRC}/notices/FREEBSD-DOC-LICENSE.txt ${STAGEDIR}${DATADIR}/notices
 	cd ${WRKSRC}/playbooks && ${COPYTREE_SHARE} . ${STAGEDIR}${DATADIR}/playbooks
 	cd ${WRKSRC}/docs && ${COPYTREE_SHARE} . ${STAGEDIR}${DATADIR}/docs
 
