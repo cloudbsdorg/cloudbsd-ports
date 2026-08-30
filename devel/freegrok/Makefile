@@ -1,7 +1,7 @@
 # FreeGrok — CloudBSD / RevyTech fork of open-source Grok Build
 PORTNAME=	freegrok
-DISTVERSION=	1.0.6
-PORTREVISION=	1
+DISTVERSION=	1.0.12
+PORTREVISION=	0
 CATEGORIES=	devel
 MASTER_SITES=	# empty until first distfile; local checkout workflow
 DISTFILES=	# empty
