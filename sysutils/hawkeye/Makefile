@@ -13,14 +13,14 @@ USES=		go:1.25+,modules
 USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
 GH_PROJECT=	hawkeye
-GH_TAGNAME=	54e790fa4248b5498ee988c6d41378e563ae5684
+GH_TAGNAME=	9980a88c9c1103684d18b9d46a055725f4d886b6
 
-GO_MODULE=	github.com/revytechinc/hawkeye@54e790fa4248b5498ee988c6d41378e563ae5684
+GO_MODULE=	github.com/revytechinc/hawkeye@9980a88c9c1103684d18b9d46a055725f4d886b6
 GO_MOD_DIST=	github
 GO_TARGET=	./cmd/hawkeye
 CGO_ENABLED=	0
 
-# Unreleased snapshot: GH_TAGNAME is commit 54e790fa4248b5498ee988c6d41378e563ae5684 (hawkeye main).
+# Unreleased snapshot: GH_TAGNAME is commit 9980a88c9c1103684d18b9d46a055725f4d886b6 (hawkeye main).
 # Switch MASTER_SITES/GH_TAGNAME to a release tag when 0.1.0 is published.
 
 # This port ships the hawkeye binary, man pages, sample JSON config, and
