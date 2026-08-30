@@ -3,9 +3,10 @@
   message: <<EOM
 OpenProject %%VERSION%% is installed at %%WWWDIR%%.
 
-This is a native CloudBSD Rails port (www/redmine61 + www/gitlab
-model): Puma on 127.0.0.1:3000 and a separate good_job worker
-rc.d. nginx is the TLS reverse proxy (X-Forwarded-Proto https).
+This is a native CloudBSD Rails port (www/gitlab rc.d/Gemfile
+pattern plus CloudBSD JSON/rc.d/mdoc/doctor wrappers): Puma on
+127.0.0.1:3000 and a separate good_job worker rc.d. nginx is
+already the jail TLS reverse proxy (X-Forwarded-Proto https).
 Docker, .deb, and linux_base are not used. BIM IFC converters
 (Linux blobs), hocuspocus, and Appsignal are not enabled.
 

@@ -7,9 +7,9 @@
 # REQUIRE: LOGIN postgresql memcached
 # KEYWORD: shutdown
 #
-# OpenProject Puma on 127.0.0.1:3000. Modeled on www/redmine61.
-# The good_job worker is a separate rc.d script (openproject_worker).
-# nginx is the reverse proxy, not here.
+# OpenProject Puma on 127.0.0.1:3000. Modeled on www/gitlab rc.d
+# plus CloudBSD checkconfig/doctor. The good_job worker is
+# rc.d/openproject_worker. nginx is already the jail reverse proxy.
 #
 # openproject_enable (bool):	default NO
 # openproject_user (str):	default %%USERS%%

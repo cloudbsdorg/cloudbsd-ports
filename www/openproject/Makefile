@@ -31,10 +31,11 @@ GH_TUPLE=	opf:dentaku:78eece45bf3f4ed021c05dd2f5411d1c3f9b168a:dentaku \
 		opf:omniauth-openid-connect:825d06235b64f6bc872bba709f1c2d48fd5cede4:omniauthoidc \
 		opf:omniauth-openid_connect-providers:c7e2498a8b093cfc5693d4960cae2e903a5e10cd:omniauthoidcprov
 
-# Native port: www/redmine61 (USES=ruby, USE_RC_SUBR, Puma, PostgreSQL)
-# plus www/gitlab (Gemfile patches, dynamic WWWDIR plist) and CloudBSD
-# JSON/rc.d/doctor wrappers. Not NO_ARCH. Docker/.deb/linux_base are
-# not used; official installers need systemd/cgroups.
+# Native port modeled on www/gitlab (rc.d, Gemfile patches, files/,
+# dynamic WWWDIR plist) plus CloudBSD JSON/rc.d/mdoc/doctor wrappers.
+# www/redmine is not the pattern for this tree. Not NO_ARCH.
+# Docker/.deb/linux_base are not used; official installers need
+# systemd/cgroups. The old FreeBSD 10 rsmith howto is historical only.
 #
 # Upstream .ruby-version is 4.0.2. lang/ruby40 in this tree is 4.0.6
 # (closest packaged Ruby). Pin ruby:4.0 even if the default is 3.4.
@@ -46,7 +47,8 @@ GH_TUPLE=	opf:dentaku:78eece45bf3f4ed021c05dd2f5411d1c3f9b168a:dentaku \
 # Day-one: no BIM IFC Linux blobs, no hocuspocus, no Appsignal.
 # Build: vendor git gems, bundle into vendor/bundle, npm ci,
 # assets:precompile. Runtime: two rc.d scripts (Puma 127.0.0.1:3000
-# and good_job worker). nginx is the reverse proxy, not bundled.
+# and good_job worker). nginx is already the jail reverse proxy
+# (sample only; not a RUN_DEPENDS).
 USES=		cpe gmake nodejs:24,build pkgconf ruby:4.0,build,run \
 		shebangfix ssl uidfix
 CPE_VENDOR=	openproject
@@ -78,23 +80,23 @@ SUB_LIST=	PREFIX=${PREFIX} \
 		GROUPS=${GROUPS}
 PLIST_SUB=	USERS=${USERS} GROUPS=${GROUPS} WWWDIR=${WWWDIR_REL}
 
-OPTIONS_DEFINE=		MEMCACHED NGINX
+OPTIONS_DEFINE=		MEMCACHED
 OPTIONS_SINGLE=		PGVER
 OPTIONS_SINGLE_PGVER=	PG16 PG17
-OPTIONS_DEFAULT=	PG17 MEMCACHED NGINX
+OPTIONS_DEFAULT=	PG17 MEMCACHED
 OPTIONS_SUB=		yes
 
 PG16_DESC=		PostgreSQL 16 client and server
 PG17_DESC=		PostgreSQL 17 client and server
 MEMCACHED_DESC=		memcached for Rails cache store
-NGINX_DESC=		nginx reverse proxy sample (X-Forwarded-Proto https)
 
 PG16_USES=		pgsql:16
 PG16_RUN_DEPENDS=	postgres:databases/postgresql16-server
 PG17_USES=		pgsql:17
 PG17_RUN_DEPENDS=	postgres:databases/postgresql17-server
 MEMCACHED_RUN_DEPENDS=	${LOCALBASE}/bin/memcached:databases/memcached
-NGINX_RUN_DEPENDS=	nginx:www/nginx
+# nginx is already installed on track (TLS + X-Forwarded-Proto https).
+# files/nginx.conf.sample is installed unconditionally; no nginx RUN_DEPENDS.
 
 WWWDIR=		${PREFIX}/www/openproject
 
