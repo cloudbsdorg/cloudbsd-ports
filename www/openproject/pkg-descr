@@ -1,0 +1,18 @@
+OpenProject is open-source project management: work packages, Gantt,
+boards, wiki, and time tracking. This CloudBSD port builds official
+OpenProject 17.7.2 from source (bundle + frontend assets) and runs
+Puma on 127.0.0.1:3000 behind nginx.
+
+Operator config is JSON under /usr/local/etc/cloudbsd/openproject.
+openproject(8) translates that JSON into OpenProject environment
+variables (DATABASE_URL, OPENPROJECT_HOST__NAME, memcached, HTTPS).
+
+Default track.cloudbsd.org layout:
+
+  Puma          127.0.0.1:3000
+  PostgreSQL    16 or 17 (port option, default 17)
+  memcached     127.0.0.1:11211
+  nginx         TLS terminator, X-Forwarded-Proto https
+  Host          track.cloudbsd.org, OPENPROJECT_HTTPS=true
+
+WWW: https://www.openproject.org/

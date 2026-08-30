@@ -1,0 +1,130 @@
+.\" Copyright (c) 2026 REVYTECH, Inc.
+.\" SPDX-License-Identifier: BSD-3-Clause
+.\"
+.Dd August 30, 2026
+.Dt OPENPROJECT.CONF 5
+.Os
+.Sh NAME
+.Nm openproject.conf
+.Nd CloudBSD OpenProject JSON configuration
+.Sh SYNOPSIS
+.Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json
+.Sh DESCRIPTION
+The file
+.Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json
+is the operator configuration for
+.Xr openproject 8 .
+It is JSON.
+OpenProject does not read this file; the helper writes official
+environment variables from it.
+.Pp
+A sample is installed as
+.Pa config.json.sample .
+Copy it and fill the secret file paths.
+Never store
+.Li SECRET_KEY_BASE
+or the database password in the JSON document; use mode 0600 files.
+.Sh KEYS
+.Bl -tag -width memcached
+.It Va version
+Packaged OpenProject version string
+.Pq 17.7.2 .
+.It Va bind.address , Va bind.port
+Puma listen address and port.
+Track uses
+.Li 127.0.0.1
+and
+.Li 3000 .
+.It Va host_name
+Public hostname.
+Becomes
+.Ev OPENPROJECT_HOST__NAME .
+Default
+.Li track.cloudbsd.org .
+.It Va https
+Boolean.
+Becomes
+.Ev OPENPROJECT_HTTPS .
+Must be true when nginx sends
+.Li X-Forwarded-Proto: https .
+.It Va default_language
+Becomes
+.Ev OPENPROJECT_DEFAULT__LANGUAGE .
+.It Va rails_env
+Rails environment.
+Default
+.Li production .
+.It Va wwwdir
+Application root.
+Default
+.Pa %%WWWDIR%% .
+.It Va secret_key_base_file
+Path of a mode 0600 file containing
+.Li SECRET_KEY_BASE .
+.It Va postgres.host , Va postgres.port , Va postgres.database , Va postgres.user
+PostgreSQL 16 or 17 connection.
+Combined with
+.Va postgres.password_file
+into
+.Ev DATABASE_URL .
+.It Va postgres.password_file
+Path of a mode 0600 file containing the database password.
+.It Va memcached.enabled
+If true, set
+.Ev OPENPROJECT_RAILS__CACHE__STORE
+to
+.Li memcache .
+.It Va memcached.server
+Host:port for
+.Ev OPENPROJECT_CACHE__MEMCACHE__SERVER .
+Default
+.Li 127.0.0.1:11211 .
+.It Va nginx.enabled
+Documented for
+.Nm doctor .
+nginx itself is configured from
+.Pa %%PREFIX%%/etc/nginx/openproject.conf.sample .
+.It Va nginx.x_forwarded_proto
+Must be
+.Li https
+on track.cloudbsd.org.
+.It Va data_dir
+Attachment and home directory.
+Default
+.Pa /var/db/openproject .
+.It Va log_dir
+Log directory.
+Default
+.Pa /var/log/openproject .
+.It Va pidfile
+rc.d pidfile.
+Default
+.Pa /var/run/openproject/openproject.pid .
+.It Va user
+Service user.
+Default
+.Li openproject .
+.It Va extra_env
+Object of additional string environment variables copied into the
+env file.
+.El
+.Sh FILES
+.Bl -tag -width indent -compact
+.It Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json
+Live configuration.
+.It Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json.sample
+Installed sample.
+.It Pa %%PREFIX%%/etc/cloudbsd/openproject/secret_key_base
+Recommended secret path.
+.It Pa %%PREFIX%%/etc/cloudbsd/openproject/postgres.password
+Recommended password path.
+.It Pa /var/db/openproject/env
+Generated env file
+.Pq mode 0600 .
+.El
+.Sh SEE ALSO
+.Xr openproject 8
+.Sh AUTHORS
+This manual page was written for CloudBSD by
+.An Mark LaPointe Aq Mt mark@cloudbsd.org .
+Copyright (c) 2026 REVYTECH, Inc., BSD 3-Clause.
