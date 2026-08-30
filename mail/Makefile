@@ -293,6 +293,8 @@
     SUBDIR += opensmtpd-filter-dkimsign
     SUBDIR += opensmtpd-filter-rspamd
     SUBDIR += opensmtpd-filter-senderscore
+    SUBDIR += opensmtpd-table-passwd
+    SUBDIR += opensmtpd-table-postgres
     SUBDIR += opensmtpd-table-socketmap
     SUBDIR += opensmtpd-table-sqlite
     SUBDIR += osbf-lua
@@ -507,6 +509,7 @@
     SUBDIR += prepflog
     SUBDIR += procmail
     SUBDIR += procmail-bgrb
+    SUBDIR += protonmail-bridge
     SUBDIR += proxsmtp
     SUBDIR += py-aiosmtpd
     SUBDIR += py-alot
