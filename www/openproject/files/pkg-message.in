@@ -3,44 +3,58 @@
   message: <<EOM
 OpenProject %%VERSION%% is installed at %%WWWDIR%%.
 
-This is a native CloudBSD Rails port. Puma binds 127.0.0.1:3000.
-nginx terminates TLS and must send X-Forwarded-Proto https.
-OPENPROJECT_HOST__NAME defaults to track.cloudbsd.org.
+This is a native CloudBSD Rails port (www/redmine61 + www/gitlab
+model): Puma on 127.0.0.1:3000 and a separate good_job worker
+rc.d. nginx is the TLS reverse proxy (X-Forwarded-Proto https).
+Docker, .deb, and linux_base are not used. BIM IFC converters
+(Linux blobs), hocuspocus, and Appsignal are not enabled.
 
-1. Copy JSON config:
+OpenProject cannot consume JSON. It reads environment variables
+(DATABASE_URL, SECRET_KEY_BASE, OPENPROJECT_HOST__NAME,
+OPENPROJECT_HTTPS, memcache). The file it actually uses is:
 
-     cp %%PREFIX%%/etc/cloudbsd/openproject/config.json.sample \
-        %%PREFIX%%/etc/cloudbsd/openproject/config.json
+  %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
 
-2. Secrets (mode 0600; do not commit):
+An optional JSON file under the same directory can generate
+that env file (`openproject env`) if you want CloudBSD JSON
+as the editor format. It is not read by OpenProject itself.
 
-     openssl rand -hex 64 \
-       > %%PREFIX%%/etc/cloudbsd/openproject/secret_key_base
-     chmod 0600 %%PREFIX%%/etc/cloudbsd/openproject/secret_key_base
-     # write the PostgreSQL password to postgres.password, mode 0600
+1. Copy the env sample and set secrets:
 
-3. PostgreSQL 16 or 17 (matching the port option):
+     cp %%PREFIX%%/etc/cloudbsd/openproject/openproject.env.sample \
+        %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
+     # set SECRET_KEY_BASE once (openssl rand -hex 64) and keep it
+     # set DATABASE_URL password
+     chmod 0600 %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
+
+   SECRET_KEY_BASE must be unique per install and persistent
+   across upgrades. Do not regenerate it on every start.
+
+2. PostgreSQL 16 or 17 (matching the port option):
 
      createuser -P openproject
      createdb -O openproject openproject
 
-4. Enable memcached and nginx. Merge
+3. Enable memcached. Merge
    %%PREFIX%%/etc/nginx/openproject.conf.sample
    into the jail vhost (certbot already on track).
 
-5. First-time schema:
+4. First-time schema:
 
-     openproject env
      openproject migrate
 
-6. Check and start:
+5. Check and start Puma and the worker (two rc.d scripts):
 
      openproject doctor
      sysrc openproject_enable=YES
+     sysrc openproject_worker_enable=YES
      service openproject start
+     service openproject_worker start
+
+Default login is admin / admin. Change it immediately.
 
 Man pages: openproject(8), openproject.conf(5)
-JSON:      %%PREFIX%%/etc/cloudbsd/openproject/config.json
+ENV file:  %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
 EOM
 }
 ]

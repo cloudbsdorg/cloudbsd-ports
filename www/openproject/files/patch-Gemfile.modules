@@ -1,0 +1,23 @@
+--- Gemfile.modules.orig
++++ Gemfile.modules
+@@ -3,12 +3,10 @@
+ end
+ 
+ gem 'omniauth-openid_connect-providers',
+-    git: 'https://github.com/opf/omniauth-openid_connect-providers.git',
+-    ref: 'c7e2498a8b093cfc5693d4960cae2e903a5e10cd'
++    path: 'vendor/gems/omniauth-openid_connect-providers'
+ 
+ gem 'omniauth-openid-connect',
+-    git: 'https://github.com/opf/omniauth-openid-connect.git',
+-    ref: '825d06235b64f6bc872bba709f1c2d48fd5cede4'
++    path: 'vendor/gems/omniauth-openid-connect'
+ 
+ group :opf_plugins do
+     # included so that engines can reference OpenProject::Version
+@@ -45,5 +43,4 @@
+   gem 'openproject-wikis',                     path: 'modules/wikis'
+   gem 'openproject-documents',                 path: 'modules/documents'
+ 
+-  gem 'openproject-bim',                       path: 'modules/bim'
+ end

@@ -1,0 +1,29 @@
+--- Gemfile.orig
++++ Gemfile
+@@ -53,7 +53,7 @@
+ gem "doorkeeper", "~> 5.9.3"
+ # Maintain our own omniauth due to relative URL root issues
+ # see upstream PR: https://github.com/omniauth/omniauth/pull/903
+-gem "omniauth", git: "https://github.com/opf/omniauth", ref: "7eb21563ba047ef86d71f099975587b5ec88f9c9"
++gem "omniauth", path: "vendor/gems/omniauth"
+ gem "request_store", "~> 1.7.0"
+ 
+ gem "warden", "~> 1.2"
+@@ -154,7 +154,7 @@
+ gem "airbrake", "~> 13.0.0", require: false
+ 
+ gem "markly", "~> 0.15" # another markdown parser like commonmarker, but with AST support used in PDF export
+-gem "md_to_pdf", git: "https://github.com/opf/md-to-pdf", ref: "0cb4597becd2243b810e7ce53bbbbf28b5f05844"
++gem "md_to_pdf", path: "vendor/gems/md-to-pdf"
+ gem "prawn", "~> 2.4"
+ gem "ttfunk", "~> 1.7.0" # remove after https://github.com/prawnpdf/prawn/issues/1346 resolved.
+ 
+@@ -400,7 +400,7 @@
+ gem "disposable", "~> 0.6.2"
+ 
+ # Used for formula evaluation of calculated values
+-gem "dentaku", "~> 3.5", git: "https://github.com/opf/dentaku", ref: "78eece45bf3f4ed021c05dd2f5411d1c3f9b168a"
++gem "dentaku", "~> 3.5", path: "vendor/gems/dentaku"
+ 
+ # Used for more powerful counter caches
+ gem "counter_culture", "~> 3.14"

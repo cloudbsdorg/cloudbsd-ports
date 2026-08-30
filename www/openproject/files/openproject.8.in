@@ -21,95 +21,99 @@
 .Nm
 .Cm supervise
 .Nm
+.Cm supervise-worker
+.Nm
 .Cm version
 .Sh DESCRIPTION
 .Nm
 is the CloudBSD helper for official OpenProject %%VERSION%%.
 The Rails application lives in
-.Pa %%WWWDIR%%
-and is served by Puma on
+.Pa %%WWWDIR%% .
+Puma binds
 .Li 127.0.0.1:3000 .
+A
+.Li good_job
+worker runs in the background.
 nginx terminates TLS and must send
 .Li X-Forwarded-Proto: https .
 .Pp
-Operator configuration is JSON.
-See
-.Xr openproject.conf 5 .
-OpenProject itself reads environment variables.
-.Nm
-translates the JSON file into those variables
-.Pq DATABASE_URL, OPENPROJECT_HOST__NAME, memcached, HTTPS
-and writes them to
-.Pa /var/db/openproject/env .
-That is why a helper exists: CloudBSD law is JSON; OpenProject's
-native config is ENV.
+OpenProject cannot consume JSON.
+It reads environment variables
+.Pq DATABASE_URL, SECRET_KEY_BASE, OPENPROJECT_HOST__NAME, OPENPROJECT_HTTPS, memcache .
+The file it uses is
+.Pa %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
+.Pq see Xr openproject.conf 5 .
+An optional JSON file in the same directory can generate that
+env file via
+.Cm env .
 .Pp
-The rc.d script
-.Pa %%PREFIX%%/etc/rc.d/openproject
-calls
-.Nm
-for
-.Cm checkconfig ,
-.Cm env ,
-and
-.Cm supervise
-so
 .Ql service openproject start
-works.
+starts Puma.
+.Ql service openproject_worker start
+starts the
+.Li good_job
+worker.
 .Sh COMMANDS
-.Bl -tag -width checkconfig
+.Bl -tag -width supervise-worker
 .It Cm checkconfig
-Validate that the JSON file exists, parses, and contains the required
-keys
-.Pq bind, host_name, secret and postgres password files .
+Validate the env file exists, is mode 0600, and contains the required
+variables.
 .It Cm doctor
-Check configuration, secret file modes, pidfile directory, PostgreSQL
-reachability, memcached, bind address, and the staged application tree.
+Check the env file, pidfiles, PostgreSQL, memcached, bind address,
+and the staged application tree.
 .It Cm env
-Write
-.Pa /var/db/openproject/env
-from JSON.
-The file is mode 0600 and contains secrets; do not print it.
+Optional: write the env file from JSON.
 .It Cm migrate
-Write the env file and run
-.Ql bundle exec rake db:migrate
-in the application directory.
+Source the env file and run
+.Ql bundle exec rake db:migrate .
 .It Cm secret
 Print a new
 .Li SECRET_KEY_BASE
-to stdout using
+using
 .Ql openssl rand -hex 64 .
-Redirect it into the secret file and set mode 0600.
+Store it once in the env file and keep it across upgrades.
 .It Cm supervise
-Load JSON, write the env file, and exec Puma in the foreground.
+Source the env file and exec Puma.
+Used by
+.Xr rc 8 .
+.It Cm supervise-worker
+Source the env file and exec
+.Ql bundle exec good_job start .
 Used by
 .Xr rc 8 .
 .It Cm version
 Print the packaged OpenProject version.
 .El
 .Sh ENVIRONMENT
-.Bl -tag -width OPENPROJECT_CONFIG
+.Bl -tag -width OPENPROJECT_ENVFILE
+.It Ev OPENPROJECT_ENVFILE
+Path of the env file OpenProject consumes.
+Default:
+.Pa %%PREFIX%%/etc/cloudbsd/openproject/openproject.env .
 .It Ev OPENPROJECT_CONFIG
-Path to the JSON file.
+Optional JSON used only by
+.Cm env .
 Default:
 .Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json .
-.It Ev OPENPROJECT_ENVFILE
-Path of the generated env file.
-Default:
-.Pa /var/db/openproject/env .
 .El
 .Sh FILES
 .Bl -tag -width indent -compact
-.It Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json
-Operator JSON configuration.
+.It Pa %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
+Runtime environment file.
 .It Pa %%PREFIX%%/etc/rc.d/openproject
-rc.d service.
+rc.d service
+.Pq Puma .
+.It Pa %%PREFIX%%/etc/rc.d/openproject_worker
+rc.d service
+.Pq good_job worker .
 .It Pa %%WWWDIR%%
 Staged OpenProject application.
 .It Pa %%PREFIX%%/etc/nginx/openproject.conf.sample
 nginx reverse-proxy snippet for track.cloudbsd.org.
 .It Pa /var/run/openproject/openproject.pid
-Service pidfile.
+Puma pidfile.
+.It Pa /var/run/openproject/openproject-worker.pid
+Worker pidfile.
 .El
 .Sh EXIT STATUS
 .Ex -std

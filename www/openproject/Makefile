@@ -8,6 +8,7 @@
 PORTNAME=	openproject
 DISTVERSIONPREFIX=	v
 DISTVERSION=	17.7.2
+PORTREVISION=	1
 CATEGORIES=	www
 
 MAINTAINER=	mark@cloudbsd.org
@@ -19,29 +20,56 @@ LICENSE_COMB=	multi
 LICENSE_FILE_BSD3CLAUSE=	${FILESDIR}/COPYRIGHT
 LICENSE_FILE_GPLv3=	${WRKSRC}/LICENSE
 
+# Official source. Git gems from Gemfile.lock are GH_TUPLE'd into
+# vendor/gems (port patches, not an application fork).
 USE_GITHUB=	yes
 GH_ACCOUNT=	opf
 GH_PROJECT=	openproject
+GH_TUPLE=	opf:dentaku:78eece45bf3f4ed021c05dd2f5411d1c3f9b168a:dentaku \
+		opf:md-to-pdf:0cb4597becd2243b810e7ce53bbbbf28b5f05844:mdtopdf \
+		opf:omniauth:7eb21563ba047ef86d71f099975587b5ec88f9c9:omniauth \
+		opf:omniauth-openid-connect:825d06235b64f6bc872bba709f1c2d48fd5cede4:omniauthoidc \
+		opf:omniauth-openid_connect-providers:c7e2498a8b093cfc5693d4960cae2e903a5e10cd:omniauthoidcprov
 
-# Native build: official source, bundle into vendor/bundle, npm +
-# assets:precompile (same steps as OpenProject docker/prod/setup).
-# Runtime is Puma on 127.0.0.1:3000 behind nginx. No linux_base, Docker,
-# or deb packages.
-USES=		cpe gmake nodejs:24,build ruby:4.0,build,run ssl
+# Native port: www/redmine61 (USES=ruby, USE_RC_SUBR, Puma, PostgreSQL)
+# plus www/gitlab (Gemfile patches, dynamic WWWDIR plist) and CloudBSD
+# JSON/rc.d/doctor wrappers. Not NO_ARCH. Docker/.deb/linux_base are
+# not used; official installers need systemd/cgroups.
+#
+# Upstream .ruby-version is 4.0.2. lang/ruby40 in this tree is 4.0.6
+# (closest packaged Ruby). Pin ruby:4.0 even if the default is 3.4.
+# Native gems in 17.7.2: nokogiri, pg, ffi. commonmarker 2.8.3 wraps
+# comrak and has no freebsd prebuilt gem — rust/cargo is required.
+# rugged is not in Gemfile.lock; do not add it.
+# USES=cargo is not used: this is not a Rust port.
+#
+# Day-one: no BIM IFC Linux blobs, no hocuspocus, no Appsignal.
+# Build: vendor git gems, bundle into vendor/bundle, npm ci,
+# assets:precompile. Runtime: two rc.d scripts (Puma 127.0.0.1:3000
+# and good_job worker). nginx is the reverse proxy, not bundled.
+USES=		cpe gmake nodejs:24,build pkgconf ruby:4.0,build,run \
+		shebangfix ssl uidfix
 CPE_VENDOR=	openproject
 CPE_PRODUCT=	openproject
+SHEBANG_FILES=	bin/rails bin/rake
 
-# jq translates CloudBSD JSON into OpenProject ENV. ImageMagick is used
-# by mini_magick for attachments. bundler drives vendor/bundle.
-BUILD_DEPENDS=	${LOCALBASE}/bin/bundle:sysutils/rubygem-bundler
+LIB_DEPENDS=	libffi.so:devel/libffi \
+		libxml2.so:textproc/libxml2 \
+		libxslt.so:textproc/libxslt
+
+# rust/cargo: commonmarker 2.x (comrak). git: leftover git gem ops.
+# jq is only needed if the optional JSON wrapper generates ENV.
+BUILD_DEPENDS=	${LOCALBASE}/bin/bundle:sysutils/rubygem-bundler \
+		${LOCALBASE}/bin/cargo:lang/rust \
+		git:devel/git
 RUN_DEPENDS=	jq:textproc/jq \
 		${LOCALBASE}/bin/bundle:sysutils/rubygem-bundler \
-		${LOCALBASE}/bin/magick:graphics/ImageMagick7
+		${LOCALBASE}/bin/magick:graphics/ImageMagick7@nox11
 
 USERS=		openproject
 GROUPS=		openproject
 
-USE_RC_SUBR=	openproject
+USE_RC_SUBR=	openproject openproject_worker
 SUB_FILES=	pkg-message openproject-ctl openproject.8 openproject.conf.5
 SUB_LIST=	PREFIX=${PREFIX} \
 		WWWDIR=${WWWDIR} \
@@ -68,14 +96,29 @@ PG17_RUN_DEPENDS=	postgres:databases/postgresql17-server
 MEMCACHED_RUN_DEPENDS=	${LOCALBASE}/bin/memcached:databases/memcached
 NGINX_RUN_DEPENDS=	nginx:www/nginx
 
+WWWDIR=		${PREFIX}/www/openproject
+
 # Official OpenProject build uses these bundle/npm settings.
+# CARGO_HOME keeps commonmarker's comrak compile off $HOME.
 BUNDLE_PATH_REL=	vendor/bundle
 MAKE_ENV+=	HOME=${WRKDIR} \
 		RAILS_ENV=production \
 		BUNDLE_PATH=${WRKSRC}/${BUNDLE_PATH_REL} \
 		BUNDLE_WITHOUT=development:test \
 		BUNDLE_RETRY=3 \
+		CARGO_HOME=${WRKDIR}/.cargo \
 		NPM_CONFIG_CACHE=${WRKDIR}/.npm
+
+post-extract:
+	${MKDIR} ${WRKSRC}/vendor/gems
+	${CP} -R ${WRKSRC_dentaku} ${WRKSRC}/vendor/gems/dentaku
+	${CP} -R ${WRKSRC_mdtopdf} ${WRKSRC}/vendor/gems/md-to-pdf
+	${CP} -R ${WRKSRC_omniauth} ${WRKSRC}/vendor/gems/omniauth
+	${CP} -R ${WRKSRC_omniauthoidc} ${WRKSRC}/vendor/gems/omniauth-openid-connect
+	${CP} -R ${WRKSRC_omniauthoidcprov} ${WRKSRC}/vendor/gems/omniauth-openid_connect-providers
+
+post-patch:
+	${REINPLACE_CMD} -e 's/^4\.0\.2$$/4.0.6/' ${WRKSRC}/.ruby-version
 
 do-build:
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
@@ -85,7 +128,7 @@ do-build:
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
 		${LOCALBASE}/bin/bundle install --jobs ${MAKE_JOBS_NUMBER} --retry 3
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
-		${LOCALBASE}/bin/npm install
+		${LOCALBASE}/bin/npm ci
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
 		SECRET_KEY_BASE=build-only-not-for-runtime \
 		DATABASE_URL=nulldb://db \
@@ -111,6 +154,8 @@ do-install:
 	${FIND} ${STAGEDIR}${WWWDIR} \( -name '*.orig' -o -name '*.bak' \) -delete
 	${INSTALL_SCRIPT} ${WRKDIR}/openproject-ctl \
 		${STAGEDIR}${PREFIX}/sbin/openproject
+	${INSTALL_DATA} ${FILESDIR}/openproject.env.sample \
+		${STAGEDIR}${PREFIX}/etc/cloudbsd/openproject/openproject.env.sample
 	${INSTALL_DATA} ${FILESDIR}/config.json.sample \
 		${STAGEDIR}${PREFIX}/etc/cloudbsd/openproject/config.json.sample
 	${INSTALL_DATA} ${FILESDIR}/nginx.conf.sample \
@@ -134,6 +179,7 @@ post-install:
 
 do-test:
 	@${SH} -n ${FILESDIR}/openproject.in
+	@${SH} -n ${FILESDIR}/openproject_worker.in
 	@${SH} -n ${WRKDIR}/openproject-ctl
 	@if command -v mandoc >/dev/null 2>&1; then \
 		mandoc -T lint -W error ${WRKDIR}/openproject.8 \

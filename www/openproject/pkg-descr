@@ -1,11 +1,11 @@
 OpenProject is open-source project management: work packages, Gantt,
 boards, wiki, and time tracking. This CloudBSD port builds official
-OpenProject 17.7.2 from source (bundle + frontend assets) and runs
-Puma on 127.0.0.1:3000 behind nginx.
+OpenProject 17.7.2 from source (native gems + frontend assets) and
+runs Puma on 127.0.0.1:3000 and a separate good_job worker, behind nginx.
 
-Operator config is JSON under /usr/local/etc/cloudbsd/openproject.
-openproject(8) translates that JSON into OpenProject environment
-variables (DATABASE_URL, OPENPROJECT_HOST__NAME, memcached, HTTPS).
+OpenProject reads environment variables, not JSON. The runtime file
+is /usr/local/etc/cloudbsd/openproject/openproject.env. Optional JSON
+in that directory can generate the env file.
 
 Default track.cloudbsd.org layout:
 

@@ -6,121 +6,81 @@
 .Os
 .Sh NAME
 .Nm openproject.conf
-.Nd CloudBSD OpenProject JSON configuration
+.Nd OpenProject environment configuration
 .Sh SYNOPSIS
-.Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json
+.Pa %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
 .Sh DESCRIPTION
+OpenProject cannot consume JSON.
+It reads environment variables.
 The file
-.Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json
-is the operator configuration for
-.Xr openproject 8 .
-It is JSON.
-OpenProject does not read this file; the helper writes official
-environment variables from it.
+.Pa %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
+is sourced by
+.Xr openproject 8
+before Puma
+.Pq rc.d/openproject
+and the
+.Li good_job
+worker
+.Pq rc.d/openproject_worker
+start.
 .Pp
 A sample is installed as
-.Pa config.json.sample .
-Copy it and fill the secret file paths.
-Never store
-.Li SECRET_KEY_BASE
-or the database password in the JSON document; use mode 0600 files.
-.Sh KEYS
-.Bl -tag -width memcached
-.It Va version
-Packaged OpenProject version string
-.Pq 17.7.2 .
-.It Va bind.address , Va bind.port
-Puma listen address and port.
+.Pa openproject.env.sample .
+Copy it, replace
+.Li REPLACE_ME
+placeholders, and set mode 0600.
+.Pp
+An optional JSON file
+.Pa config.json
+in the same directory can generate the env file
+.Pq Cm openproject env .
+That JSON is CloudBSD editor sugar only.
+.Sh VARIABLES
+.Bl -tag -width OPENPROJECT_CACHE__MEMCACHE__SERVER
+.It Ev RAILS_ENV
+Default
+.Li production .
+.It Ev HOST , Ev PORT
+Puma bind.
 Track uses
 .Li 127.0.0.1
 and
 .Li 3000 .
-.It Va host_name
+.It Ev SECRET_KEY_BASE
+Must be unique per install and persistent across upgrades.
+Generate once with
+.Ql openssl rand -hex 64 .
+Do not regenerate on every start.
+.It Ev DATABASE_URL
+PostgreSQL 16 or 17 URL
+.Pq postgresql://user:pass@127.0.0.1:5432/openproject .
+.It Ev OPENPROJECT_HOST__NAME
 Public hostname.
-Becomes
-.Ev OPENPROJECT_HOST__NAME .
 Default
 .Li track.cloudbsd.org .
-.It Va https
-Boolean.
-Becomes
-.Ev OPENPROJECT_HTTPS .
-Must be true when nginx sends
+.It Ev OPENPROJECT_HTTPS
+Must be
+.Li true
+when nginx sends
 .Li X-Forwarded-Proto: https .
-.It Va default_language
-Becomes
-.Ev OPENPROJECT_DEFAULT__LANGUAGE .
-.It Va rails_env
-Rails environment.
+.It Ev OPENPROJECT_DEFAULT__LANGUAGE
 Default
-.Li production .
-.It Va wwwdir
-Application root.
-Default
-.Pa %%WWWDIR%% .
-.It Va secret_key_base_file
-Path of a mode 0600 file containing
-.Li SECRET_KEY_BASE .
-.It Va postgres.host , Va postgres.port , Va postgres.database , Va postgres.user
-PostgreSQL 16 or 17 connection.
-Combined with
-.Va postgres.password_file
-into
-.Ev DATABASE_URL .
-.It Va postgres.password_file
-Path of a mode 0600 file containing the database password.
-.It Va memcached.enabled
-If true, set
-.Ev OPENPROJECT_RAILS__CACHE__STORE
-to
-.Li memcache .
-.It Va memcached.server
-Host:port for
-.Ev OPENPROJECT_CACHE__MEMCACHE__SERVER .
+.Li en .
+.It Ev OPENPROJECT_RAILS__CACHE__STORE
+.Li memcache
+when memcached is used.
+.It Ev OPENPROJECT_CACHE__MEMCACHE__SERVER
 Default
 .Li 127.0.0.1:11211 .
-.It Va nginx.enabled
-Documented for
-.Nm doctor .
-nginx itself is configured from
-.Pa %%PREFIX%%/etc/nginx/openproject.conf.sample .
-.It Va nginx.x_forwarded_proto
-Must be
-.Li https
-on track.cloudbsd.org.
-.It Va data_dir
-Attachment and home directory.
-Default
-.Pa /var/db/openproject .
-.It Va log_dir
-Log directory.
-Default
-.Pa /var/log/openproject .
-.It Va pidfile
-rc.d pidfile.
-Default
-.Pa /var/run/openproject/openproject.pid .
-.It Va user
-Service user.
-Default
-.Li openproject .
-.It Va extra_env
-Object of additional string environment variables copied into the
-env file.
 .El
 .Sh FILES
 .Bl -tag -width indent -compact
-.It Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json
-Live configuration.
-.It Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json.sample
+.It Pa %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
+Live environment file.
+.It Pa %%PREFIX%%/etc/cloudbsd/openproject/openproject.env.sample
 Installed sample.
-.It Pa %%PREFIX%%/etc/cloudbsd/openproject/secret_key_base
-Recommended secret path.
-.It Pa %%PREFIX%%/etc/cloudbsd/openproject/postgres.password
-Recommended password path.
-.It Pa /var/db/openproject/env
-Generated env file
-.Pq mode 0600 .
+.It Pa %%PREFIX%%/etc/cloudbsd/openproject/config.json.sample
+Optional JSON wrapper sample.
 .El
 .Sh SEE ALSO
 .Xr openproject 8

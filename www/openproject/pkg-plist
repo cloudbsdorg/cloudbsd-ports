@@ -1,4 +1,5 @@
 sbin/openproject
+@sample etc/cloudbsd/openproject/openproject.env.sample
 @sample etc/cloudbsd/openproject/config.json.sample
 @dir etc/cloudbsd/openproject
 @sample etc/nginx/openproject.conf.sample

@@ -6,9 +6,16 @@
 # PROVIDE: openproject
 # REQUIRE: LOGIN postgresql memcached
 # KEYWORD: shutdown
-
-# OpenProject Puma on 127.0.0.1:3000. JSON config is translated by
-# %%PREFIX%%/sbin/openproject before start.
+#
+# OpenProject Puma on 127.0.0.1:3000. Modeled on www/redmine61.
+# The good_job worker is a separate rc.d script (openproject_worker).
+# nginx is the reverse proxy, not here.
+#
+# openproject_enable (bool):	default NO
+# openproject_user (str):	default %%USERS%%
+# openproject_group (str):	default %%GROUPS%%
+# openproject_envfile (str):	ENV file OpenProject actually consumes
+# openproject_args (str):	extra Puma args (default bind 127.0.0.1:3000)
 
 . /etc/rc.subr
 
@@ -21,12 +28,15 @@ load_rc_config ${name}
 : ${openproject_enable:="NO"}
 : ${openproject_user:="%%USERS%%"}
 : ${openproject_group:="%%GROUPS%%"}
-: ${openproject_config:="%%PREFIX%%/etc/cloudbsd/openproject/config.json"}
+: ${openproject_envfile:="%%PREFIX%%/etc/cloudbsd/openproject/openproject.env"}
 : ${openproject_pidfile:="/var/run/openproject/openproject.pid"}
+: ${openproject_args="--bind tcp://127.0.0.1:3000 -e production"}
 
 pidfile="${openproject_pidfile}"
 procname="%%PREFIX%%/bin/ruby"
 command="/usr/sbin/daemon"
+command_args="-c -f -P ${pidfile} -u ${openproject_user} -T ${name} -t ${name} \
+	%%PREFIX%%/sbin/openproject supervise"
 
 extra_commands="doctor checkconfig"
 doctor_cmd="openproject_doctor"
@@ -34,7 +44,8 @@ checkconfig_cmd="openproject_checkconfig"
 start_precmd="openproject_prestart"
 stop_postcmd="openproject_poststop"
 
-export OPENPROJECT_CONFIG="${openproject_config}"
+export OPENPROJECT_ENVFILE="${openproject_envfile}"
+export PATH="${PATH}:%%PREFIX%%/bin"
 
 openproject_checkconfig()
 {
@@ -49,20 +60,16 @@ openproject_doctor()
 openproject_prestart()
 {
 	openproject_checkconfig || return 1
-	%%PREFIX%%/sbin/openproject env || return 1
 	install -d -o "${openproject_user}" -g "${openproject_group}" \
 		-m 0755 /var/run/openproject \
 		/var/log/openproject \
-		/var/db/openproject
+		/var/db/openproject \
+		%%WWWDIR%%/tmp/pids
 }
 
 openproject_poststop()
 {
 	rm -f "${pidfile}"
 }
-
-# -P records daemon's pid. supervise execs bundle/puma in the foreground.
-command_args="-c -f -P ${pidfile} -u ${openproject_user} -T ${name} \
-	%%PREFIX%%/sbin/openproject supervise"
 
 run_rc_command "$1"

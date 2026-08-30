@@ -1,3 +1,13 @@
 TIMESTAMP = 1788131063
 SHA256 (opf-openproject-v17.7.2_GH0.tar.gz) = 4d5f9e7f8cde6ad7b222fd01dfdce2cba8fbf87aee4a9f534ef0372b77883570
 SIZE (opf-openproject-v17.7.2_GH0.tar.gz) = 350682942
+SHA256 (opf-dentaku-78eece45bf3f4ed021c05dd2f5411d1c3f9b168a_GH0.tar.gz) = 7d9cb4ef7ac312a26ea125545258e84c8852a8e1bfb97b5f67010bf154c6bbf5
+SIZE (opf-dentaku-78eece45bf3f4ed021c05dd2f5411d1c3f9b168a_GH0.tar.gz) = 57468
+SHA256 (opf-md-to-pdf-0cb4597becd2243b810e7ce53bbbbf28b5f05844_GH0.tar.gz) = 41dc66b040813b4d5c912ff055d26be453b55778a58e3c6e78286868aabefebb
+SIZE (opf-md-to-pdf-0cb4597becd2243b810e7ce53bbbbf28b5f05844_GH0.tar.gz) = 4892319
+SHA256 (opf-omniauth-7eb21563ba047ef86d71f099975587b5ec88f9c9_GH0.tar.gz) = eca7f736df1fef36435775d5fd06e5cab831393441b782484dc672e8583a4e19
+SIZE (opf-omniauth-7eb21563ba047ef86d71f099975587b5ec88f9c9_GH0.tar.gz) = 26826
+SHA256 (opf-omniauth-openid-connect-825d06235b64f6bc872bba709f1c2d48fd5cede4_GH0.tar.gz) = 759de376f132345b3cb67a882cd5f1f3418f823cfd00a5b789cd76b587558e89
+SIZE (opf-omniauth-openid-connect-825d06235b64f6bc872bba709f1c2d48fd5cede4_GH0.tar.gz) = 16672
+SHA256 (opf-omniauth-openid_connect-providers-c7e2498a8b093cfc5693d4960cae2e903a5e10cd_GH0.tar.gz) = 6ab829537d2e2f98e17d6a5f6f48dfeed377a75c4e865f74a31c78ad505a98f2
+SIZE (opf-omniauth-openid_connect-providers-c7e2498a8b093cfc5693d4960cae2e903a5e10cd_GH0.tar.gz) = 14949

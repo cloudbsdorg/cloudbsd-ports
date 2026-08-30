@@ -29,5 +29,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SPDX-License-Identifier: BSD-3-Clause
 
 This copyright applies to CloudBSD packaging files in this port
-(wrapper, rc.d, JSON sample, mdoc). It does not relicense OpenProject,
-which remains GNU GPL version 3. See OPENPROJECT-LICENSE.
+(wrapper, rc.d, env/JSON samples, mdoc). It does not relicense
+OpenProject, which remains GNU GPL version 3. See LICENSE in the
+OpenProject source.
