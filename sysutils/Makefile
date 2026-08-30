@@ -512,6 +512,8 @@
     SUBDIR += hare
     SUBDIR += hared
     SUBDIR += hatop
+    SUBDIR += hawkeye
+    SUBDIR += hawkeye-data
     SUBDIR += hcloud
     SUBDIR += hdrecover
     SUBDIR += healthd
