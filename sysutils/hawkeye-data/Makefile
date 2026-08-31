@@ -1,6 +1,6 @@
 PORTNAME=	hawkeye-data
 DISTVERSION=	0.1.0
-PORTREVISION=	3
+PORTREVISION=	4
 CATEGORIES=	sysutils
 
 MAINTAINER=	mark@cloudbsd.org
@@ -13,9 +13,9 @@ LICENSE_FILE=	${WRKSRC}/LICENSE
 USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
 GH_PROJECT=	hawkeye-data
-GH_TAGNAME=	b4b42203f396198d81e616b5a50ca4ef3af1f2c4
+GH_TAGNAME=	6d28064016ae563098ab820281415f62a1302271
 
-# Unreleased snapshot: GH_TAGNAME is commit b4b42203f396198d81e616b5a50ca4ef3af1f2c4 (hawkeye-data main, fstab/rc/full/net/sshd playbooks).
+# Unreleased snapshot: GH_TAGNAME is commit 6d28064016ae563098ab820281415f62a1302271 (hawkeye-data main, embeddings builder / PR 5).
 
 # Sibling of sysutils/hawkeye (binaries). This port is data only.
 # sysutils/hawkeye RUN_DEPENDS on this port so pkg install hawkeye
