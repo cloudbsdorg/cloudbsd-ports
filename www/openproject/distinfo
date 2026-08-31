@@ -11,3 +11,5 @@ SHA256 (opf-omniauth-openid-connect-825d06235b64f6bc872bba709f1c2d48fd5cede4_GH0
 SIZE (opf-omniauth-openid-connect-825d06235b64f6bc872bba709f1c2d48fd5cede4_GH0.tar.gz) = 16672
 SHA256 (opf-omniauth-openid_connect-providers-c7e2498a8b093cfc5693d4960cae2e903a5e10cd_GH0.tar.gz) = 6ab829537d2e2f98e17d6a5f6f48dfeed377a75c4e865f74a31c78ad505a98f2
 SIZE (opf-omniauth-openid_connect-providers-c7e2498a8b093cfc5693d4960cae2e903a5e10cd_GH0.tar.gz) = 14949
+SHA256 (op-blocknote-extensions-0.2.1.tgz) = 3f6d8c58a21a29f86d7e42ddec1f28656d7e6c404d2a5ccd07681dbdd7e10a9c
+SIZE (op-blocknote-extensions-0.2.1.tgz) = 158273

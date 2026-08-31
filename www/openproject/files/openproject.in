@@ -33,7 +33,7 @@ load_rc_config ${name}
 : ${openproject_args="--bind tcp://127.0.0.1:3000 -e production"}
 
 pidfile="${openproject_pidfile}"
-procname="%%PREFIX%%/bin/ruby"
+procname="%%RUBY%%"
 command="/usr/sbin/daemon"
 command_args="-c -f -P ${pidfile} -u ${openproject_user} -T ${name} -t ${name} \
 	%%PREFIX%%/sbin/openproject supervise"

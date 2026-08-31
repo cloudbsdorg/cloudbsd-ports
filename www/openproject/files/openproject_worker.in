@@ -31,7 +31,7 @@ load_rc_config ${name}
 : ${openproject_worker_pidfile:="/var/run/openproject/openproject-worker.pid"}
 
 pidfile="${openproject_worker_pidfile}"
-procname="%%PREFIX%%/bin/ruby"
+procname="%%RUBY%%"
 command="/usr/sbin/daemon"
 command_args="-c -f -P ${pidfile} -u ${openproject_worker_user} \
 	-T ${name} -t ${name} \
