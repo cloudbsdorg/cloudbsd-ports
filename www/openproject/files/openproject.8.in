@@ -1,7 +1,7 @@
 .\" Copyright (c) 2026 REVYTECH, Inc.
 .\" SPDX-License-Identifier: BSD-3-Clause
 .\"
-.Dd August 30, 2026
+.Dd August 31, 2026
 .Dt OPENPROJECT 8
 .Os
 .Sh NAME
@@ -40,6 +40,12 @@ nginx terminates TLS and must send
 OpenProject cannot consume JSON.
 It reads environment variables
 .Pq DATABASE_URL, SECRET_KEY_BASE, OPENPROJECT_HOST__NAME, OPENPROJECT_HTTPS, memcache .
+The canonical hostname is
+.Li track.cloudbsd.org
+.Pq Ev OPENPROJECT_HOST__NAME .
+Aliases return HTTP 400 until
+.Ev OPENPROJECT_ADDITIONAL__HOST__NAMES
+lists them.
 The file it uses is
 .Pa %%PREFIX%%/etc/cloudbsd/openproject/openproject.env
 .Pq see Xr openproject.conf 5 .
@@ -73,7 +79,17 @@ using
 .Ql openssl rand -hex 64 .
 Store it once in the env file and keep it across upgrades.
 .It Cm supervise
-Source the env file and exec Puma.
+Source the env file and exec Puma with
+.Li --no-config
+bound to
+.Li tcp://127.0.0.1:3000
+.Pq or Ev HOST / Ev PORT .
+.Li --no-config
+avoids
+.Li config/puma.rb
+referencing
+.Li OpenProject
+before it is loaded on ruby40.
 Used by
 .Xr rc 8 .
 .It Cm supervise-worker

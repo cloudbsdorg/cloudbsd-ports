@@ -11,6 +11,11 @@
 # Packaged 17.7.2 uses good_job as a long-running process;
 # cron jobs:workoff is stale. Pair with rc.d/openproject (Puma).
 #
+# Bastille jail: `daemon -u openproject` failed with
+#   initgroups(openproject,576): Operation not permitted
+# rc.subr already does `su -m ${openproject_worker_user}` when
+# ${name}_user is set. daemon must not also -u.
+#
 # openproject_worker_enable (bool):	default NO
 # openproject_worker_user (str):	default %%USERS%%
 # openproject_worker_group (str):	default %%GROUPS%%
@@ -33,8 +38,8 @@ load_rc_config ${name}
 pidfile="${openproject_worker_pidfile}"
 procname="%%RUBY%%"
 command="/usr/sbin/daemon"
-command_args="-c -f -P ${pidfile} -u ${openproject_worker_user} \
-	-T ${name} -t ${name} \
+# No -u: already running as ${openproject_worker_user} via su -m.
+command_args="-c -f -P ${pidfile} -T ${name} -t ${name} \
 	%%PREFIX%%/sbin/openproject supervise-worker"
 
 extra_commands="checkconfig"

@@ -11,11 +11,16 @@
 # plus CloudBSD checkconfig/doctor. The good_job worker is
 # rc.d/openproject_worker. nginx is already the jail reverse proxy.
 #
+# Bastille jail: `daemon -u openproject` failed with
+#   initgroups(openproject,576): Operation not permitted
+# rc.subr already does `su -m ${openproject_user}` when ${name}_user
+# is set. daemon must not also -u (same as misc/hermes-agent).
+#
 # openproject_enable (bool):	default NO
 # openproject_user (str):	default %%USERS%%
 # openproject_group (str):	default %%GROUPS%%
 # openproject_envfile (str):	ENV file OpenProject actually consumes
-# openproject_args (str):	extra Puma args (default bind 127.0.0.1:3000)
+# openproject_args (str):	unused by supervise; bind is in ctl
 
 . /etc/rc.subr
 
@@ -35,7 +40,8 @@ load_rc_config ${name}
 pidfile="${openproject_pidfile}"
 procname="%%RUBY%%"
 command="/usr/sbin/daemon"
-command_args="-c -f -P ${pidfile} -u ${openproject_user} -T ${name} -t ${name} \
+# No -u: already running as ${openproject_user} via su -m.
+command_args="-c -f -P ${pidfile} -T ${name} -t ${name} \
 	%%PREFIX%%/sbin/openproject supervise"
 
 extra_commands="doctor checkconfig"

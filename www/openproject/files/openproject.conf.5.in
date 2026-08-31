@@ -1,7 +1,7 @@
 .\" Copyright (c) 2026 REVYTECH, Inc.
 .\" SPDX-License-Identifier: BSD-3-Clause
 .\"
-.Dd August 30, 2026
+.Dd August 31, 2026
 .Dt OPENPROJECT.CONF 5
 .Os
 .Sh NAME
@@ -59,8 +59,22 @@ Do not regenerate on every start.
 PostgreSQL 17 URL
 .Pq postgresql://user:pass@127.0.0.1:5432/openproject .
 .It Ev OPENPROJECT_HOST__NAME
-Public hostname.
+Canonical public hostname.
 Default
+.Li track.cloudbsd.org .
+.It Ev OPENPROJECT_ADDITIONAL__HOST__NAMES
+Additional allowed
+.Li Host
+names.
+OpenProject returns HTTP 400 for any
+.Li Host
+header that is not
+.Ev OPENPROJECT_HOST__NAME
+until this is set.
+Pass an array
+.Pq Li [alias1, alias2]
+as documented by upstream ENV parsing.
+Leave unset when nginx and clients send only
 .Li track.cloudbsd.org .
 .It Ev OPENPROJECT_HTTPS
 Must be
