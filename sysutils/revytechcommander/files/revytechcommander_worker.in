@@ -1,0 +1,154 @@
+#!/bin/sh
+
+# PROVIDE: revytechcommander_worker
+# REQUIRE: LOGIN nats postgresql
+# KEYWORD: shutdown
+#
+# Add the following to /etc/rc.conf.local or /etc/rc.conf:
+#
+#  revytechcommander_worker_enable="YES"
+#  revytechcommander_worker_user="revytech"
+#  revytechcommander_worker_group="revytech"
+#  revytechcommander_worker_config="%%PREFIX%%/etc/cloudbsd/revytechcommander/config.json"
+#  revytechcommander_worker_logfile="/var/log/revytechcommander/worker.log"
+#  revytechcommander_worker_logdir="/var/log/revytechcommander"
+#  revytechcommander_worker_piddir="/var/run/revytechcommander"
+#  revytechcommander_worker_flags=""          # extra args after `worker`
+#  revytechcommander_worker_class="cpu"   # or gpu
+
+# Single-node: prefer the meta script `revytechcommander` instead of
+# enabling each role. Nomad-managed nodes must leave this enable=NO.
+#
+# Pulls JetStream jobs. On GPU/Ollama boxes set worker_class=gpu.
+# Do not enable this rc.d script on a host where Nomad already runs the worker job.
+
+. /etc/rc.subr
+
+name="revytechcommander_worker"
+rcvar="${name}_enable"
+desc="REVYTECHCommander worker"
+
+load_rc_config $name
+
+: ${revytechcommander_worker_enable:="NO"}
+: ${revytechcommander_worker_user:="revytech"}
+: ${revytechcommander_worker_group:="revytech"}
+: ${revytechcommander_worker_config:="%%PREFIX%%/etc/cloudbsd/revytechcommander/config.json"}
+: ${revytechcommander_worker_logdir:="/var/log/revytechcommander"}
+: ${revytechcommander_worker_logfile:="/var/log/revytechcommander/worker.log"}
+: ${revytechcommander_worker_piddir:="/var/run/revytechcommander"}
+: ${revytechcommander_worker_program:="%%PREFIX%%/bin/revytechcommander"}
+: ${revytechcommander_worker_flags:=""}
+: ${revytechcommander_worker_class:="cpu"}
+
+
+pidfile="${revytechcommander_worker_piddir}/worker.pid"
+procname="${revytechcommander_worker_program}"
+command="/usr/sbin/daemon"
+command_args="-p ${pidfile} -t ${name} -u ${revytechcommander_worker_user} -o ${revytechcommander_worker_logfile} ${procname} worker -config ${revytechcommander_worker_config} -class ${revytechcommander_worker_class} ${revytechcommander_worker_flags}"
+
+required_files="${revytechcommander_worker_config}"
+start_precmd="revytechcommander_worker_prestart"
+start_postcmd="revytechcommander_worker_poststart"
+stop_postcmd="revytechcommander_worker_poststop"
+
+extra_commands="status reload"
+sig_reload="HUP"
+reload_precmd="revytechcommander_worker_reloadpre"
+
+revytechcommander_worker_reloadpre()
+{
+	local _config _proc
+	_config="${revytechcommander_worker_config}"
+	_proc="${revytechcommander_worker_program}"
+	# Validate like --check-config. Failure must not stop or kill the daemon.
+	if [ -x "${_proc}" ]; then
+		if ! "${_proc}" --check-config -config "${_config}"; then
+			err 1 "revytechcommander_worker: --check-config failed; not signaling daemon"
+		fi
+	fi
+	if [ ! -f "${pidfile}" ] || [ ! -s "${pidfile}" ]; then
+		err 1 "revytechcommander_worker: not running"
+	fi
+}
+
+revytechcommander_worker_prestart()
+{
+	local _user _group _piddir _logdir _logfile _config _proc
+
+	_user="${revytechcommander_worker_user}"
+	_group="${revytechcommander_worker_group}"
+	_piddir="${revytechcommander_worker_piddir}"
+	_logdir="${revytechcommander_worker_logdir}"
+	_logfile="${revytechcommander_worker_logfile}"
+	_config="${revytechcommander_worker_config}"
+	_proc="${revytechcommander_worker_program}"
+
+	if [ "${_user}" = "root" ] || [ -z "${_user}" ]; then
+		err 1 "revytechcommander_worker: refusing to run as root; set revytechcommander_worker_user to a dedicated account (revytech)"
+	fi
+	if [ ! -x "${_proc}" ]; then
+		err 1 "revytechcommander_worker: ${_proc} is not executable"
+	fi
+	if [ ! -f "${_config}" ]; then
+		err 1 "revytechcommander_worker: config ${_config} not found"
+	fi
+	# Secrets require 0600 (CloudBSD). Never world-readable or world-writable.
+	if find "${_config}" -perm -002 | grep -q .; then
+		err 1 "revytechcommander_worker: config ${_config} is world-writable"
+	fi
+	chmod 0600 "${_config}" 2>/dev/null || warn "revytechcommander_worker: could not chmod 0600 ${_config}"
+	chown "${_user}:${_group}" "${_config}" 2>/dev/null || warn "revytechcommander_worker: could not chown config to ${_user}:${_group}"
+	if ! "${_proc}" --check-config -config "${_config}"; then
+		err 1 "revytechcommander_worker: --check-config failed"
+	fi
+
+	install -d -o "${_user}" -g "${_group}" -m 0750 "${_piddir}" || \
+		err 1 "revytechcommander_worker: cannot create ${_piddir}"
+	install -d -o "${_user}" -g "${_group}" -m 0750 "${_logdir}" || \
+		err 1 "revytechcommander_worker: cannot create ${_logdir}"
+	if [ ! -f "${_logfile}" ]; then
+		install -o "${_user}" -g "${_group}" -m 0640 /dev/null "${_logfile}" || \
+			err 1 "revytechcommander_worker: cannot create ${_logfile}"
+	else
+		chmod 0640 "${_logfile}" 2>/dev/null || true
+		chown "${_user}:${_group}" "${_logfile}" 2>/dev/null || true
+	fi
+	chmod 0750 "${_piddir}" "${_logdir}" 2>/dev/null || true
+
+	# Pidfile: never empty, never root-owned leftover, owned by service user.
+	if [ -f "${pidfile}" ]; then
+		if [ ! -s "${pidfile}" ]; then
+			rm -f "${pidfile}"
+		else
+			_owner=`stat -f %Su "${pidfile}" 2>/dev/null`
+			if [ "${_owner}" = "root" ]; then
+				rm -f "${pidfile}"
+			fi
+		fi
+	fi
+}
+
+revytechcommander_worker_poststart()
+{
+	local _user _group
+	_user="${revytechcommander_worker_user}"
+	_group="${revytechcommander_worker_group}"
+	if [ ! -f "${pidfile}" ]; then
+		err 1 "revytechcommander_worker: pidfile ${pidfile} missing after start"
+	fi
+	if [ ! -s "${pidfile}" ]; then
+		rm -f "${pidfile}"
+		err 1 "revytechcommander_worker: empty pidfile after start"
+	fi
+	chown "${_user}:${_group}" "${pidfile}" || \
+		err 1 "revytechcommander_worker: pidfile must be owned by ${_user}, not root"
+	chmod 0640 "${pidfile}" 2>/dev/null || true
+}
+
+revytechcommander_worker_poststop()
+{
+	rm -f "${pidfile}"
+}
+
+run_rc_command "$1"

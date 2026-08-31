@@ -1,0 +1,164 @@
+#!/bin/sh
+
+# PROVIDE: revytechcommander
+# REQUIRE: LOGIN nats postgresql
+# KEYWORD: shutdown
+#
+# Meta service: starts conductor, then worker, then gateway via service(8)
+# onestart (so per-role *_enable may stay NO). Stops in reverse order.
+#
+# Add the following to /etc/rc.conf.local or /etc/rc.conf:
+#
+#  revytechcommander_enable="YES"
+#  revytechcommander_user="revytech"
+#  revytechcommander_group="revytech"
+#  revytechcommander_config="%%PREFIX%%/etc/cloudbsd/revytechcommander/config.json"
+#  revytechcommander_roles="conductor worker gateway"
+#
+# Single-node:
+#   sysrc revytechcommander_enable=YES
+#   service revytechcommander start
+#   Do NOT also sysrc revytechcommander_gateway_enable=YES (double-start).
+#
+# Nomad-managed cluster:
+#   sysrc revytechcommander_enable=NO
+#   sysrc revytechcommander_gateway_enable=NO \
+#         revytechcommander_worker_enable=NO \
+#         revytechcommander_conductor_enable=NO
+#   Nomad raw_exec owns the processes. rc.d and Nomad must not both run them.
+#
+# Per-role enable is for hosts that run only one role without Nomad
+# (for example a dedicated GPU worker).
+
+. /etc/rc.subr
+
+name="revytechcommander"
+rcvar="${name}_enable"
+desc="REVYTECHCommander meta service (conductor, worker, gateway)"
+
+load_rc_config $name
+
+: ${revytechcommander_enable:="NO"}
+: ${revytechcommander_user:="revytech"}
+: ${revytechcommander_group:="revytech"}
+: ${revytechcommander_config:="%%PREFIX%%/etc/cloudbsd/revytechcommander/config.json"}
+: ${revytechcommander_piddir:="/var/run/revytechcommander"}
+: ${revytechcommander_logdir:="/var/log/revytechcommander"}
+: ${revytechcommander_roles:="conductor worker gateway"}
+: ${revytechcommander_program:="%%PREFIX%%/bin/revytechcommander"}
+
+start_cmd="revytechcommander_start"
+stop_cmd="revytechcommander_stop"
+status_cmd="revytechcommander_status"
+start_precmd="revytechcommander_prestart"
+extra_commands="status reload"
+reload_cmd="revytechcommander_reload"
+
+revytechcommander_prestart()
+{
+	local _user _group _config _proc
+
+	_user="${revytechcommander_user}"
+	_group="${revytechcommander_group}"
+	_config="${revytechcommander_config}"
+	_proc="${revytechcommander_program}"
+
+	if [ "${_user}" = "root" ] || [ -z "${_user}" ]; then
+		err 1 "revytechcommander: refusing to run as root; set revytechcommander_user"
+	fi
+	if [ ! -f "${_config}" ]; then
+		err 1 "revytechcommander: config ${_config} not found"
+	fi
+	if find "${_config}" -perm -002 | grep -q .; then
+		err 1 "revytechcommander: config is world-writable"
+	fi
+	chmod 0600 "${_config}" 2>/dev/null || \
+		warn "revytechcommander: could not chmod 0600 config"
+	chown "${_user}:${_group}" "${_config}" 2>/dev/null || \
+		warn "revytechcommander: could not chown config"
+	if [ -x "${_proc}" ]; then
+		if ! "${_proc}" --check-config -config "${_config}"; then
+			err 1 "revytechcommander: --check-config failed"
+		fi
+	fi
+
+	install -d -o "${_user}" -g "${_group}" -m 0750 "${revytechcommander_piddir}" || \
+		err 1 "revytechcommander: cannot create ${revytechcommander_piddir}"
+	install -d -o "${_user}" -g "${_group}" -m 0750 "${revytechcommander_logdir}" || \
+		err 1 "revytechcommander: cannot create ${revytechcommander_logdir}"
+	chmod 0750 "${revytechcommander_piddir}" "${revytechcommander_logdir}" 2>/dev/null || true
+}
+
+revytechcommander_start()
+{
+	local _role
+	# Start order: conductor (desired state + outbox), workers, then gateway.
+	for _role in ${revytechcommander_roles}; do
+		echo "Starting revytechcommander_${_role}"
+		/usr/sbin/service "revytechcommander_${_role}" onestart || \
+			err 1 "revytechcommander: failed to start ${_role}"
+	done
+}
+
+revytechcommander_stop()
+{
+	local _role _rev
+	_rev=""
+	for _role in ${revytechcommander_roles}; do
+		_rev="${_role} ${_rev}"
+	done
+	for _role in ${_rev}; do
+		echo "Stopping revytechcommander_${_role}"
+		/usr/sbin/service "revytechcommander_${_role}" onestop || true
+	done
+}
+
+revytechcommander_status()
+{
+	local _role _st
+	_st=0
+	for _role in ${revytechcommander_roles}; do
+		if /usr/sbin/service "revytechcommander_${_role}" onestatus; then
+			true
+		else
+			_st=1
+		fi
+	done
+	return ${_st}
+}
+
+
+revytechcommander_reload()
+{
+	local _role _pidfile _pid _config _proc _st
+	_config="${revytechcommander_config}"
+	_proc="${revytechcommander_program}"
+	_st=0
+	# Failed check must not kill running daemons.
+	if [ -x "${_proc}" ]; then
+		if ! "${_proc}" --check-config -config "${_config}"; then
+			err 1 "revytechcommander: --check-config failed; not signaling running roles"
+		fi
+	fi
+	for _role in ${revytechcommander_roles}; do
+		_pidfile="${revytechcommander_piddir}/${_role}.pid"
+		if [ ! -f "${_pidfile}" ] || [ ! -s "${_pidfile}" ]; then
+			continue
+		fi
+		_pid=`cat "${_pidfile}"`
+		if [ -z "${_pid}" ]; then
+			continue
+		fi
+		if ! kill -0 "${_pid}" 2>/dev/null; then
+			continue
+		fi
+		echo "Reloading revytechcommander_${_role} (pid ${_pid})"
+		if ! kill -HUP "${_pid}" 2>/dev/null; then
+			warn "revytechcommander: SIGHUP ${_role} (pid ${_pid}) failed"
+			_st=1
+		fi
+	done
+	return ${_st}
+}
+
+run_rc_command "$1"

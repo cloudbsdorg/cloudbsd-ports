@@ -1,0 +1,43 @@
+[
+{ type: install
+  message: <<EOM
+REVYTECHCommander is installed. Before enabling services:
+
+  1. mkdir -p ${PREFIX}/etc/cloudbsd/revytechcommander
+     cp ${PREFIX}/etc/cloudbsd/revytechcommander/config.json.sample \
+        ${PREFIX}/etc/cloudbsd/revytechcommander/config.json
+  2. Fill PLACEHOLDERS: public domain, bcrypt password_hash, provider
+     API keys, FreeGrok base_url, Postgres DSN, NATS URL, Caddy DNS-01
+     token. Secrets may also be supplied via REVYTECH_* environment
+     variables (see README).
+  3. pw groupadd revytech
+     pw useradd revytech -g revytech -s /usr/sbin/nologin \
+        -d /var/db/revytechcommander -m
+     chmod 0600 ${PREFIX}/etc/cloudbsd/revytechcommander/config.json
+     chown revytech:revytech ${PREFIX}/etc/cloudbsd/revytechcommander/config.json
+  4. Apply ${DATADIR}/deploy/sql/001_init.sql.
+  5. Point Caddy at ${DATADIR}/deploy/Caddyfile. The gateway must NOT bind
+     public 443.
+
+Single-node (meta service starts conductor, worker, gateway in order):
+
+     sysrc revytechcommander_enable=YES
+     sysrc revytechcommander_gateway_enable=NO \
+           revytechcommander_worker_enable=NO \
+           revytechcommander_conductor_enable=NO
+     service revytechcommander start
+
+Do not also enable the per-role scripts when the meta service is on
+(double-start). Nomad-managed hosts must leave every *_enable at NO.
+
+Config is JSON only. Validate with:
+  revytechcommander --check-config -config ${PREFIX}/etc/cloudbsd/revytechcommander/config.json
+
+The binary is one file with subcommands:
+  revytechcommander gateway|worker|conductor
+
+Sample rc.conf keys: ${DATADIR}/deploy/rc.conf.sample
+Nomad/Consul/WireGuard/NATS: ${DATADIR}/deploy
+EOM
+}
+]

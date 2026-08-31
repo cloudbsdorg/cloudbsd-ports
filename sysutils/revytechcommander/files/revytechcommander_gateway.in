@@ -1,0 +1,152 @@
+#!/bin/sh
+
+# PROVIDE: revytechcommander_gateway
+# REQUIRE: LOGIN nats postgresql
+# KEYWORD: shutdown
+#
+# Add the following to /etc/rc.conf.local or /etc/rc.conf:
+#
+#  revytechcommander_gateway_enable="YES"
+#  revytechcommander_gateway_user="revytech"
+#  revytechcommander_gateway_group="revytech"
+#  revytechcommander_gateway_config="%%PREFIX%%/etc/cloudbsd/revytechcommander/config.json"
+#  revytechcommander_gateway_logfile="/var/log/revytechcommander/gateway.log"
+#  revytechcommander_gateway_logdir="/var/log/revytechcommander"
+#  revytechcommander_gateway_piddir="/var/run/revytechcommander"
+#  revytechcommander_gateway_flags=""          # extra args after `gateway`
+
+# Single-node: prefer the meta script `revytechcommander` instead of
+# enabling each role. Nomad-managed nodes must leave this enable=NO.
+#
+# Gateway binds loopback HTTP. Caddy owns public 443.
+# Do not enable this rc.d script on a host where Nomad already runs the gateway job.
+
+. /etc/rc.subr
+
+name="revytechcommander_gateway"
+rcvar="${name}_enable"
+desc="REVYTECHCommander gateway"
+
+load_rc_config $name
+
+: ${revytechcommander_gateway_enable:="NO"}
+: ${revytechcommander_gateway_user:="revytech"}
+: ${revytechcommander_gateway_group:="revytech"}
+: ${revytechcommander_gateway_config:="%%PREFIX%%/etc/cloudbsd/revytechcommander/config.json"}
+: ${revytechcommander_gateway_logdir:="/var/log/revytechcommander"}
+: ${revytechcommander_gateway_logfile:="/var/log/revytechcommander/gateway.log"}
+: ${revytechcommander_gateway_piddir:="/var/run/revytechcommander"}
+: ${revytechcommander_gateway_program:="%%PREFIX%%/bin/revytechcommander"}
+: ${revytechcommander_gateway_flags:=""}
+
+
+pidfile="${revytechcommander_gateway_piddir}/gateway.pid"
+procname="${revytechcommander_gateway_program}"
+command="/usr/sbin/daemon"
+command_args="-p ${pidfile} -t ${name} -u ${revytechcommander_gateway_user} -o ${revytechcommander_gateway_logfile} ${procname} gateway -config ${revytechcommander_gateway_config} ${revytechcommander_gateway_flags}"
+
+required_files="${revytechcommander_gateway_config}"
+start_precmd="revytechcommander_gateway_prestart"
+start_postcmd="revytechcommander_gateway_poststart"
+stop_postcmd="revytechcommander_gateway_poststop"
+
+extra_commands="status reload"
+sig_reload="HUP"
+reload_precmd="revytechcommander_gateway_reloadpre"
+
+revytechcommander_gateway_reloadpre()
+{
+	local _config _proc
+	_config="${revytechcommander_gateway_config}"
+	_proc="${revytechcommander_gateway_program}"
+	# Validate like --check-config. Failure must not stop or kill the daemon.
+	if [ -x "${_proc}" ]; then
+		if ! "${_proc}" --check-config -config "${_config}"; then
+			err 1 "revytechcommander_gateway: --check-config failed; not signaling daemon"
+		fi
+	fi
+	if [ ! -f "${pidfile}" ] || [ ! -s "${pidfile}" ]; then
+		err 1 "revytechcommander_gateway: not running"
+	fi
+}
+
+revytechcommander_gateway_prestart()
+{
+	local _user _group _piddir _logdir _logfile _config _proc
+
+	_user="${revytechcommander_gateway_user}"
+	_group="${revytechcommander_gateway_group}"
+	_piddir="${revytechcommander_gateway_piddir}"
+	_logdir="${revytechcommander_gateway_logdir}"
+	_logfile="${revytechcommander_gateway_logfile}"
+	_config="${revytechcommander_gateway_config}"
+	_proc="${revytechcommander_gateway_program}"
+
+	if [ "${_user}" = "root" ] || [ -z "${_user}" ]; then
+		err 1 "revytechcommander_gateway: refusing to run as root; set revytechcommander_gateway_user to a dedicated account (revytech)"
+	fi
+	if [ ! -x "${_proc}" ]; then
+		err 1 "revytechcommander_gateway: ${_proc} is not executable"
+	fi
+	if [ ! -f "${_config}" ]; then
+		err 1 "revytechcommander_gateway: config ${_config} not found"
+	fi
+	# Secrets require 0600 (CloudBSD). Never world-readable or world-writable.
+	if find "${_config}" -perm -002 | grep -q .; then
+		err 1 "revytechcommander_gateway: config ${_config} is world-writable"
+	fi
+	chmod 0600 "${_config}" 2>/dev/null || warn "revytechcommander_gateway: could not chmod 0600 ${_config}"
+	chown "${_user}:${_group}" "${_config}" 2>/dev/null || warn "revytechcommander_gateway: could not chown config to ${_user}:${_group}"
+	if ! "${_proc}" --check-config -config "${_config}"; then
+		err 1 "revytechcommander_gateway: --check-config failed"
+	fi
+
+	install -d -o "${_user}" -g "${_group}" -m 0750 "${_piddir}" || \
+		err 1 "revytechcommander_gateway: cannot create ${_piddir}"
+	install -d -o "${_user}" -g "${_group}" -m 0750 "${_logdir}" || \
+		err 1 "revytechcommander_gateway: cannot create ${_logdir}"
+	if [ ! -f "${_logfile}" ]; then
+		install -o "${_user}" -g "${_group}" -m 0640 /dev/null "${_logfile}" || \
+			err 1 "revytechcommander_gateway: cannot create ${_logfile}"
+	else
+		chmod 0640 "${_logfile}" 2>/dev/null || true
+		chown "${_user}:${_group}" "${_logfile}" 2>/dev/null || true
+	fi
+	chmod 0750 "${_piddir}" "${_logdir}" 2>/dev/null || true
+
+	# Pidfile: never empty, never root-owned leftover, owned by service user.
+	if [ -f "${pidfile}" ]; then
+		if [ ! -s "${pidfile}" ]; then
+			rm -f "${pidfile}"
+		else
+			_owner=`stat -f %Su "${pidfile}" 2>/dev/null`
+			if [ "${_owner}" = "root" ]; then
+				rm -f "${pidfile}"
+			fi
+		fi
+	fi
+}
+
+revytechcommander_gateway_poststart()
+{
+	local _user _group
+	_user="${revytechcommander_gateway_user}"
+	_group="${revytechcommander_gateway_group}"
+	if [ ! -f "${pidfile}" ]; then
+		err 1 "revytechcommander_gateway: pidfile ${pidfile} missing after start"
+	fi
+	if [ ! -s "${pidfile}" ]; then
+		rm -f "${pidfile}"
+		err 1 "revytechcommander_gateway: empty pidfile after start"
+	fi
+	chown "${_user}:${_group}" "${pidfile}" || \
+		err 1 "revytechcommander_gateway: pidfile must be owned by ${_user}, not root"
+	chmod 0640 "${pidfile}" 2>/dev/null || true
+}
+
+revytechcommander_gateway_poststop()
+{
+	rm -f "${pidfile}"
+}
+
+run_rc_command "$1"

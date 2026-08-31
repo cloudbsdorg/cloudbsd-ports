@@ -1,0 +1,12 @@
+REVYTECHCommander is a FreeBSD-native platform for running many LLM bots
+as configuration (name, system prompt, allowed models, rate limits)
+rather than binaries. A gateway serves HTTP/SSE with session cookies,
+workers pull NATS JetStream jobs and call Ollama, Claude, Grok,
+FreeGrok, MiniMax, or LiteLLM, and a conductor reconciles desired bot
+state plus the transactional outbox.
+
+HTTPS is terminated by Caddy (Let's Encrypt DNS-01). The service mesh is
+WireGuard + Consul + Nomad + NATS mTLS, not Envoy. Postgres holds chat
+state; Valkey holds sessions and rate limits.
+
+WWW: https://github.com/revytechinc/REVYTECHCommander
