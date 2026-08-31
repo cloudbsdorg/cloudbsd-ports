@@ -46,7 +46,8 @@ GH_TUPLE=	opf:dentaku:78eece45bf3f4ed021c05dd2f5411d1c3f9b168a:dentaku \
 # USES=cargo is not used: this is not a Rust port.
 #
 # Day-one: no BIM IFC Linux blobs, no hocuspocus, no Appsignal.
-# Monolith: bundle --deployment --without development test mysql2 sqlite
+# Monolith: bundle config set --local {path,without,deployment}; bundle
+# install --jobs/--retry only (Bundler 4 removed --deployment/--without).
 # into WWWDIR; npm ci; assets:precompile. Node is BUILD only.
 # Runtime: two rc.d scripts (Puma 127.0.0.1:3000 and good_job worker).
 # PostgreSQL 17 client (server is a sibling jail/service). nginx is
@@ -130,8 +131,7 @@ do-build:
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
 		${LOCALBASE}/bin/bundle config set --local deployment true
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
-		${LOCALBASE}/bin/bundle install --deployment \
-		--without development:test:mysql2:sqlite \
+		${LOCALBASE}/bin/bundle install \
 		--jobs ${MAKE_JOBS_NUMBER} --retry 3
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
 		${LOCALBASE}/bin/npm ci
