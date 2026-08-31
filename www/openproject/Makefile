@@ -8,7 +8,7 @@
 PORTNAME=	openproject
 DISTVERSIONPREFIX=	v
 DISTVERSION=	17.7.2
-PORTREVISION=	2
+PORTREVISION=	3
 CATEGORIES=	www
 
 MAINTAINER=	mark@cloudbsd.org
@@ -66,6 +66,10 @@ EXTRACT_ONLY=	${_DISTFILES:N${BLOCKNOTE_DIST}}
 # install --jobs/--retry only (Bundler 4 removed --deployment/--without).
 # into WWWDIR; npm ci; assets:precompile. Node is BUILD only.
 # Runtime: two rc.d scripts (Puma 127.0.0.1:3000 and good_job worker).
+# Bastille: rc.subr su -m ${name}_user, then daemon without -u
+# (daemon -u hits initgroups EPERM). ctl supervise uses puma
+# --no-config --bind tcp://127.0.0.1:3000 (puma.rb NameError on
+# ruby40). Aliases need OPENPROJECT_ADDITIONAL__HOST__NAMES.
 # PostgreSQL 17 client (server is a sibling jail/service). nginx is
 # already the reverse proxy (sample only; not a RUN_DEPENDS).
 # Config is under etc/cloudbsd/openproject (CloudBSD JSON law;
@@ -251,6 +255,13 @@ do-test:
 	@${GREP} -q 'NPM_CONFIG_ALLOW_REMOTE=none' ${.CURDIR}/Makefile
 	@${GREP} -q 'NPM_CONFIG_ALLOW_FILE=root' ${.CURDIR}/Makefile
 	@${GREP} -q 'bundle40' ${FILESDIR}/openproject-ctl.in
+	@${GREP} -q -- '--no-config' ${FILESDIR}/openproject-ctl.in
+	@${GREP} -q 'ADDITIONAL__HOST__NAMES' ${FILESDIR}/openproject.env.sample
+	@${GREP} -q 'ADDITIONAL__HOST__NAMES' ${FILESDIR}/openproject.conf.5.in
+	@${GREP} -q 'initgroups' ${FILESDIR}/openproject.in
+	@${GREP} -q 'initgroups' ${FILESDIR}/openproject_worker.in
+	@${GREP} -q 'su -m' ${FILESDIR}/openproject.in
+	@${GREP} -q 'su -m' ${FILESDIR}/openproject_worker.in
 	@if command -v mandoc >/dev/null 2>&1; then \
 		mandoc -T lint -W error ${WRKDIR}/openproject.8 \
 			${WRKDIR}/openproject.conf.5; \

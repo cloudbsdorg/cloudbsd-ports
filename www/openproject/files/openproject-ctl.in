@@ -369,7 +369,12 @@ do_supervise()
 	_addr="${HOST:-127.0.0.1}"
 	_port="${PORT:-3000}"
 	cd "${WWWDIR_DEFAULT}"
+	# ruby40: config/puma.rb:36 references OpenProject::Configuration
+	# before that constant is loaded (Puma::DSL::OpenProject NameError).
+	# --no-config skips that file; bind and env come from the CLI.
+	# Same pattern as www/redmine61. Not an application fork.
 	exec "${RUBY}" -S "${BUNDLE}" exec puma \
+		--no-config \
 		--dir "${WWWDIR_DEFAULT}" \
 		-e "${RAILS_ENV:-production}" \
 		--bind "tcp://${_addr}:${_port}"
