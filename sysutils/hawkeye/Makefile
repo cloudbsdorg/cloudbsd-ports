@@ -1,5 +1,6 @@
 PORTNAME=	hawkeye
 DISTVERSION=	0.1.0
+PORTREVISION=	1
 CATEGORIES=	sysutils
 
 MAINTAINER=	mark@cloudbsd.org
@@ -8,6 +9,8 @@ WWW=		https://github.com/revytechinc/hawkeye
 
 LICENSE=	BSD3CLAUSE
 LICENSE_FILE=	${WRKSRC}/LICENSE
+
+RUN_DEPENDS=	hawkeye-data>0:sysutils/hawkeye-data
 
 USES=		go:1.25+,modules
 USE_GITHUB=	yes
@@ -24,9 +27,10 @@ CGO_ENABLED=	0
 # Switch MASTER_SITES/GH_TAGNAME to a release tag when 0.1.0 is published.
 
 # This port ships the hawkeye binary, man pages, sample JSON config, and
-# rc.d script only. The diagnostic knowledge corpus is the sibling
-# repository/port hawkeye-data (https://github.com/revytechinc/hawkeye-data).
-# Do not vendor that corpus here.
+# rc.d script. The diagnostic knowledge corpus is RUN_DEPENDS hawkeye-data
+# (https://github.com/revytechinc/hawkeye-data). pkg install hawkeye pulls
+# the kit; do not vendor the corpus here. hawkeye-data must not depend on
+# hawkeye (no cycle).
 
 USE_RC_SUBR=	hawkeye
 
