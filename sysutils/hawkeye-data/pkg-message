@@ -1,7 +1,9 @@
 [
 { type: install
   message: <<EOM
-hawkeye-data is the knowledge kit (sibling of sysutils/hawkeye).
+hawkeye-data is the knowledge kit. It comes with the hawkeye binary:
+pkg install hawkeye pulls this port in. You do not need a second
+pkg install of hawkeye-data. This port does not depend on hawkeye.
 
   pkg copy:    ${PKG_PREFIX}/share/hawkeye/knowledge.sqlite
   rescue copy: /boot/hawkeye/knowledge.sqlite

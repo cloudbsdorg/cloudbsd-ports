@@ -1,0 +1,15 @@
+[
+{ type: install
+  message: <<EOM
+Hawkeye includes the hawkeye-data knowledge kit as a runtime dependency.
+
+  pkg install hawkeye
+
+That single command installs the binary and the corpus. A second
+pkg install of hawkeye-data is not required.
+
+  pkg copy:    ${PKG_PREFIX}/share/hawkeye/knowledge.sqlite
+  rescue copy: /boot/hawkeye/knowledge.sqlite (not installed by default)
+EOM
+}
+]

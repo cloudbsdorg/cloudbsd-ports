@@ -1,6 +1,6 @@
 PORTNAME=	hawkeye-data
 DISTVERSION=	0.1.0
-PORTREVISION=	1
+PORTREVISION=	2
 CATEGORIES=	sysutils
 
 MAINTAINER=	mark@cloudbsd.org
@@ -18,8 +18,8 @@ GH_TAGNAME=	a9e96f52a9a08e526232582d1e4d4a819fad0088
 # Unreleased snapshot: GH_TAGNAME is commit a9e96f52a9a08e526232582d1e4d4a819fad0088 (hawkeye-data main, harvest PR 2).
 
 # Sibling of sysutils/hawkeye (binaries). This port is data only.
-# hawkeye is the sibling binary; see pkg-message. Not a RUN_DEPENDS to
-# avoid a hard cycle with the doctor that consumes this corpus.
+# sysutils/hawkeye RUN_DEPENDS on this port so pkg install hawkeye
+# pulls the kit. Do not add a reverse RUN_DEPENDS on hawkeye (cycle).
 NO_ARCH=	yes
 NO_BUILD=	yes
 
