@@ -14,6 +14,8 @@ set -eu
 PREFIX="%%PREFIX%%"
 WWWDIR_DEFAULT="%%WWWDIR%%"
 VERSION="%%VERSION%%"
+RUBY="%%RUBY%%"
+BUNDLE="${PREFIX}/bin/bundle"
 
 : "${OPENPROJECT_ENVFILE:=${PREFIX}/etc/cloudbsd/openproject/openproject.env}"
 : "${OPENPROJECT_CONFIG:=${PREFIX}/etc/cloudbsd/openproject/config.json}"
@@ -325,6 +327,16 @@ doctor()
 	else
 		_wrn "vendor/bundle absent (port build compiles native gems)"
 	fi
+	echo "==> ruby"
+	if [ -x "${RUBY}" ]; then
+		_rv=$("${RUBY}" -e 'puts RUBY_VERSION' 2>/dev/null || echo unknown)
+		case "${_rv}" in
+		4.0.*) _ok "${RUBY} ${_rv}" ;;
+		*) _bad "${RUBY} is ${_rv} (want 4.0.x)" ;;
+		esac
+	else
+		_bad "missing ${RUBY}"
+	fi
 
 	if [ "${_fail}" -ne 0 ]; then
 		echo "openproject: doctor failed"
@@ -334,20 +346,30 @@ doctor()
 	return 0
 }
 
+# Prefer bundle40 so an unversioned bundle shebang cannot pick ruby34.
+select_bundle()
+{
+	if [ -x "${PREFIX}/bin/bundle40" ]; then
+		BUNDLE="${PREFIX}/bin/bundle40"
+	fi
+}
+
 do_migrate()
 {
 	load_env
+	select_bundle
 	cd "${WWWDIR_DEFAULT}"
-	${PREFIX}/bin/bundle exec rake db:migrate
+	"${RUBY}" -S "${BUNDLE}" exec "${RUBY}" -S rake db:migrate
 }
 
 do_supervise()
 {
 	load_env
+	select_bundle
 	_addr="${HOST:-127.0.0.1}"
 	_port="${PORT:-3000}"
 	cd "${WWWDIR_DEFAULT}"
-	exec ${PREFIX}/bin/bundle exec puma \
+	exec "${RUBY}" -S "${BUNDLE}" exec puma \
 		--dir "${WWWDIR_DEFAULT}" \
 		-e "${RAILS_ENV:-production}" \
 		--bind "tcp://${_addr}:${_port}"
@@ -356,8 +378,9 @@ do_supervise()
 do_supervise_worker()
 {
 	load_env
+	select_bundle
 	cd "${WWWDIR_DEFAULT}"
-	exec ${PREFIX}/bin/bundle exec good_job start
+	exec "${RUBY}" -S "${BUNDLE}" exec good_job start
 }
 
 do_secret()
