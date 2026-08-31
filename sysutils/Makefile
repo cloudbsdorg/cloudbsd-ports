@@ -1196,6 +1196,7 @@
     SUBDIR += rest-server
     SUBDIR += restic
     SUBDIR += retail
+    SUBDIR += revytechcommander
     SUBDIR += rex
     SUBDIR += rhc
     SUBDIR += rinse

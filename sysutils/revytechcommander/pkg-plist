@@ -1,0 +1,5 @@
+bin/revytechcommander
+@sample etc/cloudbsd/revytechcommander/config.json.sample
+%%DATADIR%%/web/index.html
+share/man/man8/revytechcommander.8.gz
+share/man/man5/revytechcommander.5.gz

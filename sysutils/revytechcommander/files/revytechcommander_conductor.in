@@ -1,0 +1,152 @@
+#!/bin/sh
+
+# PROVIDE: revytechcommander_conductor
+# REQUIRE: LOGIN nats postgresql
+# KEYWORD: shutdown
+#
+# Add the following to /etc/rc.conf.local or /etc/rc.conf:
+#
+#  revytechcommander_conductor_enable="YES"
+#  revytechcommander_conductor_user="revytech"
+#  revytechcommander_conductor_group="revytech"
+#  revytechcommander_conductor_config="%%PREFIX%%/etc/cloudbsd/revytechcommander/config.json"
+#  revytechcommander_conductor_logfile="/var/log/revytechcommander/conductor.log"
+#  revytechcommander_conductor_logdir="/var/log/revytechcommander"
+#  revytechcommander_conductor_piddir="/var/run/revytechcommander"
+#  revytechcommander_conductor_flags=""          # extra args after `conductor`
+
+# Single-node: prefer the meta script `revytechcommander` instead of
+# enabling each role. Nomad-managed nodes must leave this enable=NO.
+#
+# Reconciles bots and the transactional outbox. One instance per cluster is enough.
+# Do not enable this rc.d script on a host where Nomad already runs the conductor job.
+
+. /etc/rc.subr
+
+name="revytechcommander_conductor"
+rcvar="${name}_enable"
+desc="REVYTECHCommander conductor"
+
+load_rc_config $name
+
+: ${revytechcommander_conductor_enable:="NO"}
+: ${revytechcommander_conductor_user:="revytech"}
+: ${revytechcommander_conductor_group:="revytech"}
+: ${revytechcommander_conductor_config:="%%PREFIX%%/etc/cloudbsd/revytechcommander/config.json"}
+: ${revytechcommander_conductor_logdir:="/var/log/revytechcommander"}
+: ${revytechcommander_conductor_logfile:="/var/log/revytechcommander/conductor.log"}
+: ${revytechcommander_conductor_piddir:="/var/run/revytechcommander"}
+: ${revytechcommander_conductor_program:="%%PREFIX%%/bin/revytechcommander"}
+: ${revytechcommander_conductor_flags:=""}
+
+
+pidfile="${revytechcommander_conductor_piddir}/conductor.pid"
+procname="${revytechcommander_conductor_program}"
+command="/usr/sbin/daemon"
+command_args="-p ${pidfile} -t ${name} -u ${revytechcommander_conductor_user} -o ${revytechcommander_conductor_logfile} ${procname} conductor -config ${revytechcommander_conductor_config} ${revytechcommander_conductor_flags}"
+
+required_files="${revytechcommander_conductor_config}"
+start_precmd="revytechcommander_conductor_prestart"
+start_postcmd="revytechcommander_conductor_poststart"
+stop_postcmd="revytechcommander_conductor_poststop"
+
+extra_commands="status reload"
+sig_reload="HUP"
+reload_precmd="revytechcommander_conductor_reloadpre"
+
+revytechcommander_conductor_reloadpre()
+{
+	local _config _proc
+	_config="${revytechcommander_conductor_config}"
+	_proc="${revytechcommander_conductor_program}"
+	# Validate like --check-config. Failure must not stop or kill the daemon.
+	if [ -x "${_proc}" ]; then
+		if ! "${_proc}" --check-config -config "${_config}"; then
+			err 1 "revytechcommander_conductor: --check-config failed; not signaling daemon"
+		fi
+	fi
+	if [ ! -f "${pidfile}" ] || [ ! -s "${pidfile}" ]; then
+		err 1 "revytechcommander_conductor: not running"
+	fi
+}
+
+revytechcommander_conductor_prestart()
+{
+	local _user _group _piddir _logdir _logfile _config _proc
+
+	_user="${revytechcommander_conductor_user}"
+	_group="${revytechcommander_conductor_group}"
+	_piddir="${revytechcommander_conductor_piddir}"
+	_logdir="${revytechcommander_conductor_logdir}"
+	_logfile="${revytechcommander_conductor_logfile}"
+	_config="${revytechcommander_conductor_config}"
+	_proc="${revytechcommander_conductor_program}"
+
+	if [ "${_user}" = "root" ] || [ -z "${_user}" ]; then
+		err 1 "revytechcommander_conductor: refusing to run as root; set revytechcommander_conductor_user to a dedicated account (revytech)"
+	fi
+	if [ ! -x "${_proc}" ]; then
+		err 1 "revytechcommander_conductor: ${_proc} is not executable"
+	fi
+	if [ ! -f "${_config}" ]; then
+		err 1 "revytechcommander_conductor: config ${_config} not found"
+	fi
+	# Secrets require 0600 (CloudBSD). Never world-readable or world-writable.
+	if find "${_config}" -perm -002 | grep -q .; then
+		err 1 "revytechcommander_conductor: config ${_config} is world-writable"
+	fi
+	chmod 0600 "${_config}" 2>/dev/null || warn "revytechcommander_conductor: could not chmod 0600 ${_config}"
+	chown "${_user}:${_group}" "${_config}" 2>/dev/null || warn "revytechcommander_conductor: could not chown config to ${_user}:${_group}"
+	if ! "${_proc}" --check-config -config "${_config}"; then
+		err 1 "revytechcommander_conductor: --check-config failed"
+	fi
+
+	install -d -o "${_user}" -g "${_group}" -m 0750 "${_piddir}" || \
+		err 1 "revytechcommander_conductor: cannot create ${_piddir}"
+	install -d -o "${_user}" -g "${_group}" -m 0750 "${_logdir}" || \
+		err 1 "revytechcommander_conductor: cannot create ${_logdir}"
+	if [ ! -f "${_logfile}" ]; then
+		install -o "${_user}" -g "${_group}" -m 0640 /dev/null "${_logfile}" || \
+			err 1 "revytechcommander_conductor: cannot create ${_logfile}"
+	else
+		chmod 0640 "${_logfile}" 2>/dev/null || true
+		chown "${_user}:${_group}" "${_logfile}" 2>/dev/null || true
+	fi
+	chmod 0750 "${_piddir}" "${_logdir}" 2>/dev/null || true
+
+	# Pidfile: never empty, never root-owned leftover, owned by service user.
+	if [ -f "${pidfile}" ]; then
+		if [ ! -s "${pidfile}" ]; then
+			rm -f "${pidfile}"
+		else
+			_owner=`stat -f %Su "${pidfile}" 2>/dev/null`
+			if [ "${_owner}" = "root" ]; then
+				rm -f "${pidfile}"
+			fi
+		fi
+	fi
+}
+
+revytechcommander_conductor_poststart()
+{
+	local _user _group
+	_user="${revytechcommander_conductor_user}"
+	_group="${revytechcommander_conductor_group}"
+	if [ ! -f "${pidfile}" ]; then
+		err 1 "revytechcommander_conductor: pidfile ${pidfile} missing after start"
+	fi
+	if [ ! -s "${pidfile}" ]; then
+		rm -f "${pidfile}"
+		err 1 "revytechcommander_conductor: empty pidfile after start"
+	fi
+	chown "${_user}:${_group}" "${pidfile}" || \
+		err 1 "revytechcommander_conductor: pidfile must be owned by ${_user}, not root"
+	chmod 0640 "${pidfile}" 2>/dev/null || true
+}
+
+revytechcommander_conductor_poststop()
+{
+	rm -f "${pidfile}"
+}
+
+run_rc_command "$1"
