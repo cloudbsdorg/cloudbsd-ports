@@ -47,8 +47,12 @@ CGO_ENABLED=	0
 
 ETCDIR=		${PREFIX}/etc/cloudbsd/revytechcommander
 
-# GH archive gitignores web/dist. ci-install web/ then node --run build.
+# GH archive gitignores web/dist. Drop Playwright, lockfile-ci web/, then node --run build. Do not omit=dev: angular cli/build are also devDependencies.
 post-build:
+	cd ${WRKSRC}/web && ${SETENV} ${MAKE_ENV} HOME=${WRKDIR} \
+		npm pkg delete devDependencies.@playwright/test
+	cd ${WRKSRC}/web && ${SETENV} ${MAKE_ENV} HOME=${WRKDIR} \
+		npm install --package-lock-only --ignore-scripts
 	cd ${WRKSRC}/web && ${SETENV} ${MAKE_ENV} HOME=${WRKDIR} \
 		npm ci
 	cd ${WRKSRC}/web && ${SETENV} ${MAKE_ENV} HOME=${WRKDIR} \
