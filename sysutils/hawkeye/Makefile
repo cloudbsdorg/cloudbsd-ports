@@ -1,6 +1,6 @@
 PORTNAME=	hawkeye
 DISTVERSION=	0.1.0
-PORTREVISION=	3
+PORTREVISION=	10
 CATEGORIES=	sysutils
 
 MAINTAINER=	mark@cloudbsd.org
@@ -16,14 +16,14 @@ USES=		go:1.25+,modules
 USE_GITHUB=	yes
 GH_ACCOUNT=	revytechinc
 GH_PROJECT=	hawkeye
-GH_TAGNAME=	2b93fe7de82da5f92f2da4cc49b0510554cfd3e3
+GH_TAGNAME=	8dd7a74b5261fb10992a8d1c7910e19b89a062f8
 
-GO_MODULE=	github.com/revytechinc/hawkeye@2b93fe7de82da5f92f2da4cc49b0510554cfd3e3
+GO_MODULE=	github.com/revytechinc/hawkeye@8dd7a74b5261fb10992a8d1c7910e19b89a062f8
 GO_MOD_DIST=	github
 GO_TARGET=	./cmd/hawkeye
 CGO_ENABLED=	0
 
-# Unreleased snapshot: GH_TAGNAME is commit 2b93fe7de82da5f92f2da4cc49b0510554cfd3e3 (hawkeye main, PR 18 first-look + PR 17 apply A-D + PR 16 carrier/MCP).
+# Unreleased snapshot: GH_TAGNAME is commit 8dd7a74b5261fb10992a8d1c7910e19b89a062f8 (hawkeye main, PR 25 / llama-completion / dangling rescue).
 # Switch MASTER_SITES/GH_TAGNAME to a release tag when 0.1.0 is published.
 
 # This port ships the hawkeye binary, man pages, sample JSON config, and
