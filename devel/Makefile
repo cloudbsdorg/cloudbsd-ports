@@ -165,7 +165,6 @@
     SUBDIR += R-cran-whoami
     SUBDIR += R-cran-withr
     SUBDIR += R-cran-zeallot
-    SUBDIR += RStudio
     SUBDIR += SpecTcl
     SUBDIR += aarch64-none-elf-gcc
     SUBDIR += abi-compliance-checker
@@ -186,7 +185,6 @@
     SUBDIR += allegro5
     SUBDIR += amber
     SUBDIR += aml
-    SUBDIR += ammonite
     SUBDIR += amqp-cpp
     SUBDIR += android-tools
     SUBDIR += antlr
@@ -670,8 +668,6 @@
     SUBDIR += efl
     SUBDIR += egypt
     SUBDIR += eiffelstudio
-    SUBDIR += electron37
-    SUBDIR += electron38
     SUBDIR += electron40
     SUBDIR += electron41
     SUBDIR += electron42
@@ -5793,6 +5789,8 @@
     SUBDIR += py-proto-plus
     SUBDIR += py-protobuf
     SUBDIR += py-protobuf-compiler
+    SUBDIR += py-protobuf-py
+    SUBDIR += py-protobuf-py-ext
     SUBDIR += py-protoc-gen-validate
     SUBDIR += py-protovalidate
     SUBDIR += py-proxmoxer
@@ -5871,7 +5869,6 @@
     SUBDIR += py-pygit2
     SUBDIR += py-pygls
     SUBDIR += py-pygobject
-    SUBDIR += py-pygpx
     SUBDIR += py-pyhashxx
     SUBDIR += py-pyhcl
     SUBDIR += py-pyicu
@@ -7441,6 +7438,7 @@
     SUBDIR += rubygem-bin_struct
     SUBDIR += rubygem-bin_utils
     SUBDIR += rubygem-bindata
+    SUBDIR += rubygem-bindata-gitlab
     SUBDIR += rubygem-bindata24
     SUBDIR += rubygem-bindex
     SUBDIR += rubygem-binding_of_caller
@@ -7983,6 +7981,7 @@
     SUBDIR += rubygem-multi_json
     SUBDIR += rubygem-multi_json-gitlab
     SUBDIR += rubygem-multi_test
+    SUBDIR += rubygem-multi_test1
     SUBDIR += rubygem-murmurhash3
     SUBDIR += rubygem-mustache
     SUBDIR += rubygem-mustache-sinatra
