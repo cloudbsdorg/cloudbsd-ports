@@ -1,0 +1,19 @@
+[
+{ type: install
+  message: <<EOM
+Cursor Agent CLI (agent / cursor-agent) needs FreeBSD Linux binary
+compatibility:
+
+  sysrc linux_enable=YES
+  service linux start
+
+Ensure linprocfs is mounted at /compat/linux/proc (linux service does this).
+
+Authenticate once:
+
+  agent login
+
+Or set CURSOR_API_KEY for non-interactive use.
+EOM
+}
+]
