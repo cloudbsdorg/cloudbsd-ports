@@ -92,6 +92,7 @@
     SUBDIR += cs
     SUBDIR += cstream
     SUBDIR += ctm
+    SUBDIR += cursor-agent
     SUBDIR += cuttlefish
     SUBDIR += dahdi
     SUBDIR += dahdi-kmod26

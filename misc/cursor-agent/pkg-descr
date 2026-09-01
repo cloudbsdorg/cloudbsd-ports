@@ -1,0 +1,7 @@
+Cursor Agent is Cursor's terminal coding agent. It runs the same agent
+workflow as the Cursor editor from a CLI (print/headless modes, MCP, etc.).
+
+cursor-agent is a closed-source Linux package that runs through Linuxlator
+(linux_base-rl9). The port installs wrappers as 'agent' and 'cursor-agent'.
+
+WWW: https://cursor.com/cli

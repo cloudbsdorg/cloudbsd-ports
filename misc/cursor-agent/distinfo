@@ -1,0 +1,5 @@
+TIMESTAMP = 1788231076
+SHA256 (cursor-agent/2026.08.25-3e8eec8/linux/x64/agent-cli-package.tar.gz) = 7a212e5a17ff9316f5acc78808e33c536940d5455645022e6388d99ba48c8425
+SIZE (cursor-agent/2026.08.25-3e8eec8/linux/x64/agent-cli-package.tar.gz) = 84518977
+SHA256 (cursor-agent/2026.08.25-3e8eec8/linux/arm64/agent-cli-package.tar.gz) = f1c1c2330d89fa4ef5b6cc04fcffba15012ff50eacd07e0f3baec0716f25ac5d
+SIZE (cursor-agent/2026.08.25-3e8eec8/linux/arm64/agent-cli-package.tar.gz) = 83111698
