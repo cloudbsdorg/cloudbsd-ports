@@ -1,6 +1,6 @@
 PORTNAME=	hawkeye
 DISTVERSION=	0.1.0
-PORTREVISION=	13
+PORTREVISION=	14
 CATEGORIES=	sysutils
 
 MAINTAINER=	mark@cloudbsd.org
@@ -23,7 +23,7 @@ GO_MOD_DIST=	github
 GO_TARGET=	./cmd/hawkeye
 CGO_ENABLED=	0
 
-# Unreleased snapshot: GH_TAGNAME is commit 9a8e5ce8ec89081b26a33d6efbfbf993db6593e2 (hawkeye main, PR 33 / rc pidfile adopt / _13).
+# Unreleased snapshot: GH_TAGNAME is commit 9a8e5ce8ec89081b26a33d6efbfbf993db6593e2 (hawkeye main, PR 33 / hawkeye.in synced from PR 33 rc.d / _14).
 # Switch MASTER_SITES/GH_TAGNAME to a release tag when 0.1.0 is published.
 
 # This port ships the hawkeye binary, man pages, sample JSON config, and

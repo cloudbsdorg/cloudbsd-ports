@@ -34,7 +34,10 @@ update_cmd="hawkeye_update"
 doctor_cmd="hawkeye_doctor"
 checkconfig_cmd="hawkeye_checkconfig"
 start_precmd="hawkeye_prestart"
+start_postcmd="hawkeye_poststart"
 stop_postcmd="hawkeye_poststop"
+start_cmd="hawkeye_start"
+status_cmd="hawkeye_status"
 
 hawkeye_checkconfig()
 {
@@ -49,6 +52,53 @@ hawkeye_update()
 hawkeye_doctor()
 {
 	"${procname}" --config "${hawkeye_config}" doctor
+}
+
+hawkeye_pidfile_operator_readable()
+{
+	# PID is not a secret. Never seed an empty pidfile: daemon(8)
+	# pidfile_open(..., O_TRUNC) plus supervisor pidfile_remove can
+	# leave a ghost or missing path while mcp --http is still bound.
+	if [ -f "${pidfile}" ]; then
+		chmod 0644 "${pidfile}" || warn "hawkeye: could not set pidfile mode 0644"
+	fi
+}
+
+hawkeye_live_mcp_pid()
+{
+	# argv[1] is the binary. Do not match daemon(8)'s wrapper line.
+	# Point at the token file only; never cat the token.
+	ps -ax -o pid= -o args= 2>/dev/null | awk -v bin="${procname}" '
+		$2 == bin {
+			for (i = 3; i <= NF; i++) {
+				if ($i == "mcp" && $(i+1) == "--http") {
+					print $1
+					exit
+				}
+			}
+		}'
+}
+
+hawkeye_adopt_live_mcp()
+{
+	_live=$(hawkeye_live_mcp_pid)
+	[ -n "${_live}" ] || return 1
+	case "${_live}" in
+	''|*[!0-9]*|0)
+		return 1
+		;;
+	esac
+	_cur=""
+	if [ -f "${pidfile}" ]; then
+		_cur=$(cat "${pidfile}" 2>/dev/null || true)
+	fi
+	if [ "${_cur}" = "${_live}" ]; then
+		hawkeye_pidfile_operator_readable
+		return 0
+	fi
+	( umask 022 && printf '%s\n' "${_live}" > "${pidfile}" ) || return 1
+	chmod 0644 "${pidfile}" || warn "hawkeye: could not set pidfile mode 0644"
+	return 0
 }
 
 hawkeye_prestart()
@@ -76,14 +126,71 @@ hawkeye_prestart()
 	fi
 }
 
+hawkeye_poststart()
+{
+	_n=0
+	while [ "${_n}" -lt 50 ]; do
+		if [ -s "${pidfile}" ]; then
+			hawkeye_pidfile_operator_readable
+			return 0
+		fi
+		sleep 0.1 2>/dev/null || sleep 1
+		_n=$((_n + 1))
+	done
+	if hawkeye_adopt_live_mcp; then
+		return 0
+	fi
+	warn "hawkeye: pidfile not written after start"
+}
+
 hawkeye_poststop()
 {
 	rm -f "${pidfile}"
 }
 
+hawkeye_status()
+{
+	hawkeye_adopt_live_mcp || true
+	_pid=""
+	if [ -f "${pidfile}" ]; then
+		if type check_pidfile >/dev/null 2>&1; then
+			_pid=$(check_pidfile "${pidfile}" "${procname}")
+		fi
+		if [ -z "${_pid}" ]; then
+			_pid=$(cat "${pidfile}" 2>/dev/null || true)
+			case "${_pid}" in
+			''|*[!0-9]*|0)
+				_pid=""
+				;;
+			*)
+				if ! kill -0 "${_pid}" 2>/dev/null; then
+					_pid=""
+				fi
+				;;
+			esac
+		fi
+	fi
+	if [ -n "${_pid}" ]; then
+		echo "${name} is running as pid ${_pid}."
+		return 0
+	fi
+	echo "${name} is not running."
+	return 1
+}
+
+hawkeye_start()
+{
+	if hawkeye_adopt_live_mcp; then
+		echo "${name} is already running as pid $(cat "${pidfile}")."
+		return 0
+	fi
+	eval ${command} ${rc_flags} ${command_args}
+}
+
 hawkeye_reload()
 {
 	hawkeye_checkconfig || return 1
+	hawkeye_adopt_live_mcp || true
 	if [ -f "${pidfile}" ]; then
 		kill -HUP "$(cat "${pidfile}")" || return 1
 	else
@@ -93,10 +200,12 @@ hawkeye_reload()
 }
 
 if [ "${hawkeye_mcp}" = "YES" ]; then
-	command_args="-p ${pidfile} -u ${hawkeye_user} -f /usr/bin/env HAWKEYE_MCP_TOKEN_FILE=${hawkeye_mcp_token_file} ${procname} --config ${hawkeye_config} mcp --http"
+	# No daemon -p: supervisor pidfile_remove and pidfile_open(O_TRUNC)
+	# leave /var/run/hawkeye.pid missing while mcp --http is bound.
+	# Hawkeye writes the pidfile after listen (mode 0644).
+	command_args="-u ${hawkeye_user} -f /usr/bin/env HAWKEYE_MCP_TOKEN_FILE=${hawkeye_mcp_token_file} ${procname} --config ${hawkeye_config} mcp --http"
 else
-	# Long-running placeholder so SIGHUP reload remains available.
-	command_args="-p ${pidfile} -u ${hawkeye_user} -f /usr/bin/true"
+	command_args="-u ${hawkeye_user} -f /usr/bin/true"
 fi
 
 run_rc_command "$1"
