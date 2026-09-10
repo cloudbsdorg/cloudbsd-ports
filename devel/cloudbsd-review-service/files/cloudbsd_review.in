@@ -1,0 +1,584 @@
+#!/bin/sh
+
+# PROVIDE: cloudbsd_review
+# REQUIRE: NETWORKING syslogd
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="cloudbsd_review"
+rcvar="cloudbsd_review_enable"
+pidfile="/var/run/${name}.pid"
+procname="%%PREFIX%%/sbin/cloudbsd-review"
+
+load_rc_config ${name}
+
+: ${cloudbsd_review_enable:="NO"}
+: ${cloudbsd_review_config:="%%PREFIX%%/etc/cloudbsd/review/config.json"}
+# NOT ${name}_env, and NOT ${name}_env_file. Both are rc.subr's own knobs,
+# verified in /etc/rc.subr rather than assumed:
+#
+#   1211:  _env=\$${name}_env
+#   1533:  ${_env:+env $_env }$command ...
+#   1220:  . $_env_file
+#
+# So `cloudbsd_review_env` would have been spliced in as `env <this path>
+# /usr/sbin/daemon ...` and env(1) would have tried to EXEC the credentials
+# file -- every start failing after prestart had passed. And `_env_file` is
+# sourced by rc.subr, which is the exact channel this script exists to remove.
+#
+# The file is PARSED as plain NAME=value lines. No quoting, no `export`: a
+# value written as KEY="v" arrives with the quotes in it.
+: ${cloudbsd_review_credfile:="%%PREFIX%%/etc/cloudbsd/review/credentials"}
+# Where the service keeps its own state. A variable, not a literal, because the
+# checks below run against the REAL path and the port's own test suite
+# therefore could only pass on a host that already had /var/db/cloudbsd -- a
+# fresh Jenkins agent does not, and every row would have failed on
+# "cannot stat", accept rows on the exit code and refusal rows on the reason.
+: ${cloudbsd_review_statedir:="/var/db/cloudbsd/review"}
+# NOT ${name}_flags. rc.subr injects that into `command`, which is
+# /usr/sbin/daemon -- so anything meant for cloudbsd-review would be parsed by
+# daemon, against the wrong program.
+#
+# Clearing rc_flags HERE would do nothing: run_rc_command re-evaluates it
+# (`eval rc_flags=\$${name}_flags`, rc.subr:1206) after this file has been
+# read. It is cleared in the prestart instead, which runs after that.
+: ${cloudbsd_review_args:=""}
+
+# A dedicated user. The prestart above exists to keep a credentials file from
+# getting root execution; running the process that spawns cursor-agent and grok
+# and talks to remote endpoints as root would give away more than that file
+# ever could.
+#
+# NOT ${name}_user -- that is a third rc.subr knob (rc.subr:1209, and 1545
+# `su -m $_user -c ...`). Setting it would run /usr/sbin/daemon itself as an
+# unprivileged user, and `daemon -u` would then fail its own setuid: the same
+# collision as ${name}_env, arrived at while fixing ${name}_env.
+#
+# daemon(8) is the right place for the drop, verified in usr.sbin/daemon.c
+# rather than assumed: daemon_exec() runs in the CHILD after fork, calls
+# pidfile_write() and only then restrict_process(user). So the supervisor and
+# the pidfile stay root's, the reviewed diff is handled by nobody, and the
+# variables exported below survive the exec.
+: ${cloudbsd_review_runas:="cloudbsd_review"}
+
+command="/usr/sbin/daemon"
+# -p = child pid so `service status` matches procname. Do not use -r.
+# -S -T: `-f` alone sends the child's stdout AND stderr to /dev/null, so a
+# service that exits on an unparseable config.json, an unreadable
+# reviewers.json or a port already bound dies silently -- and `service start`
+# still returns 0, because daemon(8) forked successfully. All this care about
+# the credentials file is worth little if the process it launches cannot say
+# why it refused. daemon(8) documents that -f redirects first and the syslog
+# options then take stdout/stderr back.
+command_args="-p ${pidfile} -u ${cloudbsd_review_runas} -f -S -T ${name} ${procname} \
+	-config ${cloudbsd_review_config} \
+	${cloudbsd_review_args}"
+
+start_precmd="cloudbsd_review_prestart"
+
+# refuse: say why and STOP.
+#
+# `return 1` is not enough. rc.subr ignores a non-zero start_precmd under
+# rc_force, so `service cloudbsd_review forcestart` walked past every check in
+# this function -- the uid-0 refusal, the credential file's mode and owner, the
+# allowlist -- and started the service anyway with a warning nobody is required
+# to read. There is no legitimate forced start past these, and an rc.d script
+# is normally run as its own process, so exiting stops this service and nothing
+# else.
+#
+# The exception, stated because the sentence above is a property of the default
+# and not of rc.d: with rc_fast_and_loose set, /etc/rc SOURCES rc.d scripts in
+# its own shell, so this exit would abort the rest of boot. That knob is
+# documented as a debugging aid and is not set on this fleet; returning instead
+# would let the caller carry on past a refusal, which is worse.
+cloudbsd_review_refuse()
+{
+	warn "$@"
+	exit 1
+}
+
+# Refuse unless every component of $1, as written AND as resolved, is a real
+# root-owned directory that nobody else can write.
+#
+# A function because there are two such paths and only one of them used to get
+# this. The credentials file got the full walk; the state directory got its
+# immediate parent, on the argument that "the only writer is root" -- which is
+# a statement about the DEFAULT, and the path is rc.conf-settable. With
+# cloudbsd_review_statedir=/tmp/x/review, /tmp/x passes as root 0755 and then
+# anyone can swap /tmp/x for a symlink between the check and the install, which
+# creates a service-owned directory wherever they point it.
+cloudbsd_review_check_path()
+{
+	_cp_what=$2
+
+	# As written first: stat(1) uses lstat(2), so a symlink component is
+	# never the directory that later gets opened or created through it.
+	_cp_u=$1
+	while :; do
+		if [ -L "$_cp_u" ]; then
+			cloudbsd_review_refuse "$_cp_u is a symlink; every component of the path to ${_cp_what} must be a real directory"
+		fi
+		[ "$_cp_u" = / ] && break
+		_cp_prev=$_cp_u
+		_cp_u=$(dirname "$_cp_u")
+		[ "$_cp_u" = "$_cp_prev" ] && break
+	done
+
+	_cp_d=$(realpath "$1") ||
+		cloudbsd_review_refuse "cannot resolve $1"
+	while :; do
+		_cp_mode=$(stat -f '%Lp' "$_cp_d") ||
+			cloudbsd_review_refuse "cannot stat $_cp_d"
+		_cp_owner=$(stat -f '%u' "$_cp_d") ||
+			cloudbsd_review_refuse "cannot stat $_cp_d"
+		if [ "$_cp_owner" != 0 ]; then
+			cloudbsd_review_refuse "$_cp_d is owned by uid ${_cp_owner}, not root; it is an ancestor of ${_cp_what}"
+		fi
+		if [ $(( 0$_cp_mode & 022 )) -ne 0 ]; then
+			cloudbsd_review_refuse "$_cp_d is group- or world-writable (${_cp_mode}); anything below it can be replaced"
+		fi
+		[ "$_cp_d" = / ] && break
+		_cp_prev=$_cp_d
+		_cp_d=$(dirname "$_cp_d")
+		[ "$_cp_d" = "$_cp_prev" ] && break
+	done
+}
+
+cloudbsd_review_prestart()
+{
+	# Here, not at the top level: rc.subr re-evaluates rc_flags from
+	# ${name}_flags after this file is read, so a value set above is
+	# overwritten before it can take effect.
+	rc_flags=""
+
+	# The operator's args must not carry -config.
+	#
+	# command_args puts `-config ${cloudbsd_review_config}` first and appends
+	# ${cloudbsd_review_args} after it, and Go's flag package takes the LAST
+	# value -- so one rc.conf line points the service at a file that none of
+	# the checks below ever looked at. Same threat model as runas=root, and
+	# the same answer.
+	# CHARACTER CLASS FIRST, then the -config test.
+	#
+	# command_args is a string rc.subr eval's as root, so this value is not
+	# argv -- `$(...)`, a backtick, `;` or a newline in it is a root shell
+	# injection, the same channel ${name}_prepend was refused for. It is an
+	# rc.conf value, so setting it already needs root; the point is that a
+	# typo or a copied line should not become command execution, and that a
+	# guard which claims to keep -config out actually does.
+	#
+	# It did not: matching " -config " is space-delimited, so a TAB or a
+	# newline before it slipped past while the shell still split on it at
+	# eval time. Refusing every character that is not part of a plain flag
+	# closes both, and does it without having to enumerate metacharacters.
+	case "${cloudbsd_review_args}" in
+	*[!-A-Za-z0-9_.=/,\ ]*)
+		cloudbsd_review_refuse "cloudbsd_review_args contains a character that is not part of a plain flag; it is spliced into a line rc.subr evaluates as root"
+		;;
+	esac
+	case " ${cloudbsd_review_args} " in
+	*" -config "*|*" -config="*|*" --config "*|*" --config="*)
+		cloudbsd_review_refuse "cloudbsd_review_args names -config; the configuration comes from cloudbsd_review_config, which is checked before the service starts"
+		;;
+	esac
+
+	# The Makefile says this service must not have root. That was a comment
+	# and a default, which is not a control: one rc.conf line
+	# (cloudbsd_review_runas="root") handed it root again with nothing to
+	# say so. Check it.
+	# A NAME, checked before it is resolved. `id -u 799` happily resolves a
+	# numeric string and passes the uid-0 test below -- but daemon(8) calls
+	# getpwnam() in the child, after fork, and getpwnam("799") fails. The
+	# supervisor has already returned 0 by then, so `service start` succeeds
+	# and the child dies into syslog: a start that reports success and
+	# leaves nothing running.
+	case "${cloudbsd_review_runas}" in
+	*[!A-Za-z0-9_.-]*|''|[0-9]*)
+		cloudbsd_review_refuse "cloudbsd_review_runas must be a user NAME, not ${cloudbsd_review_runas}; daemon(8) resolves it with getpwnam after forking, so a numeric value fails in the child and the start still reports success"
+		;;
+	esac
+	runas_uid=$(id -u "${cloudbsd_review_runas}" 2>/dev/null) ||
+		cloudbsd_review_refuse "no such user: ${cloudbsd_review_runas}"
+	if [ "$runas_uid" = 0 ]; then
+		cloudbsd_review_refuse "cloudbsd_review_runas is ${cloudbsd_review_runas} (uid 0); this service spawns agent CLIs over a diff it did not write and must not run as root"
+	fi
+
+	# ABSOLUTE, both of them, before anything walks a path.
+	#
+	# The ancestor walk below climbs with dirname until it reaches "/". On a
+	# RELATIVE path it never does: dirname "credentials" is ".", dirname "."
+	# is ".", stat "." succeeds, and the loop spins for ever. An rc.conf typo
+	# would not be refused at boot -- it would HANG the boot, in a prestart
+	# whose entire purpose is to refuse things.
+	for _p in "${cloudbsd_review_credfile}" "${cloudbsd_review_config}" \
+	    "${cloudbsd_review_statedir}"; do
+		case "$_p" in
+		/*) ;;
+		*) cloudbsd_review_refuse "$_p must be an absolute path" ;;
+		esac
+	done
+
+	# The config file, which nothing checked. Every line of care below is
+	# about the credentials file; meanwhile a missing or unreadable
+	# config.json let daemon(8) fork successfully, the child die immediately,
+	# and `service start` return 0.
+	#
+	# Readability is checked as root, which is not the whole question -- the
+	# child runs as ${cloudbsd_review_runas} -- but sh has no way to test
+	# access as another user without a login shell, and the account has
+	# nologin by design. So this catches the common failure (absent, or a
+	# typo in the path) and not a mode that excludes the service user.
+	# -f AND -r. `[ -r <dir> ]` is true for a readable directory, so pointing
+	# cloudbsd_review_config at the directory instead of the file passed this
+	# check, daemon forked, and the child died -- the silent start the check
+	# exists to prevent, reached through the check.
+	if [ ! -f "${cloudbsd_review_config}" ] || [ ! -r "${cloudbsd_review_config}" ]; then
+		cloudbsd_review_refuse "${cloudbsd_review_config} is not a readable file; it is the service's configuration"
+	fi
+	# And it gets the same treatment as the credentials file, because it is
+	# the same kind of thing: it carries the listen address and names
+	# auth.tokenFile. A group- or world-writable config.json lets any local
+	# user re-point the service, which needs no credential at all.
+	if [ -L "${cloudbsd_review_config}" ]; then
+		cloudbsd_review_refuse "${cloudbsd_review_config} is a symlink; refusing to read the configuration through one"
+	fi
+	_cmode=$(stat -f '%Lp' "${cloudbsd_review_config}") ||
+		cloudbsd_review_refuse "cannot stat ${cloudbsd_review_config}"
+	_cowner=$(stat -f '%u' "${cloudbsd_review_config}") ||
+		cloudbsd_review_refuse "cannot stat ${cloudbsd_review_config}"
+	if [ "$_cowner" != 0 ] || [ $(( 0$_cmode & 022 )) -ne 0 ]; then
+		cloudbsd_review_refuse "${cloudbsd_review_config} is uid ${_cowner} mode ${_cmode}; it must be root-owned and not writable by others"
+	fi
+	cloudbsd_review_check_path "$(dirname "${cloudbsd_review_config}")" \
+		"${cloudbsd_review_config}"
+
+	# Create it if it is missing; do NOT re-own or re-mode it if it exists.
+	#
+	# `install -d -o <service user>` ran as root on EVERY start. After the
+	# first one the directory belongs to the unprivileged service account,
+	# which can then replace it with a symlink -- and the next start's
+	# install(1) follows that link and applies the ownership and mode to
+	# whatever it points at. A start-time convenience that hands the service
+	# account a way to chown an arbitrary directory as root.
+	# The PARENT is created separately, root-owned, and checked before the
+	# leaf is made.
+	#
+	# An earlier comment here justified this by claiming `install -d -o user
+	# a/b/c` applies that owner to every component it creates. That is FALSE,
+	# measured rather than argued: xinstall creates intermediates root:wheel
+	# 0755 and chowns only the final path.
+	#
+	#   $ doas install -d -m 0750 -o nobody -g nobody $d/a/b/c
+	#   drwxr-xr-x root   wheel  $d/a
+	#   drwxr-xr-x root   wheel  $d/a/b
+	#   drwxr-x--- nobody nobody $d/a/b/c
+	#
+	# The separation is kept because it is still the right shape -- the walk
+	# below has to happen before anything is created, and having one call
+	# make the leaf keeps that ordering obvious -- but the danger it was
+	# said to remove was not real. A wrong reason for correct code is worth
+	# correcting: it is the reason the NEXT change gets made badly.
+	_stateparent=$(dirname "${cloudbsd_review_statedir}")
+	if [ -L "${cloudbsd_review_statedir}" ]; then
+		cloudbsd_review_refuse "${cloudbsd_review_statedir} is a symlink; refusing to use it as the state directory"
+	fi
+	# Check the deepest EXISTING ancestor before root creates anything.
+	#
+	# install(1) creates every missing component, so running it first and
+	# walking afterwards meant a hostile or typo'd rc.conf path got a
+	# root-owned tree built wherever it pointed, and the refusal came after
+	# the write. Worse, a symlink planted on the missing component between
+	# the `[ ! -d ]` test and the install is followed.
+	_probe=$_stateparent
+	while [ ! -d "$_probe" ] && [ "$_probe" != / ]; do
+		_pprev=$_probe
+		_probe=$(dirname "$_probe")
+		[ "$_probe" = "$_pprev" ] && break
+	done
+	cloudbsd_review_check_path "$_probe" "${cloudbsd_review_statedir}"
+	if [ ! -d "$_stateparent" ]; then
+		install -d -m 0755 "$_stateparent" ||
+			cloudbsd_review_refuse "cannot create $_stateparent"
+	fi
+	cloudbsd_review_check_path "$_stateparent" "${cloudbsd_review_statedir}"
+	if [ ! -d "${cloudbsd_review_statedir}" ]; then
+		# -g as well as -o. Without it the directory inherits the parent's
+		# group, which is wheel, and 0750 then means every wheel member can
+		# read the agent CLIs' session state.
+		install -d -m 0750 -o "${cloudbsd_review_runas}" \
+			-g "$(id -g "${cloudbsd_review_runas}")" \
+			"${cloudbsd_review_statedir}" ||
+			cloudbsd_review_refuse "cannot create ${cloudbsd_review_statedir}"
+	fi
+	_smode=$(stat -f '%Lp' "${cloudbsd_review_statedir}") ||
+		cloudbsd_review_refuse "cannot stat ${cloudbsd_review_statedir}"
+	if [ $(( 0$_smode & 027 )) -ne 0 ]; then
+		cloudbsd_review_refuse "${cloudbsd_review_statedir} is mode ${_smode}; it holds the agent CLIs' session state and must not be readable or writable by group or other"
+	fi
+	# And it must belong to the service. An EXISTING directory was never
+	# checked, so one left by a previous runas -- or by root -- became a HOME
+	# the child cannot write, and the agent CLIs fail somewhere far from here.
+	_sowner=$(stat -f '%u' "${cloudbsd_review_statedir}") ||
+		cloudbsd_review_refuse "cannot stat ${cloudbsd_review_statedir}"
+	if [ "$_sowner" != "$runas_uid" ]; then
+		cloudbsd_review_refuse "${cloudbsd_review_statedir} is owned by uid ${_sowner}, not ${cloudbsd_review_runas} (${runas_uid}); the service writes its state there"
+	fi
+	# The GROUP as well as the owner. `-g` is passed when this script creates
+	# the directory, but an existing one -- left by an older version that did
+	# not, or by a chgrp -- keeps whatever group it has, and 0750 with group
+	# wheel means every wheel member can read the agent CLIs' session state.
+	_sgroup=$(stat -f '%g' "${cloudbsd_review_statedir}") ||
+		cloudbsd_review_refuse "cannot stat ${cloudbsd_review_statedir}"
+	_wantgroup=$(id -g "${cloudbsd_review_runas}") ||
+		cloudbsd_review_refuse "cannot resolve the group of ${cloudbsd_review_runas}"
+	if [ "$_sgroup" != "$_wantgroup" ]; then
+		cloudbsd_review_refuse "${cloudbsd_review_statedir} has group ${_sgroup}, not ${cloudbsd_review_runas}'s (${_wantgroup}); its mode is meaningless against the wrong group"
+	fi
+	# A missing file is a FAILURE, not a skip. The roster lives in it, and a
+	# service that starts with no reviewers configured answers every tool
+	# normally and reviews nothing -- "could not look" wearing the answer of
+	# "found nothing", one level down from where this service already fights
+	# that distinction.
+	if [ ! -f "${cloudbsd_review_credfile}" ]; then
+		cloudbsd_review_refuse "${cloudbsd_review_credfile} does not exist; it holds the reviewer roster and the credentials"
+	fi
+	# NO second `if [ -f ]` here.
+	#
+	# The missing-file refusal is above; this block used to be wrapped in a
+	# second existence test as well, left over from when the file was
+	# optional. A file present at the first test and gone at the second --
+	# which anyone who can write the directory can arrange, and catching
+	# exactly that is what the walk INSIDE this block is for -- skipped the
+	# whole thing and returned 0. No roster check, no allowlist, nothing
+	# exported, and a service that starts and reviews nothing: the state
+	# this script exists to refuse, reached by the check that refuses it.
+	{
+		# READ it, do not SOURCE it.
+		#
+		# Sourcing is a code-execution channel, and the checks that were
+		# guarding it could not close the window: `.` re-opens the path after
+		# the checks, so in any directory an ordinary user can write, the file
+		# can be swapped between the two. That is root RCE through a file whose
+		# permissions were right at the moment they were looked at.
+		#
+		# (An earlier version of this comment blamed stat(1) for following
+		# symlinks. It does not -- stat(1) calls lstat(2) unless given -L. The
+		# [ -L ] check below is still right, but as an outright refusal to read
+		# credentials through a link, not as a fix for stat.)
+		#
+		# Parsing NAME=value removes the channel rather than racing it: the
+		# worst a hostile file can now do is set a variable this service
+		# already reads from its own configuration.
+		if [ -L "${cloudbsd_review_credfile}" ]; then
+			cloudbsd_review_refuse "${cloudbsd_review_credfile} is a symlink; refusing to read credentials through one"
+		fi
+		mode=$(stat -f '%Lp' "${cloudbsd_review_credfile}") ||
+			cloudbsd_review_refuse "cannot stat ${cloudbsd_review_credfile}"
+		case "$mode" in
+		600|400) ;;
+		*)
+			cloudbsd_review_refuse "${cloudbsd_review_credfile} is mode ${mode}; it holds credentials. chmod 600 it."
+			;;
+		esac
+		owner=$(stat -f '%u' "${cloudbsd_review_credfile}") ||
+			cloudbsd_review_refuse "cannot stat ${cloudbsd_review_credfile}"
+		if [ "$owner" != 0 ]; then
+			cloudbsd_review_refuse "${cloudbsd_review_credfile} is owned by uid ${owner}, not root. chown root it."
+		fi
+		# The directory too: a root-owned file in a directory somebody else
+		# can write is a file somebody else can replace.
+		#
+		# As a NUMBER, not a glob. The pattern `?[2367]?` matched a mode as
+		# TEXT, which is the same mistake as reading 755 as decimal, and it
+		# let modes through that the arithmetic below refuses.
+		#
+		# Note what stat prints, because the earlier version of this comment
+		# had the story wrong: `%Lp` gives only the user/group/other bits, so
+		# a 2775 directory reports as 775 and setgid never appears here at
+		# all. 2775 is refused for being group-writable. `%p` would show
+		# 42775 if the message ever needs to name the bit.
+		# EVERY ancestor, RESOLVED, and the loop must terminate.
+		#
+		# Checking only the immediate parent left the claim below false: if
+		# any directory further up is writable by a non-root user, that user
+		# renames the parent and puts their own in its place, and the swap
+		# happens between these checks and the redirect that reads the file.
+		# The path is rc.conf-settable, so "in practice it is under a
+		# pkg-created root-owned tree" describes the default, not the check.
+		#
+		# realpath(1) first, because stat(1) uses lstat(2) -- the comment
+		# above says so and the walk then ignored it. If any ancestor is a
+		# symlink (a prefix moved onto another dataset is an ordinary FreeBSD
+		# layout), the walk read the LINK's mode and owner, which are
+		# typically root and 0755, and never looked at the directory the file
+		# actually lives in.
+		#
+		# The `$d = $prev` guard is belt and braces on top of the absolute
+		# path enforced above: two ways to leave this loop, because the cost
+		# of leaving neither is a hung boot.
+		# Every component, as written and as resolved. See
+		# cloudbsd_review_check_path above for why both walks are needed:
+		# realpath validates the ancestors of the RESOLVED directory while
+		# the redirect below opens the ORIGINAL path, so a symlink component
+		# sits on neither walk.
+		cloudbsd_review_check_path "$(dirname "${cloudbsd_review_credfile}")" \
+			"${cloudbsd_review_credfile}"
+
+		# ALLOWLIST the names. Exporting whatever the file names writes into
+		# THIS shell, after command, command_args, procname and pidfile are
+		# set -- so a file that passes every check above could set `command`,
+		# PATH, IFS or LD_PRELOAD and own the next run_rc_command. An earlier
+		# comment here claimed the worst case was "a variable this service
+		# already reads"; that was simply untrue, and the allowlist is what
+		# makes it true.
+		#
+		# `|| [ -n "$line" ]` because read returns non-zero on a final line
+		# with no newline, and dropping the last line of a credential file
+		# starts the service with one variable quietly missing.
+		#
+		# Parse the WHOLE file into $@ first and export afterwards. Exporting
+		# as it went meant a file rejected on line 5 had already exported lines
+		# 1 to 4 -- which matters because `service forcestart` ignores a
+		# start_precmd failure, so that partial environment was reachable.
+		set --
+		lineno=0
+		while IFS= read -r line || [ -n "$line" ]; do
+			lineno=$((lineno + 1))
+			case "$line" in
+			''|'#'*) continue ;;
+			esac
+			# var_name, NOT name: `name` is rc.subr's own global holding
+			# the service name, and every ${name}_* hook resolves through
+			# it. Clobbering it here would leave the rest of the rc flow
+			# looking up a service called CLOUDBSD_REVIEW_TARGETS.
+			var_name=${line%%=*}
+			case "$line" in
+			*=*) ;;
+			*)
+				# The line, NOT its content. With no `=` in it,
+				# $var_name IS the whole line -- so an operator who
+				# pasted a bare token into this file would have had
+				# that token copied into syslog by the check that
+				# rejected it.
+				cloudbsd_review_refuse "${cloudbsd_review_credfile}: line ${lineno} is not NAME=value"
+				;;
+			esac
+			# A strict identifier FIRST. `CLOUDBSD_REVIEW_[A-Z0-9_]*` is a
+			# glob, so `CLOUDBSD_REVIEW_X Y` matches it -- and `export` is a
+			# special builtin, so its failure aborts a non-interactive shell
+			# before the warn below could ever print.
+			case "$var_name" in
+			*[!A-Z0-9_]*|'')
+				cloudbsd_review_refuse "${cloudbsd_review_credfile}: line ${lineno} does not begin with a valid variable name"
+				;;
+			esac
+			case "$var_name" in
+			CLOUDBSD_REVIEW_*|CURSOR_API_*|GROK_API_KEY|XAI_API_KEY|OLLAMA_API_KEY|SHIM_TOKEN|LITELLM_KEY)
+				set -- "$@" "$line"
+				;;
+			*)
+				cloudbsd_review_refuse "${cloudbsd_review_credfile}: ${var_name} is not a variable this service reads; refusing the file"
+				;;
+			esac
+		done < "${cloudbsd_review_credfile}"
+
+		# The roster must actually be IN THE FILE, and this is checked
+		# against what was parsed -- BEFORE anything is exported.
+		#
+		# The first version tested the variables in this shell after
+		# exporting, which is a different question with the same shape: a
+		# value inherited from the environment, or set unexported in rc.conf,
+		# satisfied it while the daemon's child still received nothing. What
+		# is being asked is "did the file say so", so ask the file.
+		#
+		# A missing file is refused above because a service with no reviewers
+		# "answers every tool normally and reviews nothing". An empty file, a
+		# comment-only file, `CLOUDBSD_REVIEW_TARGETS=` and an EMPTY JSON LIST
+		# all reach that identical state through the front door. `[]` is the
+		# one worth naming: it is not blank, so a non-empty test passes it,
+		# and it means exactly zero reviewers. This is not a guess about the
+		# binary -- cmd/cloudbsd-review/config.go logs "no reviewers
+		# configured" and returns a working registry rather than failing, on
+		# purpose -- so the refusal has to happen here.
+		for required in CLOUDBSD_REVIEW_TARGETS CLOUDBSD_REVIEW_REVIEWERS; do
+			value=""
+			for kv in "$@"; do
+				case "$kv" in
+				"${required}="*) value=${kv#*=} ;;
+				esac
+			done
+			# Blank, or blank once the punctuation of an empty
+			# collection is removed.
+			# Quotes too. `CLOUDBSD_REVIEW_TARGETS=""` is two characters
+			# and survived this, starting the service with a literal
+			# two-quote target -- the exact mistake pkg-message warns
+			# about, since nothing here strips quoting.
+			case "$(printf '%s' "$value" | tr -d '[:space:],[]{}'\''"')" in
+			'')
+				cloudbsd_review_refuse "${cloudbsd_review_credfile} sets no usable ${required}; the service would start and review nothing"
+				;;
+			esac
+		done
+
+		for kv in "$@"; do
+			export "$kv" ||
+				cloudbsd_review_refuse "${cloudbsd_review_credfile}: could not export ${kv%%=*}"
+		done
+
+		# Two residuals, stated rather than implied away.
+		#
+		# The mode, owner and symlink checks are made with stat(1) and the file
+		# is opened again by the redirect, so a swap between the two is still
+		# possible for anyone who can write a directory on the path. The
+		# ancestor walk above is what makes that "nobody but root", and sh has
+		# no O_NOFOLLOW open to do better.
+		#
+		# What the allowlist guarantees is that a file swapped in regardless
+		# can set only the variables named here. For CLOUDBSD_REVIEW_* that is
+		# the exhaustive set the binary reads -- TARGETS, REVIEWERS, RELAY and
+		# DIFF_DIR (cmd/cloudbsd-review/main.go) -- all of them operator
+		# configuration. It is NOT "harmless": DIFF_DIR names a path and RELAY
+		# names an endpoint. The claim is bounded, not absent.
+		#
+		# And every credential here reaches EVERY child: cloudbsd-review passes
+		# its environment to cursor-agent and to grok, so each sees the other
+		# rungs' keys. Closing that belongs in the service, which should hand
+		# each child only its own; the rc script cannot do it.
+	}
+}
+
+# EVERY cloudbsd_review_* variable that is not one of ours, refused.
+#
+# An allowlist, not a blocklist. The first version named the knobs it could
+# think of and missed ${name}_prepend -- prepended to the eval'd command line,
+# so `cloudbsd_review_prepend="/tmp/evil;"` runs as root -- and ${name}_setup,
+# which is run as a command before start. A blocklist over somebody else's
+# namespace is a list of the things you happened to know about.
+#
+# The argument is the one that added the uid-0 check: a default and a comment
+# are not a control. Three of rc.subr's knobs defeat everything this script
+# does -- ${name}_env_file is SOURCED as root, ${name}_program replaces
+# /usr/sbin/daemon and the -u that drops privilege, and ${name}_env is spliced
+# in as `env <value> $command`.
+#
+# Checked HERE, at the top level: load_rc_config has run so rc.conf values are
+# visible, and run_rc_command has not, so nothing has been sourced or spliced
+# yet. On EVERY verb, not just the starting ones: rc.subr sources
+# ${name}_env_file while setting up run_rc_command, before it dispatches on the
+# verb, so `service cloudbsd_review status` executes that file as root too.
+# Refusing here costs a `service` invocation that would have misbehaved anyway.
+for _v in $(set | sed -n 's/^\(cloudbsd_review_[A-Za-z0-9_]*\)=.*/\1/p'); do
+	case "$_v" in
+	cloudbsd_review_enable|cloudbsd_review_config|cloudbsd_review_credfile|\
+	cloudbsd_review_statedir|cloudbsd_review_args|cloudbsd_review_runas)
+		continue
+		;;
+	esac
+	eval "_vv=\${$_v-}"
+	[ -n "$_vv" ] || continue
+	warn "$_v is set. This service reads cloudbsd_review_enable, _config, _credfile, _statedir, _args and _runas; anything else in this namespace is an rc.subr knob that would change how, where or as whom it runs."
+	exit 1
+done
+
+run_rc_command "$1"

@@ -1,0 +1,13 @@
+cloudbsd-review-service runs a chain of independent code reviewers over one
+diff and aggregates their findings into one comparable shape, then asks a
+single relay model to consolidate them into a report the author acts on.
+
+Reviewers reached over an OpenAI-compatible endpoint and reviewers driven as
+agent CLIs (cursor-agent, grok) sit side by side on the same panel. Each
+reviewer is a ladder of ways to obtain that voice, so a cloud endpoint that
+runs out of credits steps down to a local model rather than dropping out --
+and every finding records which rung produced it, because a review done by a
+smaller model than the one configured is not the same result.
+
+This is internal tooling. It is not part of the CloudBSD server product:
+whose code REVYTECH reviews is not an appliance operator's concern.

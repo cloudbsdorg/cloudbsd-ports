@@ -1,0 +1,17 @@
+# REVYTECH accounts, kept HERE rather than appended to ${PORTSDIR}/UIDs.
+#
+# That shared file is FreeBSD's and is replaced wholesale every time the ports
+# tree is updated, so a line added to it is a merge conflict on every update
+# and is silently lost the first time somebody resolves one the easy way. The
+# framework takes a LIST -- Mk/Scripts/do-users-groups.sh iterates
+# ${dp_UID_FILES} -- so a port may carry its own.
+#
+# 799 is inside FreeBSD's own 0-999 ports range and is currently unassigned in
+# both ${PORTSDIR}/UIDs and ${PORTSDIR}/GIDs. If upstream ever assigns it, the
+# clash is a duplicate uid rather than a duplicate name, so `pw` reports it
+# instead of silently merging two accounts.
+#
+# The home directory is the service's own state directory, and it matters:
+# daemon(8) -u calls setusercontext() and then setenv("HOME", pw->pw_dir), so
+# this value is where cursor-agent and grok look for their session state.
+cloudbsd_review:*:799:799::0:0:CloudBSD review service:/var/db/cloudbsd/review:/usr/sbin/nologin

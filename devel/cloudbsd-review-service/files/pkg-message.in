@@ -1,0 +1,53 @@
+[
+{ type: install
+  message: <<EOM
+cloudbsd-review-service is internal tooling and is NOT part of the CloudBSD
+server product.
+
+To run it:
+
+  1. Edit %%PREFIX%%/etc/cloudbsd/review/config.json -- pkg creates it from
+     config.json.sample on install, so it already exists. It will NOT start
+     unedited: the sample points auth.tokenFile at
+     %%PREFIX%%/etc/cloudbsd/review/token, which this package deliberately does
+     not ship. Create it, mode 600, with a secret of your own:
+
+         openssl rand -hex 32 | install -o cloudbsd_review -g cloudbsd_review \
+             -m 0400 /dev/stdin %%PREFIX%%/etc/cloudbsd/review/token
+
+     Note the ownership, and note that it is the OPPOSITE of the credentials
+     file. These two are read by different processes:
+
+       credentials  root:wheel 0600  -- read by the rc script, as root, before
+                                        the service starts
+       token        cloudbsd_review 0400
+                                     -- read by the service itself, which has
+                                        already dropped to that user
+
+     Writing the token as root:wheel 0600 leaves it unreadable by the process
+     that needs it, and the failure is silent: daemon(8) forks, `service start`
+     returns 0, and the child dies. A token shipped in a package is a token
+     every install shares, so there is no default here on purpose.
+  2. Write %%PREFIX%%/etc/cloudbsd/review/credentials, mode 600, setting
+     CLOUDBSD_REVIEW_TARGETS and CLOUDBSD_REVIEW_REVIEWERS -- both are
+     required, and an empty list is refused -- and optionally
+     CLOUDBSD_REVIEW_RELAY and CLOUDBSD_REVIEW_DIFF_DIR. See
+     reviewers.json.sample.
+
+     A rung names the environment VARIABLE holding its credential; put the
+     credential itself in this file and nowhere else. The rc script will not
+     export a name it does not recognise, and refuses the whole file rather
+     than skipping the line, so a rung's credential variable must be one of:
+
+         CLOUDBSD_REVIEW_*   CURSOR_API_*   GROK_API_KEY   XAI_API_KEY
+         OLLAMA_API_KEY      SHIM_TOKEN     LITELLM_KEY
+
+     Plain NAME=value lines only -- no quoting and no `export`; the rc script
+     exports them for you, and a value written as KEY="v" arrives with the
+     quotes still in it.
+  3. sysrc cloudbsd_review_enable=YES && service cloudbsd_review start
+
+It listens on 127.0.0.1:9750 and requires a bearer token even on loopback.
+EOM
+}
+]
