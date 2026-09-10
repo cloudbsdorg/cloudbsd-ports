@@ -1,12 +1,23 @@
 #!/bin/sh
 
 # PROVIDE: hawkeye
-# REQUIRE: FILESYSTEMS
+# REQUIRE: LOGIN cleanvar
+# BEFORE: nginx
 # KEYWORD: shutdown
 
 # Optional rc.d service: refresh hawkeye-data artifacts and run a
 # loopback MCP listener (nginx terminates TLS; hawkeye checks the token).
 # This is NOT a public chat UI.
+#
+# REQUIRE: LOGIN (not FILESYSTEMS): mcp --http binds 127.0.0.1:8741.
+# FILESYSTEMS is before ldconfig/netif/DAEMON/LOGIN; lo0 may be down.
+# daemon -f can return success while the child dies on bind, so nginx
+# (REQUIRE: LOGIN) comes up and the /mcp proxy gets Connection refused
+# (502) until a later manual `service hawkeye start`. LOGIN is the same
+# class as www/nginx; cleanvar must run first so it does not wipe
+# /var/run/hawkeye.pid after we write it. BEFORE nginx so the loopback
+# listener exists when the TLS proxy starts. T035 adopt/pidfile is
+# unchanged: write after listen, no empty seed, no daemon -p.
 
 . /etc/rc.subr
 
@@ -104,6 +115,8 @@ hawkeye_adopt_live_mcp()
 hawkeye_prestart()
 {
 	hawkeye_checkconfig || return 1
+	# After LOGIN, NETWORKING has already been provided. Do not
+	# move start (or this optional fetch) back to FILESYSTEMS.
 	if [ "${hawkeye_update}" = "YES" ]; then
 		hawkeye_update || warn "hawkeye update failed (continuing)"
 	fi
