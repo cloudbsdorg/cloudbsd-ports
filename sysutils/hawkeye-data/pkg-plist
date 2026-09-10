@@ -1,6 +1,7 @@
 %%DATADIR%%/README.md
 %%DATADIR%%/SOURCES.md
 %%DATADIR%%/notices/FREEBSD-DOC-LICENSE.txt
+%%DATADIR%%/notices/PROGRAMMING-LICENSES.txt
 %%DATADIR%%/knowledge.sqlite
 %%DATADIR%%/schema/knowledge.sql
 %%DATADIR%%/playbooks/bectl-rollback.md
