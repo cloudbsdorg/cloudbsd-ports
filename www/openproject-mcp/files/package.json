@@ -1,0 +1,11 @@
+{
+  "name": "openproject-mcp-installer",
+  "private": true,
+  "version": "1.0.1",
+  "description": "CloudBSD installer pin for openproject-mcp and supergateway",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "openproject-mcp": "1.0.1",
+    "supergateway": "3.4.3"
+  }
+}

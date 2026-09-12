@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# Copyright (c) 2026 REVYTECH, Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# HTTP gateway: read mcp.api_key line 1, set OPENPROJECT_URL and
+# OPENPROJECT_API_KEY, exec pinned supergateway wrapping openproject-mcp.
+# No npx. Key file is not shipped by the port.
+
+set -eu
+
+PREFIX="%%PREFIX%%"
+KEYFILE="${OPENPROJECT_MCP_KEYFILE:-${PREFIX}/etc/cloudbsd/openproject/mcp.api_key}"
+PORT="${OPENPROJECT_MCP_PORT:-8000}"
+
+die()
+{
+	echo "openproject_mcp: $*" >&2
+	exit 1
+}
+
+filemode()
+{
+	if stat -f %OLp "$1" >/dev/null 2>&1; then
+		stat -f %OLp "$1"
+	else
+		stat -c %a "$1"
+	fi
+}
+
+[ -f "${KEYFILE}" ] || die "missing keyfile ${KEYFILE}"
+_mode=$(filemode "${KEYFILE}")
+case "${_mode}" in
+600|400|0600|0400) ;;
+*)
+	die "keyfile ${KEYFILE} must be mode 0600 (is ${_mode})"
+	;;
+esac
+
+_key=$(sed -n '1p' "${KEYFILE}" | tr -d '\r\n')
+[ -n "${_key}" ] || die "keyfile ${KEYFILE} line 1 is empty"
+[ "${_key}" != "REPLACE_ME" ] || die "keyfile ${KEYFILE} is still REPLACE_ME"
+
+[ -x "${PREFIX}/bin/supergateway" ] || die "missing ${PREFIX}/bin/supergateway"
+[ -x "${PREFIX}/bin/openproject-mcp" ] || die "missing ${PREFIX}/bin/openproject-mcp"
+
+export OPENPROJECT_API_KEY="${_key}"
+export OPENPROJECT_URL="${OPENPROJECT_URL:-http://127.0.0.1:3000}"
+
+exec "${PREFIX}/bin/supergateway" \
+	--stdio "${PREFIX}/bin/openproject-mcp" \
+	--port "${PORT}" \
+	--outputTransport streamableHttp \
+	--streamableHttpPath /mcp \
+	--logLevel none

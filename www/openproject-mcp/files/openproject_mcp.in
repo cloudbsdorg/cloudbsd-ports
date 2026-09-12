@@ -1,0 +1,117 @@
+#!/bin/sh
+#
+# Copyright (c) 2026 REVYTECH, Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# PROVIDE: openproject_mcp
+# REQUIRE: LOGIN openproject
+# KEYWORD: shutdown
+#
+# OpenProject MCP HTTP gateway on 127.0.0.1:8000 (supergateway
+# wrapping openproject-mcp). DEV jails only. Default enable is NO.
+# Production www/openproject stays MCP-free; do not enable there.
+#
+# Bastille jail: `daemon -u openproject` failed with
+#   initgroups(openproject,576): Operation not permitted
+# rc.subr already does `su -m ${openproject_mcp_user}` when
+# ${name}_user is set. daemon must not also -u (same as
+# www/openproject and misc/hermes-agent).
+#
+# openproject_mcp_enable (bool):	default NO
+# openproject_mcp_user (str):		default %%USERS%%
+# openproject_mcp_group (str):		default %%GROUPS%%
+# openproject_mcp_keyfile (str):	OpenProject API key (mode 0600)
+# openproject_mcp_port (str):		default 8000
+
+. /etc/rc.subr
+
+name="openproject_mcp"
+desc="OpenProject MCP HTTP gateway (DEV)"
+rcvar="openproject_mcp_enable"
+
+load_rc_config ${name}
+
+: ${openproject_mcp_enable:="NO"}
+: ${openproject_mcp_user:="%%USERS%%"}
+: ${openproject_mcp_group:="%%GROUPS%%"}
+: ${openproject_mcp_keyfile:="%%PREFIX%%/etc/cloudbsd/openproject/mcp.api_key"}
+: ${openproject_mcp_pidfile:="/var/run/openproject/openproject_mcp.pid"}
+: ${openproject_mcp_port:="8000"}
+
+pidfile="${openproject_mcp_pidfile}"
+procname="%%PREFIX%%/bin/node"
+command="/usr/sbin/daemon"
+# No -u: already running as ${openproject_mcp_user} via su -m.
+command_args="-c -f -P ${pidfile} -T ${name} -t ${name} \
+	%%PREFIX%%/libexec/openproject_mcp"
+
+extra_commands="checkconfig"
+checkconfig_cmd="openproject_mcp_checkconfig"
+start_precmd="openproject_mcp_prestart"
+start_postcmd="openproject_mcp_wait"
+stop_postcmd="openproject_mcp_poststop"
+
+export OPENPROJECT_MCP_KEYFILE="${openproject_mcp_keyfile}"
+export OPENPROJECT_MCP_PORT="${openproject_mcp_port}"
+export PATH="${PATH}:%%PREFIX%%/bin"
+
+openproject_mcp_filemode()
+{
+	if stat -f %OLp "$1" >/dev/null 2>&1; then
+		stat -f %OLp "$1"
+	else
+		stat -c %a "$1"
+	fi
+}
+
+openproject_mcp_checkconfig()
+{
+	if [ ! -f "${openproject_mcp_keyfile}" ]; then
+		err 1 "missing keyfile ${openproject_mcp_keyfile} (copy mcp.api_key.sample, chmod 0600; do not ship the key in the port)"
+	fi
+	_mode=$(openproject_mcp_filemode "${openproject_mcp_keyfile}")
+	case "${_mode}" in
+	600|400|0600|0400) ;;
+	*)
+		err 1 "keyfile ${openproject_mcp_keyfile} must be mode 0600 (is ${_mode})"
+		;;
+	esac
+	_key=$(sed -n '1p' "${openproject_mcp_keyfile}" | tr -d '\r\n')
+	if [ -z "${_key}" ] || [ "${_key}" = "REPLACE_ME" ]; then
+		err 1 "keyfile ${openproject_mcp_keyfile} is empty or REPLACE_ME"
+	fi
+	return 0
+}
+
+openproject_mcp_prestart()
+{
+	openproject_mcp_checkconfig || return 1
+	if [ ! -x "%%PREFIX%%/bin/openproject-mcp" ] || \
+	   [ ! -x "%%PREFIX%%/bin/supergateway" ]; then
+		err 1 "missing %%PREFIX%%/bin/openproject-mcp or supergateway (no npx)"
+	fi
+	install -d -o "${openproject_mcp_user}" -g "${openproject_mcp_group}" \
+		-m 0755 /var/run/openproject
+}
+
+openproject_mcp_wait()
+{
+	# Wait until sockstat shows :8000 (supergateway streamable HTTP).
+	_i=0
+	while [ "${_i}" -lt 30 ]; do
+		if sockstat -l -P tcp 2>/dev/null | \
+		    grep -q ":${openproject_mcp_port}"; then
+			return 0
+		fi
+		sleep 1
+		_i=$((_i + 1))
+	done
+	err 1 "${name}: nothing listening on :${openproject_mcp_port}"
+}
+
+openproject_mcp_poststop()
+{
+	rm -f "${pidfile}"
+}
+
+run_rc_command "$1"

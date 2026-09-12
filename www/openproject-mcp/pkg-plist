@@ -1,0 +1,10 @@
+bin/openproject-mcp
+bin/supergateway
+libexec/openproject_mcp
+libexec/openproject_mcp_stdio
+etc/cloudbsd/openproject/mcp.api_key.sample
+etc/cloudbsd/openproject/mcp.bearer.sample
+etc/nginx/openproject-mcp.conf.sample
+share/doc/openproject-mcp/COPYRIGHT
+share/doc/openproject-mcp/LICENSE-openproject-mcp
+share/doc/openproject-mcp/LICENSE-supergateway
