@@ -8,7 +8,7 @@
 PORTNAME=	openproject
 DISTVERSIONPREFIX=	v
 DISTVERSION=	17.7.2
-PORTREVISION=	4
+PORTREVISION=	5
 CATEGORIES=	www
 
 MAINTAINER=	mark@cloudbsd.org
@@ -63,6 +63,9 @@ EXTRACT_ONLY=	${_DISTFILES:N${BLOCKNOTE_DIST}}
 #
 # PORTREVISION 4: COPYTREE_SHARE + pkg add can drop +x on
 # vendor/bundle/ruby/*/bin/*; do-install chmod 755 those binstubs.
+# PORTREVISION 5: Gemfile.lock must list both jail ABI platforms
+# (amd64-freebsd-15 and amd64-freebsd-16). Login BIM logo logical
+# paths must be in the packaged .sprockets-manifest-*.
 #
 # Day-one: no BIM IFC Linux blobs, no hocuspocus, no Appsignal.
 # Monolith: bundle config set --local {path,without,deployment}; bundle
@@ -169,6 +172,16 @@ post-patch:
 	${REINPLACE_CMD} -e 's|https://github.com/opf/op-blocknote-extensions/releases/download/v${BLOCKNOTE_VER}/${BLOCKNOTE_DIST}|file:vendor/${BLOCKNOTE_DIST}|g' \
 		${WRKSRC}/frontend/package.json \
 		${WRKSRC}/frontend/package-lock.json
+	# Core /login CSS calls asset_path() on
+	# bim/logo_openproject_bim_big.png and
+	# bim/logo_openproject_bim_big_coloured.png even when
+	# openproject-bim is not bundled (day-one: no BIM IFC).
+	# Put the shipped PNGs on the app/assets precompile path so
+	# .sprockets-manifest-* lists those logical paths.
+	${MKDIR} ${WRKSRC}/app/assets/images/bim
+	${CP} ${WRKSRC}/modules/bim/app/assets/images/bim/logo_openproject_bim_big.png \
+		${WRKSRC}/modules/bim/app/assets/images/bim/logo_openproject_bim_big_coloured.png \
+		${WRKSRC}/app/assets/images/bim/
 
 # PATH shim so every nested `ruby` / `bundle` is 4.0. Prefer the
 # versioned bundle40 binary; otherwise wrap unversioned bundle with
@@ -192,8 +205,17 @@ do-build:
 		${RUBY} -S ${OP_BUNDLE} config set --local path '${BUNDLE_PATH_REL}'
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
 		${RUBY} -S ${OP_BUNDLE} config set --local without 'development test mysql2 sqlite'
+	# Packages must not assume build-host OSVERSION equals the
+	# jail ABI (freebsd-pkg-matrix). bundle lock records only the
+	# current host in Gemfile.lock PLATFORMS (amd64-freebsd-16 on
+	# 16-CURRENT). A 15.1-RELEASE jail then raises
+	# Bundler::ProductionError even when vendor/bundle already
+	# has extensions for both majors. Add both production
+	# CloudBSD jail majors before deployment freeze.
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
-		${RUBY} -S ${OP_BUNDLE} lock
+		${RUBY} -S ${OP_BUNDLE} lock \
+		--add-platform amd64-freebsd-15 \
+		--add-platform amd64-freebsd-16
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
 		${RUBY} -S ${OP_BUNDLE} config set --local deployment true
 	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
@@ -208,6 +230,11 @@ do-build:
 		DATABASE_URL=nulldb://db \
 		${RUBY} -S ${OP_BUNDLE} exec ${RUBY} bin/rails \
 		openproject:plugins:register_frontend assets:precompile
+	# Prefer manifest keys that match shipped public/assets/bim
+	# files. Safety net if precompile still omits the two login
+	# BIM logical paths (proven /login 500 after pkg add).
+	cd ${WRKSRC} && ${SETENV} ${MAKE_ENV} \
+		${RUBY} ${FILESDIR}/ensure-bim-sprockets-manifest.rb ${WRKSRC}
 
 do-install:
 	${MKDIR} ${STAGEDIR}${WWWDIR} \
@@ -273,6 +300,17 @@ do-test:
 	@${GREP} -q 'su -m' ${FILESDIR}/openproject_worker.in
 	@${GREP} -q "ruby/*/bin/*" ${.CURDIR}/Makefile
 	@${GREP} -q 'CHMOD} 755' ${.CURDIR}/Makefile
+	@${GREP} -q -- '--add-platform' ${.CURDIR}/Makefile
+	@${GREP} -q 'amd64-freebsd-15' ${.CURDIR}/Makefile
+	@${GREP} -q 'amd64-freebsd-16' ${.CURDIR}/Makefile
+	@${GREP} -q 'OSVERSION' ${.CURDIR}/Makefile
+	@${GREP} -q 'logo_openproject_bim_big_coloured.png' ${.CURDIR}/Makefile
+	@${GREP} -q 'sprockets-manifest' ${.CURDIR}/Makefile
+	@${GREP} -q 'ensure-bim-sprockets-manifest.rb' ${.CURDIR}/Makefile
+	@if command -v ruby >/dev/null 2>&1; then \
+		ruby -c ${FILESDIR}/ensure-bim-sprockets-manifest.rb >/dev/null; \
+		ruby ${FILESDIR}/ensure-bim-sprockets-manifest.rb --self-test; \
+	fi
 	@if command -v mandoc >/dev/null 2>&1; then \
 		mandoc -T lint -W error ${WRKDIR}/openproject.8 \
 			${WRKDIR}/openproject.conf.5; \
