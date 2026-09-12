@@ -1,0 +1,14 @@
+OpenProject MCP gateway for CloudBSD DEV jails. Packages pinned npm
+bins (openproject-mcp 1.0.1 and supergateway 3.4.3) plus rc.d and
+libexec wrappers. Runtime does not call npx.
+
+Enable only on DEV. www/openproject stays MCP-free: this port is a
+separate package (pkg install openproject-mcp). Default rc.d enable
+is NO. Production must not set openproject_mcp_enable=YES.
+
+The HTTP gateway listens on 127.0.0.1:8000 (streamable HTTP at /mcp)
+after OpenProject Puma is up on 127.0.0.1:3000. An stdio helper is
+included for SSH bridges. Operator creates mcp.api_key and optional
+mcp.bearer as mode 0600; this port ships samples only.
+
+WWW: https://github.com/cyborgx0x/mcp-openproject

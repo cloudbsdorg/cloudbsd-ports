@@ -1,0 +1,38 @@
+# Copyright (c) 2026 REVYTECH, Inc.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Sample nginx location for the OpenProject MCP gateway (DEV only).
+# Include inside an existing TLS server block. Do not enable on
+# production. The gateway listens on 127.0.0.1:8000 only.
+#
+# Operator must create these files as mode 0600 (samples are
+# placeholders; this file is not a token):
+#   %%PREFIX%%/etc/cloudbsd/openproject/mcp.api_key
+#   %%PREFIX%%/etc/cloudbsd/openproject/mcp.bearer
+#
+# Wire Authorization: Bearer <contents of mcp.bearer> before
+# proxy_pass. Example map (http{} context; replace the token
+# with the live mcp.bearer value — never commit a real token):
+#
+#   map $http_authorization $mcp_ok {
+#       default 0;
+#       "Bearer REPLACE_ME" 1;
+#   }
+
+location /mcp {
+	# Reject requests that do not present the operator Bearer.
+	# $mcp_ok comes from the map above (or auth_request).
+	if ($mcp_ok = 0) {
+		return 401;
+	}
+
+	proxy_pass		http://127.0.0.1:8000;
+	proxy_http_version	1.1;
+	proxy_set_header	Host			$host;
+	proxy_set_header	X-Real-IP		$remote_addr;
+	proxy_set_header	X-Forwarded-For		$proxy_add_x_forwarded_for;
+	proxy_set_header	X-Forwarded-Proto	https;
+	proxy_set_header	Connection		"";
+	proxy_buffering		off;
+	proxy_read_timeout	3600s;
+}

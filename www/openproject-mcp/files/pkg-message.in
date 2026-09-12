@@ -1,0 +1,41 @@
+[
+{ type: install
+  message: <<EOM
+openproject-mcp %%MCP_VER%% is installed (supergateway %%SG_VER%%).
+
+This is a DEV-only CloudBSD port. www/openproject remains usable
+without MCP. Default is disabled:
+
+  openproject_mcp_enable=NO
+
+Do not enable on production. Pins are global under LOCALBASE
+(%%PREFIX%%/bin/openproject-mcp and %%PREFIX%%/bin/supergateway).
+Runtime does not call npx.
+
+1. Create secrets as mode 0600 (samples are placeholders):
+
+     cp %%PREFIX%%/etc/cloudbsd/openproject/mcp.api_key.sample \
+        %%PREFIX%%/etc/cloudbsd/openproject/mcp.api_key
+     # line 1: OpenProject API token (My Account → Access tokens)
+     chmod 0600 %%PREFIX%%/etc/cloudbsd/openproject/mcp.api_key
+
+     cp %%PREFIX%%/etc/cloudbsd/openproject/mcp.bearer.sample \
+        %%PREFIX%%/etc/cloudbsd/openproject/mcp.bearer
+     # line 1: nginx Bearer token (not the API key)
+     chmod 0600 %%PREFIX%%/etc/cloudbsd/openproject/mcp.bearer
+
+2. Merge %%PREFIX%%/etc/nginx/openproject-mcp.conf.sample
+   into the DEV TLS vhost (location /mcp → 127.0.0.1:8000
+   with Bearer auth). Reload nginx.
+
+3. OpenProject Puma must already listen on 127.0.0.1:3000
+   (service openproject). Then:
+
+     sysrc openproject_mcp_enable=YES
+     service openproject_mcp start
+
+HTTP:  127.0.0.1:8000/mcp (streamable HTTP via supergateway)
+Stdio: %%PREFIX%%/libexec/openproject_mcp_stdio (SSH bridges)
+EOM
+}
+]

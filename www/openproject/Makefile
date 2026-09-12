@@ -8,7 +8,7 @@
 PORTNAME=	openproject
 DISTVERSIONPREFIX=	v
 DISTVERSION=	17.7.2
-PORTREVISION=	3
+PORTREVISION=	4
 CATEGORIES=	www
 
 MAINTAINER=	mark@cloudbsd.org
@@ -60,6 +60,9 @@ EXTRACT_ONLY=	${_DISTFILES:N${BLOCKNOTE_DIST}}
 # comrak and has no freebsd prebuilt gem — rust/cargo is required.
 # rugged is not in Gemfile.lock; do not add it.
 # USES=cargo is not used: this is not a Rust port.
+#
+# PORTREVISION 4: COPYTREE_SHARE + pkg add can drop +x on
+# vendor/bundle/ruby/*/bin/*; do-install chmod 755 those binstubs.
 #
 # Day-one: no BIM IFC Linux blobs, no hocuspocus, no Appsignal.
 # Monolith: bundle config set --local {path,without,deployment}; bundle
@@ -222,6 +225,12 @@ do-install:
 		${STAGEDIR}/var/run/openproject
 	(cd ${WRKSRC} && ${COPYTREE_SHARE} . ${STAGEDIR}${WWWDIR})
 	${FIND} ${STAGEDIR}${WWWDIR} \( -name '*.orig' -o -name '*.bak' \) -delete
+	# COPYTREE_SHARE / pkg add can drop +x on gem binstubs.
+	# Runtime bundle exec needs vendor/bundle/ruby/*/bin/* executable.
+	@if [ -d ${STAGEDIR}${WWWDIR}/vendor/bundle ]; then \
+		${FIND} ${STAGEDIR}${WWWDIR}/vendor/bundle -type f \
+			-path '*/ruby/*/bin/*' -exec ${CHMOD} 755 {} +; \
+	fi
 	${INSTALL_SCRIPT} ${WRKDIR}/openproject-ctl \
 		${STAGEDIR}${PREFIX}/sbin/openproject
 	${INSTALL_DATA} ${FILESDIR}/openproject.env.sample \
@@ -262,6 +271,8 @@ do-test:
 	@${GREP} -q 'initgroups' ${FILESDIR}/openproject_worker.in
 	@${GREP} -q 'su -m' ${FILESDIR}/openproject.in
 	@${GREP} -q 'su -m' ${FILESDIR}/openproject_worker.in
+	@${GREP} -q "ruby/*/bin/*" ${.CURDIR}/Makefile
+	@${GREP} -q 'CHMOD} 755' ${.CURDIR}/Makefile
 	@if command -v mandoc >/dev/null 2>&1; then \
 		mandoc -T lint -W error ${WRKDIR}/openproject.8 \
 			${WRKDIR}/openproject.conf.5; \

@@ -559,6 +559,7 @@
     SUBDIR += openemr
     SUBDIR += opengist
     SUBDIR += openproject
+    SUBDIR += openproject-mcp
     SUBDIR += openresty
     SUBDIR += orangehrm
     SUBDIR += osrm-backend
