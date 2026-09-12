@@ -94,13 +94,11 @@ do-install:
 	${INSTALL_DATA} ${WRKSRC}/package-lock.json \
 		${STAGEDIR}${PREFIX}/lib/openproject-mcp/package-lock.json
 	cd ${WRKSRC} && ${COPYTREE_SHARE} node_modules \
-		${STAGEDIR}${PREFIX}/lib/openproject-mcp/node_modules
-	# COPYTREE_SHARE / pkg(8) can drop +x. Entry points must be 755.
-	${INSTALL} -m 755 \
-		${WRKSRC}/node_modules/openproject-mcp/index.js \
+		${STAGEDIR}${PREFIX}/lib/openproject-mcp
+	# COPYTREE_SHARE uses cpio hardlinks so chmod staged paths (INSTALL would fail).
+	${CHMOD} 755 \
 		${STAGEDIR}${PREFIX}/lib/openproject-mcp/node_modules/openproject-mcp/index.js
-	${INSTALL} -m 755 \
-		${WRKSRC}/node_modules/supergateway/dist/index.js \
+	${CHMOD} 755 \
 		${STAGEDIR}${PREFIX}/lib/openproject-mcp/node_modules/supergateway/dist/index.js
 	${PRINTF} '#!/bin/sh\nexec %s/bin/node %s/lib/openproject-mcp/node_modules/openproject-mcp/index.js "$$@"\n' \
 		${PREFIX} ${PREFIX} > ${STAGEDIR}${PREFIX}/bin/openproject-mcp
